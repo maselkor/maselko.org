@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1080">
+  <defs>
+    <linearGradient id="beam" x1="1" y1="0" x2="0" y2="0.55">
+      <stop offset="0" stop-color="#aab8d0" stop-opacity="0.2" />
+      <stop offset="0.48" stop-color="#8fa0bc" stop-opacity="0.07" />
+      <stop offset="1" stop-color="#71819e" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="beam-edge" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#a9b7cd" stop-opacity="0.72" />
+      <stop offset="1" stop-color="#73829e" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- A quiet beam, with only the two outer edges visible. -->
+  <path d="M551 258 L-24 414 L-24 641 Z" fill="url(#beam)" />
+  <g fill="none" stroke="url(#beam-edge)" stroke-width="0.9">
+    <path d="M551 258 L-24 414" />
+    <path d="M551 258 L-24 641" />
+  </g>
+
+  <g fill="none" stroke="#8291aa" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Lantern and roof. -->
+    <path d="M585 127v40" opacity="0.82" />
+    <circle cx="585" cy="173" r="7" />
+    <path d="M548 219c7-26 21-40 37-40s31 14 38 40" />
+    <path d="M546 220c0-4 3-7 7-7h64c5 0 8 3 8 7 0 3-3 5-7 5h-65c-4 0-7-2-7-5Z" />
+    <path d="M550 225v72M620 225v72M567 225v72M585 225v72M603 225v72" />
+    <path d="M551 252c17-4 50-4 68 0M551 278c18-4 50-4 68 0" opacity="0.82" />
+    <circle cx="585" cy="260" r="4.5" opacity="0.72" />
+
+    <!-- Gallery and railing. -->
+    <path d="M537 297h96M536 302v22M549 302v22M567 302v22M585 302v22M603 302v22M621 302v22M634 302v22M535 302h100M531 324h108" />
+    <path d="M529 324v11c0 4 3 7 8 9 25 8 72 8 97 0 5-2 8-5 8-9v-11" />
+    <path d="M529 335c29 9 84 9 113 0M536 348c25 7 74 7 99 0M537 356c25 7 73 7 98 0" />
+
+    <!-- Tapered tower. -->
+    <path d="M543 356 513 699M628 356l32 343" />
+    <path d="M536 438c25-7 71-7 98 0M528 527c31-7 85-7 114 0M520 616c36-8 95-8 132 0" opacity="0.9" />
+    <path d="M578 393c0-7 5-12 11-12s11 5 11 12v24h-22Z" />
+    <path d="M573 477c0-7 5-12 11-12s11 5 11 12v23h-22Z" />
+    <path d="M570 565c0-7 5-12 11-12s11 5 11 12v24h-22Z" />
+
+    <!-- Masonry base. -->
+    <path d="M513 699c42-9 105-9 147 0l2 21H510Z" />
+    <path d="M505 720c45-7 116-7 161 0v18H501v-12c0-3 2-5 4-6Z" />
+    <path d="M523 702v17M543 699v20M565 697v21M589 696v22M613 697v21M637 700v19M518 723v14M543 720v17M570 719v18M599 719v18M627 720v17M651 723v14" opacity="0.82" />
+
+    <!-- Headland beneath the lighthouse. -->
+    <path d="M471 760c12-8 22-17 30-22h165c18 5 36 15 53 27" />
+    <path d="M501 738c-13 9-20 23-31 31-11 9-12 23-23 31-14 10-17 27-29 38-10 9-17 25-30 35" />
+    <path d="M520 742c-21 18-32 40-45 62-6 10-15 16-25 22M557 737c-12 11-21 27-28 42-8 18-20 29-31 45-7 10-13 22-24 28" />
+    <path d="M604 735c-21 17-33 40-48 61-13 18-28 32-38 52M652 741c-26 20-42 45-57 73-10 18-20 31-35 44" />
+    <path d="M698 759c-19 10-31 25-43 42-9 13-20 22-34 27-17 6-26 24-37 38" />
+    <path d="M431 809c19-5 34-2 48 8M398 844c18-7 36-4 50 6M370 879c24-5 46-2 64 9M452 779c14 0 25 4 35 12M512 776c13-3 24-1 36 5M566 804c15-2 26 1 37 8M621 774c17-1 31 4 41 13" opacity="0.68" />
+
+    <!-- Distant and foreground rocks. -->
+    <path d="M49 875c17-12 34-14 52-7 13-13 28-14 43-5 17-20 42-28 64-18 14-12 33-14 48-4 12 8 25 13 40 11 18-2 34 5 46 17" opacity="0.62" />
+    <path d="M303 1080c20-14 42-22 65-19 18-20 39-33 65-30 13-18 36-27 57-17 17-11 37-12 55-3 21-22 47-32 76-24 15-16 35-22 56-14 17 6 31 4 43-5" opacity="0.62" />
+    <path d="M355 1036c21-15 43-24 67-22M402 1068c26-21 53-30 83-23M466 1023c22-12 43-14 64-5M528 1054c24-17 48-21 73-11M602 1006c19-10 37-11 55-4" opacity="0.5" />
+
+    <!-- Waterline and calm reflections. -->
+    <path d="M0 868h338M0 883h322M0 897h365M0 920h414M0 946h454M0 970h500" opacity="0.34" />
+    <path d="M34 881h157M101 910h198M14 936h249M171 959h211" opacity="0.25" />
+  </g>
+</svg>

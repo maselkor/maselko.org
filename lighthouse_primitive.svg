@@ -12,10 +12,13 @@
   </defs>
 
   <!-- A quiet beam, with only the two outer edges visible. -->
-  <path d="M551 258 L-24 414 L-24 641 Z" fill="url(#beam)" />
-  <g fill="none" stroke="url(#beam-edge)" stroke-width="0.9">
-    <path d="M551 258 L-24 414" />
-    <path d="M551 258 L-24 641" />
+  <g>
+    <animate attributeName="opacity" values="1;0.3;1" dur="5s" repeatCount="indefinite" />
+    <path d="M551 258 L-24 414 L-24 641 Z" fill="url(#beam)" />
+    <g fill="none" stroke="url(#beam-edge)" stroke-width="0.9">
+      <path d="M551 258 L-24 414" />
+      <path d="M551 258 L-24 641" />
+    </g>
   </g>
 
   <g fill="none" stroke="#8291aa" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round">

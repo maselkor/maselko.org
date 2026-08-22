@@ -1,0 +1,835 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><meta charset="utf-8"><script data-cfasync="false">
+	(() => {
+		const root = document.documentElement;
+		const paintTheme = (theme) => {
+			const dark = theme === 'dark';
+			root.setAttribute('data-theme', dark ? 'dark' : 'light');
+			root.style.setProperty('background-color', 'var(--color-bg)');
+			root.style.colorScheme = dark ? 'dark' : 'light';
+		};
+		let theme = 'light';
+		try {
+			const s = localStorage.getItem('theme');
+			if (s === 'dark' || s === 'light') theme = s;
+			else if (matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+		} catch {
+			if (matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+		}
+		paintTheme(theme);
+		window.addEventListener('load', () => root.setAttribute('data-theme-ready', 'true'), { once: true });
+		window.__setPreferredTheme = paintTheme;
+	})();
+</script><style>
+	/* CSS variables inline — available immediately in all modes (dev + prod), before any external CSS */
+	:root {
+		--color-bg: #ffffff;
+		--color-bg-offset: #ffffff;
+		--color-bg-header: rgba(255, 255, 255, 0.85);
+		--color-text-main: #1a1a1a;
+		--color-text-muted: #555555;
+		--color-accent: #003366;
+		--color-border: #eaeaea;
+	}
+	[data-theme='dark'] {
+		--color-bg: #0f172a;
+		--color-bg-offset: #0f172a;
+		--color-bg-header: rgba(15, 23, 42, 0.8);
+		--color-text-main: #e2e8f0;
+		--color-text-muted: #94a3b8;
+		--color-accent: #60a5fa;
+		--color-border: #334155;
+	}
+	html, body { min-height: 100%; background-color: var(--color-bg); }
+	@media (prefers-color-scheme: dark) {
+		html:not([data-theme='light']), html:not([data-theme='light']) body { background-color: var(--color-bg); }
+	}
+	html[data-theme='dark'], html[data-theme='dark'] body { background-color: var(--color-bg); color-scheme: dark; }
+	html[data-theme='light'], html[data-theme='light'] body { background-color: var(--color-bg); color-scheme: light; }
+	/* Critical header layout — prevents FOUC before component CSS loads */
+	header {
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		padding: 0 1em;
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+	}
+	header nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 960px;
+		margin: 0 auto;
+		height: 4.5rem;
+	}
+	header { background-color: var(--color-bg-header); }
+	/* Critical card backgrounds — prevents white flash in dark mode */
+	.project-card, .interactive-card, .pi-card, .collab-card, .team-card {
+		background-color: var(--color-bg-offset);
+		border-color: var(--color-border);
+	}
+	.team-hero h1 { color: var(--color-text-main); }
+	.team-hero p { color: var(--color-text-muted); }
+	body {
+		background-color: var(--color-bg);
+		color: var(--color-text-main);
+		margin: 0;
+	}
+	/* Suppress all transitions until page is fully styled */
+	html:not([data-theme-ready]) *, html:not([data-theme-ready]) *::before, html:not([data-theme-ready]) *::after {
+		transition: none !important;
+		animation: none !important;
+	}
+</style><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" hreflang="uk" href="https://maselko.org/blog/koncepciya-avtorozpodilu"><link rel="alternate" hreflang="en" href="https://maselko.org/en/blog/concept-automated-case-allocation"><link rel="alternate" hreflang="x-default" href="https://maselko.org/blog/koncepciya-avtorozpodilu"><meta property="og:locale" content="en_US"><link rel="alternate" type="application/rss+xml" title="Public Report by Roman Maselko" href="https://maselko.org/rss.xml"><meta name="generator" content="Astro v6.4.5"><meta name="color-scheme" content="light dark"><style>
+		@font-face {
+			font-family: "Atkinson";
+			src: url("/fonts/atkinson-regular.woff") format("woff");
+			font-weight: 400;
+			font-style: normal;
+			font-display: swap;
+		}
+
+		@font-face {
+			font-family: "Atkinson";
+			src: url("/fonts/atkinson-bold.woff") format("woff");
+			font-weight: 700;
+			font-style: normal;
+			font-display: swap;
+		}
+	</style><link rel="canonical" href="https://maselko.org/en/blog/koncepciya-avtorozpodilu/"><title>Концепція автоматизованого розподілу судових справ в Україні</title><meta name="title" content="Концепція автоматизованого розподілу судових справ в Україні"><meta name="description" content="Повний текст Концепції: аналіз чинної моделі авторозподілу, концептуальні засади та пропозиція нових формул для внутрішньосудового та екстериторіального розподілу справ."><meta property="og:type" content="website"><meta property="og:url" content="https://maselko.org/en/blog/koncepciya-avtorozpodilu/"><meta property="og:title" content="Концепція автоматизованого розподілу судових справ в Україні"><meta property="og:description" content="Повний текст Концепції: аналіз чинної моделі авторозподілу, концептуальні засади та пропозиція нових формул для внутрішньосудового та екстериторіального розподілу справ."><meta property="og:image" content="https://maselko.org/en/blog/koncepciya-avtorozpodilu.png"><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://maselko.org/en/blog/koncepciya-avtorozpodilu/"><meta property="twitter:title" content="Концепція автоматизованого розподілу судових справ в Україні"><meta property="twitter:description" content="Повний текст Концепції: аналіз чинної моделі авторозподілу, концептуальні засади та пропозиція нових формул для внутрішньосудового та екстериторіального розподілу справ."><meta property="twitter:image" content="https://maselko.org/en/blog/koncepciya-avtorozpodilu.png"><!-- Umami Analytics --><style>:root{--font-sans: "Atkinson", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;--font-serif: "Georgia", "Times New Roman", Times, serif;--color-bg: #ffffff;--color-bg-offset: #ffffff;--color-bg-header: rgba(255, 255, 255, .85);--color-text-main: #1a1a1a;--color-text-muted: #555555;--color-accent: #003366;--color-accent-light: #e6f0fa;--color-border: #eaeaea;--color-header-border: rgba(0, 0, 0, .08);--color-bg-mobile-menu: rgba(255, 255, 255, .95);--max-width: 1200px;--radius: 8px;--shadow-sm: 0 1px 3px rgba(0, 0, 0, .05);--shadow-md: 0 4px 6px rgba(0, 0, 0, .08);--shadow-lg: 0 10px 15px rgba(0, 0, 0, .1)}[data-theme=dark]{--color-bg: #0f172a;--color-bg-offset: #0f172a;--color-bg-header: rgba(15, 23, 42, .8);--color-text-main: #e2e8f0;--color-text-muted: #94a3b8;--color-accent: #60a5fa;--color-accent-light: #1e3a8a;--color-border: #334155;--color-header-border: rgba(255, 255, 255, .1);--color-bg-mobile-menu: rgba(15, 23, 42, .95);--shadow-sm: 0 1px 3px rgba(0, 0, 0, .5);--shadow-md: 0 4px 6px rgba(0, 0, 0, .5);--shadow-lg: 0 10px 15px rgba(0, 0, 0, .5)}html{box-sizing:border-box;scroll-behavior:smooth;overflow-y:scroll}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:var(--color-bg)}::-webkit-scrollbar-thumb{background-color:var(--color-border);border-radius:10px;border:2px solid var(--color-bg)}::-webkit-scrollbar-thumb:hover{background-color:var(--color-text-muted)}*,*:before,*:after{box-sizing:inherit}body{font-family:var(--font-sans);background-color:var(--color-bg);color:var(--color-text-main);line-height:1.6;margin:0;font-size:18px;transition:background-color .3s ease,color .3s ease}main{width:100%;max-width:var(--max-width);margin:0 auto;padding:3rem 1rem}h1,h2,h3,h4,h5{font-family:var(--font-serif);color:var(--color-text-main);line-height:1.2;margin-bottom:.75rem}h1{font-size:2.5rem;margin-top:0}h2{font-size:2rem;margin-top:2rem;border-bottom:2px solid var(--color-accent);padding-bottom:.5rem;display:inline-block}h3{font-size:1.5rem;color:var(--color-accent);margin-top:1.5rem}p{margin-bottom:1.5rem;color:var(--color-text-muted)}a{color:var(--color-accent);text-decoration:none;transition:.2s}a:hover{opacity:.8;text-decoration:underline}.btn{display:inline-block;background-color:var(--color-accent);color:var(--color-bg);font-weight:600;padding:.5rem 1rem;border-radius:4px;text-decoration:none!important}.btn-outline{background:transparent;border:1px solid var(--color-accent);color:var(--color-accent);padding:.5rem 1rem;border-radius:4px}.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-top:2rem}.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:2rem}.author-link{position:relative;display:inline-block;cursor:pointer;border-bottom:1px dotted var(--color-accent);color:var(--color-text-main)}.author-link:hover .author-tooltip{opacity:1;visibility:visible;transform:translate(-50%) translateY(-10px)}.author-tooltip{position:absolute;bottom:100%;left:50%;transform:translate(-50%) translateY(0);background-color:var(--color-bg);color:var(--color-text-main);border:1px solid var(--color-border);box-shadow:var(--shadow-lg);padding:1rem;width:max-content;max-width:320px;border-radius:8px;opacity:0;visibility:hidden;transition:all .2s ease-in-out;z-index:1000;text-align:left;pointer-events:none}.author-tooltip img{width:50px;height:50px;border-radius:50%;float:left;margin-right:1rem;object-fit:cover}.author-tooltip h4{margin:0;font-size:1rem;font-family:var(--font-sans);color:var(--color-text-main)}.author-tooltip p{margin:0;font-size:.85rem;line-height:1.4;color:var(--color-text-muted)}.author-tooltip .role{font-size:.8rem;color:var(--color-accent);display:block;margin-bottom:.25rem}.bibtex-panel::-webkit-scrollbar{height:6px}.bibtex-panel::-webkit-scrollbar-track{background:transparent}.bibtex-panel::-webkit-scrollbar-thumb{background-color:var(--color-border);border-radius:10px}.blog-row{display:flex;gap:1.5rem;border-bottom:1px solid var(--color-border);padding:1.5rem 0;align-items:flex-start}.blog-row:first-child{padding-top:0}.blog-row:last-child{border-bottom:none}.blog-row img{width:200px;height:120px;object-fit:cover;border-radius:6px;flex-shrink:0}.blog-content{flex:1}.blog-title{margin:0 0 .5rem;font-size:1.4rem;font-family:var(--font-serif);color:var(--color-text-main)}.blog-meta{font-size:.9rem;color:var(--color-text-muted);margin-bottom:.5rem}.blog-desc{margin:0;font-size:1rem;color:var(--color-text-muted)}.publication-item{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--color-border)}.pub-title{font-weight:700;font-size:1.1rem;color:var(--color-text-main);display:block}.pub-authors{margin:.25rem 0;color:var(--color-text-muted)}.pub-venue{font-style:italic;color:var(--color-text-muted)}.team-card{text-align:center}.team-avatar{width:140px;height:140px;border-radius:50%;object-fit:cover;margin-bottom:1rem;border:3px solid var(--color-accent-light)}.team-name{font-weight:700;font-size:1.1rem;display:block;color:var(--color-text-main)}.team-role{font-size:.9rem;color:var(--color-accent);display:block;margin-bottom:.5rem}.project-card{background-color:var(--color-bg-offset);border:1px solid var(--color-border);border-radius:var(--radius)}[data-theme=dark] img{filter:brightness(.9)}@media(max-width:720px){.blog-row{flex-direction:column}.blog-row img{width:100%;height:auto}}.pagefind-ui__result.svelte-j9e30.svelte-j9e30{list-style-type:none;display:flex;align-items:flex-start;gap:min(calc(40px * var(--pagefind-ui-scale)),3%);padding:calc(30px * var(--pagefind-ui-scale)) 0 calc(40px * var(--pagefind-ui-scale));border-top:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result.svelte-j9e30.svelte-j9e30:last-of-type{border-bottom:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result-thumb.svelte-j9e30.svelte-j9e30{width:min(30%,calc((30% - (100px * var(--pagefind-ui-scale))) * 100000));max-width:calc(120px * var(--pagefind-ui-scale));margin-top:calc(10px * var(--pagefind-ui-scale));aspect-ratio:var(--pagefind-ui-image-box-ratio);position:relative}.pagefind-ui__result-image.svelte-j9e30.svelte-j9e30{display:block;position:absolute;left:50%;transform:translate(-50%);font-size:0;width:auto;height:auto;max-width:100%;max-height:100%;border-radius:var(--pagefind-ui-image-border-radius)}.pagefind-ui__result-inner.svelte-j9e30.svelte-j9e30{flex:1;display:flex;flex-direction:column;align-items:flex-start;margin-top:calc(10px * var(--pagefind-ui-scale))}.pagefind-ui__result-title.svelte-j9e30.svelte-j9e30{display:inline-block;font-weight:700;font-size:calc(21px * var(--pagefind-ui-scale));margin-top:0;margin-bottom:0}.pagefind-ui__result-title.svelte-j9e30 .pagefind-ui__result-link.svelte-j9e30{color:var(--pagefind-ui-text);text-decoration:none}.pagefind-ui__result-title.svelte-j9e30 .pagefind-ui__result-link.svelte-j9e30:hover{text-decoration:underline}.pagefind-ui__result-excerpt.svelte-j9e30.svelte-j9e30{display:inline-block;font-weight:400;font-size:calc(16px * var(--pagefind-ui-scale));margin-top:calc(4px * var(--pagefind-ui-scale));margin-bottom:0;min-width:calc(250px * var(--pagefind-ui-scale))}.pagefind-ui__loading.svelte-j9e30.svelte-j9e30{color:var(--pagefind-ui-text);background-color:var(--pagefind-ui-text);border-radius:var(--pagefind-ui-border-radius);opacity:.1;pointer-events:none}.pagefind-ui__result-tags.svelte-j9e30.svelte-j9e30{list-style-type:none;padding:0;display:flex;gap:calc(20px * var(--pagefind-ui-scale));flex-wrap:wrap;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__result-tag.svelte-j9e30.svelte-j9e30{padding:calc(4px * var(--pagefind-ui-scale)) calc(8px * var(--pagefind-ui-scale));font-size:calc(14px * var(--pagefind-ui-scale));border-radius:var(--pagefind-ui-border-radius);background-color:var(--pagefind-ui-tag)}.pagefind-ui__result.svelte-4xnkmf.svelte-4xnkmf{list-style-type:none;display:flex;align-items:flex-start;gap:min(calc(40px * var(--pagefind-ui-scale)),3%);padding:calc(30px * var(--pagefind-ui-scale)) 0 calc(40px * var(--pagefind-ui-scale));border-top:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result.svelte-4xnkmf.svelte-4xnkmf:last-of-type{border-bottom:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result-nested.svelte-4xnkmf.svelte-4xnkmf{display:flex;flex-direction:column;padding-left:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__result-nested.svelte-4xnkmf.svelte-4xnkmf:first-of-type{padding-top:calc(10px * var(--pagefind-ui-scale))}.pagefind-ui__result-nested.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf{font-size:.9em;position:relative}.pagefind-ui__result-nested.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf:before{content:"⤷ ";position:absolute;top:0;right:calc(100% + .1em)}.pagefind-ui__result-thumb.svelte-4xnkmf.svelte-4xnkmf{width:min(30%,calc((30% - (100px * var(--pagefind-ui-scale))) * 100000));max-width:calc(120px * var(--pagefind-ui-scale));margin-top:calc(10px * var(--pagefind-ui-scale));aspect-ratio:var(--pagefind-ui-image-box-ratio);position:relative}.pagefind-ui__result-image.svelte-4xnkmf.svelte-4xnkmf{display:block;position:absolute;left:50%;transform:translate(-50%);font-size:0;width:auto;height:auto;max-width:100%;max-height:100%;border-radius:var(--pagefind-ui-image-border-radius)}.pagefind-ui__result-inner.svelte-4xnkmf.svelte-4xnkmf{flex:1;display:flex;flex-direction:column;align-items:flex-start;margin-top:calc(10px * var(--pagefind-ui-scale))}.pagefind-ui__result-title.svelte-4xnkmf.svelte-4xnkmf{display:inline-block;font-weight:700;font-size:calc(21px * var(--pagefind-ui-scale));margin-top:0;margin-bottom:0}.pagefind-ui__result-title.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf{color:var(--pagefind-ui-text);text-decoration:none}.pagefind-ui__result-title.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf:hover{text-decoration:underline}.pagefind-ui__result-excerpt.svelte-4xnkmf.svelte-4xnkmf{display:inline-block;font-weight:400;font-size:calc(16px * var(--pagefind-ui-scale));margin-top:calc(4px * var(--pagefind-ui-scale));margin-bottom:0;min-width:calc(250px * var(--pagefind-ui-scale))}.pagefind-ui__loading.svelte-4xnkmf.svelte-4xnkmf{color:var(--pagefind-ui-text);background-color:var(--pagefind-ui-text);border-radius:var(--pagefind-ui-border-radius);opacity:.1;pointer-events:none}.pagefind-ui__result-tags.svelte-4xnkmf.svelte-4xnkmf{list-style-type:none;padding:0;display:flex;gap:calc(20px * var(--pagefind-ui-scale));flex-wrap:wrap;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__result-tag.svelte-4xnkmf.svelte-4xnkmf{padding:calc(4px * var(--pagefind-ui-scale)) calc(8px * var(--pagefind-ui-scale));font-size:calc(14px * var(--pagefind-ui-scale));border-radius:var(--pagefind-ui-border-radius);background-color:var(--pagefind-ui-tag)}legend.svelte-1v2r7ls.svelte-1v2r7ls{position:absolute;clip:rect(0 0 0 0)}.pagefind-ui__filter-panel.svelte-1v2r7ls.svelte-1v2r7ls{min-width:min(calc(260px * var(--pagefind-ui-scale)),100%);flex:1;display:flex;flex-direction:column;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__filter-group.svelte-1v2r7ls.svelte-1v2r7ls{border:0;padding:0}.pagefind-ui__filter-block.svelte-1v2r7ls.svelte-1v2r7ls{padding:0;display:block;border-bottom:solid calc(2px * var(--pagefind-ui-scale)) var(--pagefind-ui-border);padding:calc(20px * var(--pagefind-ui-scale)) 0}.pagefind-ui__filter-name.svelte-1v2r7ls.svelte-1v2r7ls{font-size:calc(16px * var(--pagefind-ui-scale));position:relative;display:flex;align-items:center;list-style:none;font-weight:700;cursor:pointer;height:calc(24px * var(--pagefind-ui-scale))}.pagefind-ui__filter-name.svelte-1v2r7ls.svelte-1v2r7ls::-webkit-details-marker{display:none}.pagefind-ui__filter-name.svelte-1v2r7ls.svelte-1v2r7ls:after{position:absolute;content:"";right:calc(6px * var(--pagefind-ui-scale));top:50%;width:calc(8px * var(--pagefind-ui-scale));height:calc(8px * var(--pagefind-ui-scale));border:solid calc(2px * var(--pagefind-ui-scale)) currentColor;border-right:0;border-top:0;transform:translateY(-70%) rotate(-45deg)}.pagefind-ui__filter-block[open].svelte-1v2r7ls .pagefind-ui__filter-name.svelte-1v2r7ls:after{transform:translateY(-70%) rotate(-225deg)}.pagefind-ui__filter-group.svelte-1v2r7ls.svelte-1v2r7ls{display:flex;flex-direction:column;gap:calc(20px * var(--pagefind-ui-scale));padding-top:calc(30px * var(--pagefind-ui-scale))}.pagefind-ui__filter-value.svelte-1v2r7ls.svelte-1v2r7ls{position:relative;display:flex;align-items:center;gap:calc(8px * var(--pagefind-ui-scale))}.pagefind-ui__filter-value.svelte-1v2r7ls.svelte-1v2r7ls:before{position:absolute;content:"";top:50%;left:calc(8px * var(--pagefind-ui-scale));width:0px;height:0px;border:solid 1px #fff;opacity:0;transform:translate(calc(4.5px * var(--pagefind-ui-scale) * -1),calc(.8px * var(--pagefind-ui-scale))) skew(-5deg) rotate(-45deg);transform-origin:top left;border-top:0;border-right:0;pointer-events:none}.pagefind-ui__filter-value.pagefind-ui__filter-value--checked.svelte-1v2r7ls.svelte-1v2r7ls:before{opacity:1;width:calc(9px * var(--pagefind-ui-scale));height:calc(4px * var(--pagefind-ui-scale));transition:width .1s ease-out .1s,height .1s ease-in}.pagefind-ui__filter-checkbox.svelte-1v2r7ls.svelte-1v2r7ls{margin:0;width:calc(16px * var(--pagefind-ui-scale));height:calc(16px * var(--pagefind-ui-scale));border:solid 1px var(--pagefind-ui-border);appearance:none;-webkit-appearance:none;border-radius:calc(var(--pagefind-ui-border-radius) / 2);background-color:var(--pagefind-ui-background);cursor:pointer}.pagefind-ui__filter-checkbox.svelte-1v2r7ls.svelte-1v2r7ls:checked{background-color:var(--pagefind-ui-primary);border:solid 1px var(--pagefind-ui-primary)}.pagefind-ui__filter-label.svelte-1v2r7ls.svelte-1v2r7ls{cursor:pointer;font-size:calc(16px * var(--pagefind-ui-scale));font-weight:400}.pagefind-ui--reset *:where(:not(html,iframe,canvas,img,svg,video):not(svg *,symbol *)){all:unset;display:revert;outline:revert}.pagefind-ui--reset *,.pagefind-ui--reset *:before,.pagefind-ui--reset *:after{box-sizing:border-box}.pagefind-ui--reset a,.pagefind-ui--reset button{cursor:revert}.pagefind-ui--reset ol,.pagefind-ui--reset ul,.pagefind-ui--reset menu{list-style:none}.pagefind-ui--reset img{max-width:100%}.pagefind-ui--reset table{border-collapse:collapse}.pagefind-ui--reset input,.pagefind-ui--reset textarea{-webkit-user-select:auto}.pagefind-ui--reset textarea{white-space:revert}.pagefind-ui--reset meter{-webkit-appearance:revert;appearance:revert}.pagefind-ui--reset ::placeholder{color:unset}.pagefind-ui--reset :where([hidden]){display:none}.pagefind-ui--reset :where([contenteditable]:not([contenteditable=false])){-moz-user-modify:read-write;-webkit-user-modify:read-write;overflow-wrap:break-word;-webkit-line-break:after-white-space;-webkit-user-select:auto}.pagefind-ui--reset :where([draggable=true]){-webkit-user-drag:element}.pagefind-ui--reset mark{all:revert}:root{--pagefind-ui-scale:.8;--pagefind-ui-primary:#393939;--pagefind-ui-text:#393939;--pagefind-ui-background:#ffffff;--pagefind-ui-border:#eeeeee;--pagefind-ui-tag:#eeeeee;--pagefind-ui-border-width:2px;--pagefind-ui-border-radius:8px;--pagefind-ui-image-border-radius:8px;--pagefind-ui-image-box-ratio:3 / 2;--pagefind-ui-font:system, -apple-system, "BlinkMacSystemFont", ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", "Ubuntu", "arial", sans-serif}.pagefind-ui.svelte-e9gkc3{width:100%;color:var(--pagefind-ui-text);font-family:var(--pagefind-ui-font)}.pagefind-ui__hidden.svelte-e9gkc3{display:none!important}.pagefind-ui__suppressed.svelte-e9gkc3{opacity:0;pointer-events:none}.pagefind-ui__form.svelte-e9gkc3{position:relative}.pagefind-ui__form.svelte-e9gkc3:before{background-color:var(--pagefind-ui-text);width:calc(18px * var(--pagefind-ui-scale));height:calc(18px * var(--pagefind-ui-scale));top:calc(23px * var(--pagefind-ui-scale));left:calc(20px * var(--pagefind-ui-scale));content:"";position:absolute;display:block;opacity:.7;-webkit-mask-image:url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.7549 11.255H11.9649L11.6849 10.985C12.6649 9.845 13.2549 8.365 13.2549 6.755C13.2549 3.165 10.3449 0.255005 6.75488 0.255005C3.16488 0.255005 0.254883 3.165 0.254883 6.755C0.254883 10.345 3.16488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255ZM6.75488 11.255C4.26488 11.255 2.25488 9.245 2.25488 6.755C2.25488 4.26501 4.26488 2.255 6.75488 2.255C9.24488 2.255 11.2549 4.26501 11.2549 6.755C11.2549 9.245 9.24488 11.255 6.75488 11.255Z' fill='%23000000'/%3E%3C/svg%3E%0A");mask-image:url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.7549 11.255H11.9649L11.6849 10.985C12.6649 9.845 13.2549 8.365 13.2549 6.755C13.2549 3.165 10.3449 0.255005 6.75488 0.255005C3.16488 0.255005 0.254883 3.165 0.254883 6.755C0.254883 10.345 3.16488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255ZM6.75488 11.255C4.26488 11.255 2.25488 9.245 2.25488 6.755C2.25488 4.26501 4.26488 2.255 6.75488 2.255C9.24488 2.255 11.2549 4.26501 11.2549 6.755C11.2549 9.245 9.24488 11.255 6.75488 11.255Z' fill='%23000000'/%3E%3C/svg%3E%0A");-webkit-mask-size:100%;mask-size:100%;z-index:9;pointer-events:none}.pagefind-ui__search-input.svelte-e9gkc3{height:calc(64px * var(--pagefind-ui-scale));padding:0 calc(70px * var(--pagefind-ui-scale)) 0 calc(54px * var(--pagefind-ui-scale));background-color:var(--pagefind-ui-background);border:var(--pagefind-ui-border-width) solid var(--pagefind-ui-border);border-radius:var(--pagefind-ui-border-radius);font-size:calc(21px * var(--pagefind-ui-scale));position:relative;appearance:none;-webkit-appearance:none;display:flex;width:100%;box-sizing:border-box;font-weight:700}.pagefind-ui__search-input.svelte-e9gkc3::placeholder{opacity:.2}.pagefind-ui__search-clear.svelte-e9gkc3{position:absolute;top:calc(3px * var(--pagefind-ui-scale));right:calc(3px * var(--pagefind-ui-scale));height:calc(58px * var(--pagefind-ui-scale));padding:0 calc(15px * var(--pagefind-ui-scale)) 0 calc(2px * var(--pagefind-ui-scale));color:var(--pagefind-ui-text);font-size:calc(14px * var(--pagefind-ui-scale));cursor:pointer;background-color:var(--pagefind-ui-background);border-radius:var(--pagefind-ui-border-radius)}.pagefind-ui__drawer.svelte-e9gkc3{gap:calc(60px * var(--pagefind-ui-scale));display:flex;flex-direction:row;flex-wrap:wrap}.pagefind-ui__results-area.svelte-e9gkc3{min-width:min(calc(400px * var(--pagefind-ui-scale)),100%);flex:1000;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__results.svelte-e9gkc3{padding:0}.pagefind-ui__message.svelte-e9gkc3{box-sizing:content-box;font-size:calc(16px * var(--pagefind-ui-scale));height:calc(24px * var(--pagefind-ui-scale));padding:calc(20px * var(--pagefind-ui-scale)) 0;display:flex;align-items:center;font-weight:700;margin-top:0}.pagefind-ui__button.svelte-e9gkc3{margin-top:calc(40px * var(--pagefind-ui-scale));border:var(--pagefind-ui-border-width) solid var(--pagefind-ui-border);border-radius:var(--pagefind-ui-border-radius);height:calc(48px * var(--pagefind-ui-scale));padding:0 calc(12px * var(--pagefind-ui-scale));font-size:calc(16px * var(--pagefind-ui-scale));color:var(--pagefind-ui-primary);background:var(--pagefind-ui-background);width:100%;text-align:center;font-weight:700;cursor:pointer}.pagefind-ui__button.svelte-e9gkc3:hover{border-color:var(--pagefind-ui-primary);color:var(--pagefind-ui-primary);background:var(--pagefind-ui-background)}.search-overlay[data-astro-cid-otpdt6jm]{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1000}.search-overlay[data-astro-cid-otpdt6jm].hidden{display:none}.search-backdrop[data-astro-cid-otpdt6jm]{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#00000080;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}.search-panel-wrapper[data-astro-cid-otpdt6jm]{position:relative;display:flex;justify-content:center;align-items:flex-start;padding-top:10vh;padding-left:1rem;padding-right:1rem;height:100%;pointer-events:none}.search-panel[data-astro-cid-otpdt6jm]{pointer-events:auto;width:100%;max-width:42rem;max-height:80vh;background-color:var(--color-bg);border:1px solid var(--color-border);border-radius:12px;box-shadow:0 25px 50px -12px #00000040;display:flex;flex-direction:column;overflow:hidden}.search-panel-header[data-astro-cid-otpdt6jm]{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem .5rem}.search-title[data-astro-cid-otpdt6jm]{font-size:.75rem;font-family:monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--color-text-muted)}.search-close-btn[data-astro-cid-otpdt6jm]{cursor:pointer;border-radius:.375rem;background-color:var(--color-bg-offset);border:1px solid var(--color-border);padding:.25rem .75rem;font-size:.875rem;font-weight:500;color:var(--color-text-muted);transition:color .15s ease,background-color .15s ease}.search-close-btn[data-astro-cid-otpdt6jm]:hover{color:var(--color-text-main);background-color:var(--color-border)}.search-panel-content[data-astro-cid-otpdt6jm]{padding:.5rem 1.5rem 1.5rem;overflow-y:auto;flex:1;min-height:0}.search-dev-msg[data-astro-cid-otpdt6jm]{text-align:center;padding:2rem 0;color:var(--color-text-muted)}#pagefind__search[data-astro-cid-otpdt6jm]{--pagefind-ui-primary: var(--color-accent);--pagefind-ui-text: var(--color-text-main);--pagefind-ui-background: var(--color-bg);--pagefind-ui-border: var(--color-border);--pagefind-ui-border-width: 1px;--pagefind-ui-font: var(--font-sans)}.pagefind-ui__search-input,.pagefind-ui__button{background-color:var(--color-bg-offset)!important;color:var(--color-text-main)!important}#pagefind__search .pagefind-ui__search-input:focus{outline:none;border-color:var(--color-accent)}#pagefind__search .pagefind-ui__search-clear{width:calc(60px * var(--pagefind-ui-scale));padding:0;background-color:transparent;overflow:hidden}#pagefind__search .pagefind-ui__search-clear:focus{outline:1px solid var(--color-accent)}#pagefind__search .pagefind-ui__search-clear:before{content:"";-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E") center / 60% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E") center / 60% no-repeat;background-color:var(--color-accent);display:block;width:100%;height:100%}#pagefind__search .pagefind-ui__result{border:0}#pagefind__search .pagefind-ui__result-link{background-size:100% 6px;background-position:bottom;background-repeat:repeat-x;background-image:linear-gradient(transparent,transparent 5px,var(--color-text-main) 5px,var(--color-text-main))}#pagefind__search .pagefind-ui__result-link:hover{text-decoration:none;background-image:linear-gradient(transparent,transparent 4px,var(--color-accent) 4px,var(--color-accent))}#pagefind__search mark{color:var(--color-bg);background-color:var(--color-accent);font-weight:600}.site-footer[data-astro-cid-sz7xmlte]{background-color:var(--color-bg-offset);color:var(--color-text-main);padding:4rem 1rem;margin-top:auto;transition:background-color .3s ease;position:relative;padding-bottom:.5%!important}.site-footer[data-astro-cid-sz7xmlte]:before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--color-border) 20%,var(--color-border) 80%,transparent 100%);opacity:.6}.footer-content[data-astro-cid-sz7xmlte]{max-width:var(--max-width);margin:0 auto;display:grid;grid-template-columns:2fr 1fr max-content 1fr;gap:3rem}.footer-col[data-astro-cid-sz7xmlte] h3[data-astro-cid-sz7xmlte]{font-family:var(--font-serif);font-size:1.5rem;margin-bottom:1rem;color:var(--color-accent)}.footer-col[data-astro-cid-sz7xmlte] ul[data-astro-cid-sz7xmlte]{list-style:none;padding:0;margin:0}.footer-col[data-astro-cid-sz7xmlte] li[data-astro-cid-sz7xmlte]{list-style:none;margin-bottom:.4rem}.brand-col[data-astro-cid-sz7xmlte] h3[data-astro-cid-sz7xmlte]{margin-bottom:0}.brand-col[data-astro-cid-sz7xmlte] p[data-astro-cid-sz7xmlte]{margin-top:0;font-size:.95rem;line-height:1.6;color:var(--color-text-muted);margin-bottom:1.5rem}.copyright[data-astro-cid-sz7xmlte]{font-size:.85rem;color:var(--color-text-muted);line-height:1.5}address[data-astro-cid-sz7xmlte]{font-style:normal;font-size:.95rem;line-height:1.6;color:var(--color-text-muted)}.social-links[data-astro-cid-sz7xmlte]{display:flex;gap:1rem}.social-links[data-astro-cid-sz7xmlte] a[data-astro-cid-sz7xmlte]{color:var(--color-text-muted);transition:all .2s}.social-links[data-astro-cid-sz7xmlte] a[data-astro-cid-sz7xmlte]:hover{color:var(--color-accent);transform:translateY(-2px)}@media(max-width:900px){.footer-content[data-astro-cid-sz7xmlte]{grid-template-columns:1fr 1fr;gap:2rem}.brand-col[data-astro-cid-sz7xmlte]{grid-column:span 2}}@media(max-width:600px){.footer-content[data-astro-cid-sz7xmlte]{grid-template-columns:1fr;text-align:center}.brand-col[data-astro-cid-sz7xmlte]{grid-column:span 1}.social-links[data-astro-cid-sz7xmlte]{justify-content:center}}.author-modal[data-astro-cid-sz7xmlte]{padding:2.5rem 2rem;border:1px solid var(--color-border);border-radius:16px;background-color:var(--color-bg);color:var(--color-text-main);max-width:500px;width:90%;box-shadow:var(--shadow-lg);margin:auto}.author-modal[data-astro-cid-sz7xmlte]::backdrop{background:#0009;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}.close-btn[data-astro-cid-sz7xmlte]{position:absolute;top:1rem;right:1.25rem;background:transparent;border:none;font-size:2rem;cursor:pointer;color:var(--color-text-muted);line-height:1;padding:0}.close-btn[data-astro-cid-sz7xmlte]:hover{color:var(--color-accent)}.modal-flex[data-astro-cid-sz7xmlte]{display:flex;gap:1.5rem;align-items:center;margin-bottom:1.5rem}.modal-avatar[data-astro-cid-sz7xmlte]{width:80px;height:80px;border-radius:50%;object-fit:cover}#modal-name[data-astro-cid-sz7xmlte]{margin:0 0 .25rem;font-size:1.5rem}#modal-title[data-astro-cid-sz7xmlte]{color:var(--color-accent);font-size:1rem;font-weight:500;display:block}#modal-role[data-astro-cid-sz7xmlte]{font-size:.85rem;color:var(--color-text-muted);display:block;margin-top:.25rem}#modal-bio[data-astro-cid-sz7xmlte]{line-height:1.6;color:var(--color-text-main);margin-bottom:2rem}#modal-socials[data-astro-cid-sz7xmlte]{display:flex;gap:1rem;flex-wrap:wrap}.social-icon-btn[data-astro-cid-sz7xmlte]{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background-color:var(--color-bg-offset);border:1px solid var(--color-border);color:var(--color-text-muted);transition:all .2s ease}.social-icon-btn[data-astro-cid-sz7xmlte]:hover{background-color:var(--color-accent);color:var(--color-bg);border-color:var(--color-accent);transform:translateY(-2px)}.author-link[data-astro-cid-sz7xmlte].author-modal-trigger{cursor:pointer;border-bottom:1px dotted var(--color-accent);transition:opacity .2s}.author-link[data-astro-cid-sz7xmlte].author-modal-trigger:hover{opacity:.8}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{text-decoration:none}.lang-switcher[data-astro-cid-a2mxz4y6]{display:inline-flex;align-items:center;gap:.15rem;font-family:var(--font-sans);font-size:.8rem;font-weight:600;letter-spacing:.03em;border:1px solid var(--color-border);border-radius:6px;padding:.15rem;flex-shrink:0}.lang-switcher[data-astro-cid-a2mxz4y6] a[data-astro-cid-a2mxz4y6],.lang-current[data-astro-cid-a2mxz4y6]{padding:.2rem .45rem;border-radius:4px;line-height:1}.lang-switcher[data-astro-cid-a2mxz4y6] a[data-astro-cid-a2mxz4y6]{color:var(--color-text-muted);text-decoration:none}.lang-switcher[data-astro-cid-a2mxz4y6] a[data-astro-cid-a2mxz4y6]:hover{color:var(--color-accent);background:var(--color-bg-offset);opacity:1}.lang-current[data-astro-cid-a2mxz4y6]{background:var(--color-accent);color:var(--color-bg)}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background-color:var(--color-bg-header);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;z-index:100;transition:background-color .3s ease}header[data-astro-cid-3ef6ksr2]:after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--color-border) 20%,var(--color-border) 80%,transparent 100%);opacity:.6}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between;max-width:var(--max-width);margin:0 auto;height:4.5rem}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1.3em;font-family:var(--font-sans);font-weight:700;letter-spacing:-.02em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{text-decoration:none;color:var(--color-text-main);border:none}.internal-links[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;gap:.25rem}.internal-links[data-astro-cid-3ef6ksr2] a{padding:.5em .75em;color:var(--color-text-main);border-bottom:2px solid transparent;text-decoration:none;font-size:.95rem;font-weight:500;transition:all .2s ease}.internal-links[data-astro-cid-3ef6ksr2] a:hover{color:var(--color-accent)}.internal-links[data-astro-cid-3ef6ksr2] a.active{text-decoration:none;border-bottom-color:var(--color-accent);color:var(--color-accent)}.dropdown[data-astro-cid-3ef6ksr2]{position:relative;display:inline-block}.dropbtn[data-astro-cid-3ef6ksr2]{background-color:transparent;color:var(--color-text-main);padding:.5em .75em;font-size:.95rem;font-weight:500;line-height:inherit;border:none;cursor:pointer;font-family:inherit;transition:all .2s ease;border-bottom:2px solid transparent}.dropdown[data-astro-cid-3ef6ksr2]:hover .dropbtn[data-astro-cid-3ef6ksr2]{color:var(--color-accent)}.dropdown-content[data-astro-cid-3ef6ksr2]{display:none;position:absolute;background-color:var(--color-bg-mobile-menu);backdrop-filter:blur(40px) saturate(150%);-webkit-backdrop-filter:blur(40px) saturate(150%);min-width:120px;box-shadow:0 8px 16px #0003;z-index:1;border-radius:8px;overflow:hidden;border:1px solid var(--color-header-border);top:100%;left:50%;transform:translate(-50%)}.dropdown-content[data-astro-cid-3ef6ksr2] a{color:var(--color-text-main);padding:12px 16px;text-decoration:none;display:block;border-bottom:none}.dropdown-content[data-astro-cid-3ef6ksr2] a:hover{background-color:var(--color-bg-offset)}.dropdown[data-astro-cid-3ef6ksr2]:hover .dropdown-content[data-astro-cid-3ef6ksr2],.dropdown[data-astro-cid-3ef6ksr2]:focus-within .dropdown-content[data-astro-cid-3ef6ksr2]{display:block}.header-actions[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;gap:.5rem}.search-toggle[data-astro-cid-3ef6ksr2],#theme-toggle[data-astro-cid-3ef6ksr2]{background:transparent;border:none;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text-main);transition:background-color .2s ease}.search-toggle[data-astro-cid-3ef6ksr2]:hover,#theme-toggle[data-astro-cid-3ef6ksr2]:hover{background-color:var(--color-bg-offset);color:var(--color-accent)}.github-link[data-astro-cid-3ef6ksr2]{background:transparent;border:none;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text-main);transition:background-color .2s ease}.github-link[data-astro-cid-3ef6ksr2]:hover{background-color:var(--color-bg-offset);color:var(--color-accent)}.mobile-menu-header[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between;padding-bottom:.25rem;border-bottom:1px solid var(--color-border);margin-bottom:.25rem}.mobile-menu-title[data-astro-cid-3ef6ksr2]{font-size:.9rem;font-weight:600;color:var(--color-text-muted);padding-left:.5rem;text-transform:uppercase;letter-spacing:.05em}#menu-toggle[data-astro-cid-3ef6ksr2]{display:none;background:transparent;border:none;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--color-text-main)}.mobile-menu[data-astro-cid-3ef6ksr2]{position:absolute;top:calc(100% + .5rem);right:1rem;width:fit-content;min-width:180px;background-color:var(--color-bg-mobile-menu);backdrop-filter:blur(40px) saturate(150%);-webkit-backdrop-filter:blur(40px) saturate(150%);border:1px solid var(--color-header-border);border-radius:12px;padding:.5rem;display:flex;flex-direction:column;gap:.125rem;box-shadow:0 8px 32px #0000001f,0 2px 8px #00000014;z-index:200;animation:menuFadeIn .2s ease}@keyframes menuFadeIn{0%{opacity:0;transform:translateY(-8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}.mobile-menu[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:.5rem .875rem;text-decoration:none;color:var(--color-text-main);font-weight:500;font-size:.9rem;border-radius:8px;transition:background-color .2s,color .2s}.mobile-menu[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]:hover{background-color:var(--color-bg-offset);color:var(--color-accent)}.mobile-menu-section[data-astro-cid-3ef6ksr2]{padding:.75rem .875rem .5rem;font-weight:600;font-size:.9rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem;border-top:1px solid var(--color-border)}.mobile-submenu[data-astro-cid-3ef6ksr2]{display:flex;flex-direction:column;padding-left:1rem;border-left:2px solid var(--color-border);margin-left:1rem;margin-bottom:.5rem}.hidden[data-astro-cid-3ef6ksr2],.moon-icon[data-astro-cid-3ef6ksr2]{display:none}.sun-icon[data-astro-cid-3ef6ksr2],html[data-theme=dark] .moon-icon[data-astro-cid-3ef6ksr2]{display:block}html[data-theme=dark] .sun-icon[data-astro-cid-3ef6ksr2]{display:none}@media(min-width:721px){#menu-toggle[data-astro-cid-3ef6ksr2]{display:none}.mobile-menu[data-astro-cid-3ef6ksr2]{display:none!important}}@media(max-width:720px){.internal-links[data-astro-cid-3ef6ksr2]{display:none}.header-actions[data-astro-cid-3ef6ksr2]{width:100%}#menu-toggle[data-astro-cid-3ef6ksr2]{display:flex;margin-left:auto}#search-toggle-desktop[data-astro-cid-3ef6ksr2]{display:none!important}}
+.toc-container[data-astro-cid-xvrfupwn]{display:none;margin-top:1.5rem}@media(min-width:1200px){.toc-container[data-astro-cid-xvrfupwn]{display:block;width:100%}.toc-inner[data-astro-cid-xvrfupwn]{position:sticky;top:6.5rem;padding-left:1rem;border-left:1px solid var(--color-border);max-height:calc(100vh - 8rem);overflow-y:auto}}.toc-title[data-astro-cid-xvrfupwn]{font-weight:700;font-size:.82rem;margin-top:0;margin-bottom:.45rem;color:var(--color-text-main);text-transform:uppercase;letter-spacing:.08em}.toc-list[data-astro-cid-xvrfupwn]{display:flex;flex-direction:column;gap:.02rem;font-size:.86rem;line-height:1.22;list-style:none;padding:0;margin:0}.toc-item[data-astro-cid-xvrfupwn]{margin:0}.toc-item[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]{display:block;border-left:2px solid transparent;padding-top:.06rem;padding-bottom:.06rem;padding-left:1rem;color:var(--color-text-muted);text-decoration:none;margin-left:-1.05rem;transition:color .2s ease,border-color .2s ease}.toc-item[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]:hover{color:var(--color-accent)}.toc-item[data-astro-cid-xvrfupwn].active a[data-astro-cid-xvrfupwn]{color:var(--color-accent);border-color:var(--color-accent);font-weight:500}.toc-item[data-astro-cid-xvrfupwn].depth-3{margin-left:.75rem}.toc-mobile-details[data-astro-cid-xvrfupwn]{margin-top:1.5rem;margin-bottom:2rem;border-radius:var(--radius);border:1px solid var(--color-border);background:var(--color-bg-offset)}@media(min-width:1200px){.toc-mobile-details[data-astro-cid-xvrfupwn]{display:none}}.toc-mobile-summary[data-astro-cid-xvrfupwn]{display:flex;align-items:center;justify-content:space-between;padding:1rem;font-weight:700;color:var(--color-text-main);cursor:pointer;list-style:none}.toc-mobile-summary[data-astro-cid-xvrfupwn]::-webkit-details-marker{display:none}.toc-mobile-summary[data-astro-cid-xvrfupwn] svg[data-astro-cid-xvrfupwn]{transition:transform .3s ease}.toc-mobile-details[data-astro-cid-xvrfupwn][open] .toc-mobile-summary[data-astro-cid-xvrfupwn] svg[data-astro-cid-xvrfupwn]{transform:rotate(180deg)}.toc-mobile-content[data-astro-cid-xvrfupwn]{padding:.2rem 1rem .85rem;border-top:1px solid var(--color-border)}.toc-list-mobile[data-astro-cid-xvrfupwn]{display:flex;flex-direction:column;gap:.02rem;font-size:.86rem;line-height:1.22;list-style:none;padding:0;margin:0}.toc-item-mobile[data-astro-cid-xvrfupwn]{margin:0}.toc-item-mobile[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]{display:block;padding-top:.1rem;padding-bottom:.1rem;color:var(--color-text-muted);text-decoration:none;transition:color .2s ease}.toc-item-mobile[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]:hover{color:var(--color-accent)}.toc-item-mobile[data-astro-cid-xvrfupwn].active a[data-astro-cid-xvrfupwn]{color:var(--color-accent);font-weight:500}.toc-item-mobile[data-astro-cid-xvrfupwn].depth-3{margin-left:.75rem;border-left:1px solid var(--color-border);padding-left:.75rem}
+html{scroll-padding-top:5.5rem}main[data-astro-cid-bvzihdzo]{width:100%;max-width:100%;margin:0}.blog-container[data-astro-cid-bvzihdzo]{position:relative;max-width:var(--max-width);margin:0 auto;display:flex;justify-content:center}@media(min-width:1200px){.blog-container[data-astro-cid-bvzihdzo]{display:grid;grid-template-columns:minmax(0,880px) 250px;gap:2rem;justify-content:center;align-items:stretch}}.prose-wrapper[data-astro-cid-bvzihdzo]{position:relative;width:880px;max-width:100%}.prose[data-astro-cid-bvzihdzo]{width:100%;padding:1rem;color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] p{text-align:justify;hyphens:auto}.prose[data-astro-cid-bvzihdzo] ul,.prose[data-astro-cid-bvzihdzo] ol{margin:0 0 1.5rem;padding-left:1.5rem}.prose[data-astro-cid-bvzihdzo] li{margin:.45rem 0}.prose[data-astro-cid-bvzihdzo] li>p{margin-bottom:.75rem}.prose[data-astro-cid-bvzihdzo] blockquote{position:relative;margin:2.25rem 0;padding:1.3rem 3.25rem;border:1px solid var(--color-border);border-left:4px solid var(--color-accent);background:linear-gradient(135deg,var(--color-accent-light) 0%,transparent 100%),var(--color-bg-offset);border-radius:18px;box-shadow:var(--shadow-sm);overflow:hidden;quotes:'"' '"' "'" "'"}.prose[data-astro-cid-bvzihdzo] blockquote:before{content:open-quote;position:absolute;top:.35rem;left:.95rem;font-family:var(--font-serif);font-size:4rem;line-height:1;color:var(--color-accent);opacity:.22}.prose[data-astro-cid-bvzihdzo] blockquote:after{content:close-quote;position:absolute;right:.95rem;bottom:-.45rem;font-family:var(--font-serif);font-size:4rem;line-height:1;color:var(--color-accent);opacity:.18}.prose[data-astro-cid-bvzihdzo] blockquote p{margin:.3rem 0;color:var(--color-text-main);text-align:left;font-size:1.02rem}.prose[data-astro-cid-bvzihdzo] blockquote p:first-child{margin-top:0}.prose[data-astro-cid-bvzihdzo] blockquote p:last-child{margin-bottom:0}.prose[data-astro-cid-bvzihdzo] blockquote cite{display:block;margin-top:.85rem;font-style:normal;font-size:.92rem;color:var(--color-text-muted)}.prose[data-astro-cid-bvzihdzo] hr{margin:2.5rem 0;border:0;border-top:1px solid var(--color-border)}.prose[data-astro-cid-bvzihdzo] code{font-family:ui-monospace,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:.92em;background:var(--color-accent-light);padding:.15rem .35rem;border-radius:.35rem}.prose[data-astro-cid-bvzihdzo] pre{margin:1.75rem 0;overflow-x:auto;line-height:1.1}.prose[data-astro-cid-bvzihdzo] pre code{display:block;background:transparent;padding:0;border-radius:0;font-size:.88rem;font-family:ui-monospace,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;line-height:1.5!important;letter-spacing:-.01em}.prose[data-astro-cid-bvzihdzo] .code-block-frame{position:relative;margin:2.5rem 0 2rem}.prose[data-astro-cid-bvzihdzo] .code-block-frame:after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;box-shadow:inset 0 1px #ffffff14}.prose[data-astro-cid-bvzihdzo] .code-block-frame pre{margin:0}.prose[data-astro-cid-bvzihdzo] pre.astro-code{border:1px solid rgba(148,163,184,.22);border-radius:18px;padding:1.2rem 1.35rem!important;box-shadow:0 20px 45px #0f172a24;background-image:radial-gradient(circle at top right,rgba(96,165,250,.16),transparent 32%),linear-gradient(180deg,#ffffff0a,#fff0);scrollbar-color:rgba(148,163,184,.75) transparent}html[data-theme=dark] .prose[data-astro-cid-bvzihdzo] pre.astro-code{border-color:#94a3b83d;box-shadow:0 20px 45px #02061766}html[data-theme=dark] .prose[data-astro-cid-bvzihdzo] pre.astro-code,html[data-theme=dark] .prose[data-astro-cid-bvzihdzo] pre.astro-code span{color:var(--shiki-dark)!important;background-color:var(--shiki-dark-bg)!important;font-style:var(--shiki-dark-font-style)!important;font-weight:var(--shiki-dark-font-weight)!important;text-decoration:var(--shiki-dark-text-decoration)!important}.prose[data-astro-cid-bvzihdzo] pre.astro-code:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}.prose[data-astro-cid-bvzihdzo] pre.astro-code code{min-width:max-content}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line{display:inline-block;line-height:1.5!important;margin:0;padding:0}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line span{line-height:inherit!important}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line.diff.add{background:#22c55e26}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line.diff.remove{background:#ef444426}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line.highlighted{background:#60a5fa2e}.prose[data-astro-cid-bvzihdzo] .code-block-label,.prose[data-astro-cid-bvzihdzo] .copy-code-button{position:absolute;top:0;z-index:2;transform:translateY(-50%);display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--color-border);border-radius:999px;background:var(--color-bg);box-shadow:var(--shadow-md);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.prose[data-astro-cid-bvzihdzo] .code-block-label{left:1rem;padding:.45rem .85rem;font-size:.72rem;font-weight:700;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] .code-block-label:before{content:"";width:.5rem;height:.5rem;border-radius:999px;background:var(--color-accent);box-shadow:0 0 0 .2rem #60a5fa29}.prose[data-astro-cid-bvzihdzo] .copy-code-button{right:1rem;padding:.45rem .85rem;font:inherit;font-size:.78rem;font-weight:700;line-height:1;color:var(--color-text-muted);cursor:pointer;transition:transform .2s ease,color .2s ease,background-color .2s ease,border-color .2s ease}.prose[data-astro-cid-bvzihdzo] .copy-code-button:hover{color:var(--color-accent)}.prose[data-astro-cid-bvzihdzo] .copy-code-button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}.prose[data-astro-cid-bvzihdzo] .copy-code-button:active{transform:translateY(-50%) scale(.97)}.prose[data-astro-cid-bvzihdzo] .copy-code-button__success{display:none}.prose[data-astro-cid-bvzihdzo] .copy-code-button[data-copied=true]{color:var(--color-accent);background:var(--color-accent-light);border-color:#60a5fa59}.prose[data-astro-cid-bvzihdzo] .copy-code-button[data-copied=true] .copy-code-button__default{display:none}.prose[data-astro-cid-bvzihdzo] .copy-code-button[data-copied=true] .copy-code-button__success{display:inline}.prose[data-astro-cid-bvzihdzo] table{width:100%;margin:2rem 0;border-collapse:collapse;display:block;overflow-x:auto;font-size:.95rem}.prose[data-astro-cid-bvzihdzo] th,.prose[data-astro-cid-bvzihdzo] td{padding:.75rem 1rem;border:1px solid var(--color-border);text-align:left}.prose[data-astro-cid-bvzihdzo] th{background:var(--color-accent-light);color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] img{max-width:100%;height:auto;border-radius:12px;box-shadow:var(--shadow-sm)}.prose[data-astro-cid-bvzihdzo] details{margin:1.5rem 0;padding:1rem 1.25rem;border:1px solid var(--color-border);border-radius:12px;background:var(--color-bg-offset)}.prose[data-astro-cid-bvzihdzo] summary{cursor:pointer;font-weight:700;color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] input[type=checkbox]{margin-right:.6rem;accent-color:var(--color-accent)}.prose[data-astro-cid-bvzihdzo] section[data-footnotes]{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--color-border)}.prose[data-astro-cid-bvzihdzo] section[data-footnotes] p{text-align:left}.prose[data-astro-cid-bvzihdzo] .callout{--callout-accent: var(--color-accent);--callout-surface: rgba(0, 51, 102, .08);position:relative;margin:2rem 0;padding:1rem 1.2rem 1rem 1.25rem;border:1px solid color-mix(in srgb,var(--callout-accent) 22%,var(--color-border));border-left:4px solid var(--callout-accent);border-radius:16px;background:linear-gradient(135deg,var(--callout-surface) 0%,transparent 100%),var(--color-bg-offset);box-shadow:var(--shadow-sm)}.prose[data-astro-cid-bvzihdzo] .callout:before{content:attr(data-callout);display:inline-flex;align-items:center;margin-bottom:.7rem;padding:.32rem .62rem;border-radius:999px;background:color-mix(in srgb,var(--callout-accent) 14%,transparent);color:var(--callout-accent);font-size:.72rem;font-weight:800;letter-spacing:.08em;line-height:1;text-transform:uppercase}.prose[data-astro-cid-bvzihdzo] .callout p{margin:.35rem 0;text-align:left}.prose[data-astro-cid-bvzihdzo] .callout p:first-child{margin-top:0}.prose[data-astro-cid-bvzihdzo] .callout p:last-child{margin-bottom:0}.prose[data-astro-cid-bvzihdzo] .callout strong{color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=note]{--callout-accent: #7c3aed;--callout-surface: rgba(124, 58, 237, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=info]{--callout-accent: #2563eb;--callout-surface: rgba(37, 99, 235, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=tip]{--callout-accent: #0f766e;--callout-surface: rgba(15, 118, 110, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=success]{--callout-accent: #15803d;--callout-surface: rgba(21, 128, 61, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=warning]{--callout-accent: #d97706;--callout-surface: rgba(217, 119, 6, .14)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=danger]{--callout-accent: #dc2626;--callout-surface: rgba(220, 38, 38, .12)}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1.2}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em;font-size:2.2rem}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:var(--color-text-muted)}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.blog-authors[data-astro-cid-bvzihdzo]{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;font-size:.9rem;color:var(--color-text-muted)}.blog-authors[data-astro-cid-bvzihdzo] span[data-astro-cid-bvzihdzo]{font-size:.9rem}@media(max-width:768px){.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{font-size:1.6rem}.prose[data-astro-cid-bvzihdzo]{padding:1rem .5rem}.prose[data-astro-cid-bvzihdzo] blockquote{padding:1.1rem 2.7rem;border-radius:14px}.prose[data-astro-cid-bvzihdzo] blockquote:before{top:.45rem;left:.75rem;font-size:3.2rem}.prose[data-astro-cid-bvzihdzo] blockquote:after{right:.7rem;bottom:-.3rem;font-size:3.2rem}.prose[data-astro-cid-bvzihdzo] .code-block-frame{margin:2.3rem 0 1.8rem}.prose[data-astro-cid-bvzihdzo] pre.astro-code{border-radius:14px;padding:1rem 1rem 1.1rem!important}.prose[data-astro-cid-bvzihdzo] .code-block-label{left:.75rem;padding:.4rem .7rem;font-size:.66rem}.prose[data-astro-cid-bvzihdzo] .copy-code-button{right:.75rem;padding:.4rem .7rem;font-size:.72rem}.prose[data-astro-cid-bvzihdzo] .callout{padding:.95rem 1rem;border-radius:14px}}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2>  <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/en" class="active" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/en/about" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About me </a> <a href="/en/publications" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Publications </a> <a href="/en/moments" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Moments </a> <a href="/en/thanks" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Acknowledgements </a> <a href="/en/plans" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Plans </a> </div> <div class="header-actions" data-astro-cid-3ef6ksr2> <div class="lang-switcher" role="group" aria-label="Switch language" data-astro-cid-a2mxz4y6> <a href="/blog/koncepciya-avtorozpodilu" hreflang="uk" lang="uk" data-astro-cid-a2mxz4y6> UK </a><span class="lang-current" aria-current="true" data-astro-cid-a2mxz4y6> EN </span> </div> <button id="search-toggle-desktop" class="search-toggle" aria-label="Search" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="11" cy="11" r="8" data-astro-cid-3ef6ksr2></circle><line x1="21" y1="21" x2="16.65" y2="16.65" data-astro-cid-3ef6ksr2></line></svg> </button> <button id="theme-toggle" aria-label="Toggle theme" data-astro-cid-3ef6ksr2> <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> <button id="menu-toggle" aria-label="Menu" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><line x1="3" y1="12" x2="21" y2="12" data-astro-cid-3ef6ksr2></line><line x1="3" y1="6" x2="21" y2="6" data-astro-cid-3ef6ksr2></line><line x1="3" y1="18" x2="21" y2="18" data-astro-cid-3ef6ksr2></line></svg> </button> </div> </nav> <div id="mobile-menu" class="mobile-menu hidden" data-astro-cid-3ef6ksr2> <div class="mobile-menu-header" data-astro-cid-3ef6ksr2> <span class="mobile-menu-title" data-astro-cid-3ef6ksr2>Menu</span> <button id="search-toggle-mobile" class="search-toggle" aria-label="Search" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="11" cy="11" r="8" data-astro-cid-3ef6ksr2></circle><line x1="21" y1="21" x2="16.65" y2="16.65" data-astro-cid-3ef6ksr2></line></svg> </button> </div> <a href="/en" data-astro-cid-3ef6ksr2>Home</a> <a href="/en/about" data-astro-cid-3ef6ksr2>About me</a> <a href="/en/publications" data-astro-cid-3ef6ksr2>Publications</a> <a href="/en/moments" data-astro-cid-3ef6ksr2>Moments</a> <a href="/en/thanks" data-astro-cid-3ef6ksr2>Acknowledgements</a> <a href="/en/plans" data-astro-cid-3ef6ksr2>Plans</a> </div> </header> <script type="module">document.getElementById("theme-toggle")?.addEventListener("click",()=>{const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";window.__setPreferredTheme?.(t),localStorage.setItem("theme",t)});document.getElementById("menu-toggle")?.addEventListener("click",()=>{document.getElementById("mobile-menu")?.classList.toggle("hidden")});document.querySelectorAll(".search-toggle").forEach(e=>{e.addEventListener("click",()=>{document.dispatchEvent(new CustomEvent("open-search"))})});</script> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo>  <div class="blog-container" style="position: relative;" data-astro-cid-bvzihdzo> <div class="prose-wrapper" data-astro-cid-bvzihdzo> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-08-14T00:00:00.000Z"> Aug 14, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Концепція автоматизованого розподілу судових справ в Україні</h1>  <div class="blog-tags" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.75rem;" data-astro-cid-bvzihdzo> <a href="/tags/цифровізація" style="text-decoration: none; font-size: 0.85rem; font-weight: 600; color: var(--color-accent); background: var(--color-bg-offset); padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid var(--color-border);" data-astro-cid-bvzihdzo>
+#цифровізація </a> </div> <hr data-astro-cid-bvzihdzo> </div> <details class="toc-mobile-details" data-astro-cid-xvrfupwn><summary class="toc-mobile-summary" data-astro-cid-xvrfupwn>Contents<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-xvrfupwn><path stroke="none" d="M0 0h24v24H0z" fill="none" data-astro-cid-xvrfupwn></path><polyline points="6 9 12 15 18 9" data-astro-cid-xvrfupwn></polyline></svg></summary><nav class="toc-mobile-content" data-astro-cid-xvrfupwn><ul class="toc-list-mobile" data-astro-cid-xvrfupwn><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#преамбула" data-astro-cid-xvrfupwn>Преамбула</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#розділ-i-аналіз-проблематики-чинних-методик-авторозподілу" data-astro-cid-xvrfupwn>Розділ I. Аналіз проблематики чинних методик авторозподілу</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#11-еволюція-методики-редакції-2018-та-2024-років" data-astro-cid-xvrfupwn>1.1. Еволюція методики: редакції 2018 та 2024 років</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#12-виявлені-проблеми-чинної-формули" data-astro-cid-xvrfupwn>1.2. Виявлені проблеми чинної формули</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#13-статистичне-моделювання-на-даних-печерського-районного-суду-м-києва" data-astro-cid-xvrfupwn>1.3. Статистичне моделювання на даних Печерського районного суду м. Києва</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#14-висновки-за-результатами-аналізу" data-astro-cid-xvrfupwn>1.4. Висновки за результатами аналізу</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#розділ-ii-концептуальні-засади-нової-методики-авторозподілу" data-astro-cid-xvrfupwn>Розділ II. Концептуальні засади нової методики авторозподілу</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#21-принципи-концепції" data-astro-cid-xvrfupwn>2.1. Принципи концепції</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#22-архітектура-системи-шість-рівнів" data-astro-cid-xvrfupwn>2.2. Архітектура системи: шість рівнів</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#23-удосконалення-вхідних-даних-рівень-1" data-astro-cid-xvrfupwn>2.3. Удосконалення вхідних даних (Рівень 1)</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#24-визначення-пулу-суддів-рівень-2" data-astro-cid-xvrfupwn>2.4. Визначення пулу суддів (Рівень 2)</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#25-захисні-механізми-рівень-6" data-astro-cid-xvrfupwn>2.5. Захисні механізми (Рівень 6)</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#26-новітні-підходи-до-оптимізації-судового-розгляду" data-astro-cid-xvrfupwn>2.6. Новітні підходи до оптимізації судового розгляду</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#розділ-iii-нова-формула-внутрішньосудового-авторозподілу" data-astro-cid-xvrfupwn>Розділ III. Нова формула внутрішньосудового авторозподілу</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#31-загальна-структура-алгоритму" data-astro-cid-xvrfupwn>3.1. Загальна структура алгоритму</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#32-формула-ваги-судової-справи" data-astro-cid-xvrfupwn>3.2. Формула ваги судової справи</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#33-формула-ефективної-спроможності-судді" data-astro-cid-xvrfupwn>3.3. Формула ефективної спроможності судді</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#34-формула-цільового-навантаження" data-astro-cid-xvrfupwn>3.4. Формула цільового навантаження</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#35-формула-діапазону-імовірності" data-astro-cid-xvrfupwn>3.5. Формула діапазону імовірності</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#36-випадковий-вибір-та-фіксація" data-astro-cid-xvrfupwn>3.6. Випадковий вибір та фіксація</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#37-workflow-процесу" data-astro-cid-xvrfupwn>3.7. Workflow процесу</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#розділ-iv-нова-формула-екстериторіального-авторозподілу" data-astro-cid-xvrfupwn>Розділ IV. Нова формула екстериторіального авторозподілу</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#41-передумови-екстериторіальності" data-astro-cid-xvrfupwn>4.1. Передумови екстериторіальності</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#42-багаторівневий-пул-судів" data-astro-cid-xvrfupwn>4.2. Багаторівневий пул судів</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#43-розширена-формула-спроможності" data-astro-cid-xvrfupwn>4.3. Розширена формула спроможності</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#44-спеціальні-правила-малозначні-справи-та-письмове-провадження" data-astro-cid-xvrfupwn>4.4. Спеціальні правила: малозначні справи та письмове провадження</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#45-електронна-нарадча-кімната-для-міжсудових-колегій" data-astro-cid-xvrfupwn>4.5. Електронна нарадча кімната для міжсудових колегій</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#розділ-v-імплементація-концепції" data-astro-cid-xvrfupwn>Розділ V. Імплементація концепції</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#51-нормативно-правові-зміни" data-astro-cid-xvrfupwn>5.1. Нормативно-правові зміни</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#52-технічні-зміни-в-асдс" data-astro-cid-xvrfupwn>5.2. Технічні зміни в АСДС</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#53-перехідні-положення" data-astro-cid-xvrfupwn>5.3. Перехідні положення</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#висновки" data-astro-cid-xvrfupwn>Висновки</a></li></ul></nav></details><script type="module">let e;function i(){e&&e.disconnect();const n=t=>{t.forEach(c=>{const o=c.target.getAttribute("id");if(!o)return;const a=document.querySelector(`.toc-item a[href="#${o}"]`),l=document.querySelector(`.toc-item-mobile a[href="#${o}"]`);c.isIntersecting&&(document.querySelectorAll(".toc-item").forEach(r=>r.classList.remove("active")),document.querySelectorAll(".toc-item-mobile").forEach(r=>r.classList.remove("active")),a?.parentElement?.classList.add("active"),l?.parentElement?.classList.add("active"))})},s={root:null,rootMargin:"-100px 0px -60% 0px",threshold:0};e=new IntersectionObserver(n,s),document.querySelectorAll("h2, h3").forEach(t=>{e?.observe(t)})}i();document.addEventListener("astro:after-swap",i);</script>  <p>За роки роботи над автоматизованим розподілом справ — від аналізу окремих судів і звернень до ДСА та ДП «Інформаційні судові системи» до звернення Вищої ради правосуддя до парламенту щодо екстериторіального розподілу — накопичився перелік проблем, які виходять далеко за межі однієї формули. Вони інституційні (хто і за якими правилами визначає спеціалізацію судді, коефіцієнти складності, дні доступності), технічні (централізованого модуля авторозподілу досі не існує, а фактично застосовувана формула вибору судді живе лише в програмному коді), юридичні (нормативний акт описує алгоритм неповно, тому результат розподілу неможливо перевірити) та організаційні.</p>
+<p>За результатами цієї роботи Ігор Білик підготував <strong>Концепцію автоматизованого розподілу судових справ в Україні</strong> — документ, який зводить виявлені проблеми докупи й пропонує не лише нову формулу, а й архітектуру з шести рівнів: від уніфікації вхідних даних до захисних механізмів і незалежного аудиту. Концепцію направлено службовою запискою Голові Вищої ради правосуддя для подальшого розвитку цього напряму.</p>
+<p>Нижче — повний текст Концепції зі збереженням структури, таблиць і рисунків оригіналу.</p>
+<hr>
+<h2 id="преамбула">Преамбула</h2>
+<p>Автоматизований розподіл судових справ є фундаментальною складовою забезпечення права на справедливий суд, передбаченого статтею 6 Конвенції про захист прав людини і основоположних свобод та статтею 55 Конституції України. Через цей механізм реалізуються конституційні принципи незалежності суддів, рівності перед законом і судом, а також забезпечується незалежність судової влади.</p>
+<p>З 2010 року Україна має систему автоматизованого розподілу судових справ, основні засади якої були закріплені рішенням Ради суддів України від 26 листопада 2010 року № 30.</p>
+<p>За понад 15 років існування автоматизованого розподілу систему було ускладнено, спрощено, поступово вдосконалено. Проте критичний аналіз чинної формули, проведений у супровідних до цієї Концепції дослідженнях, виявив низку математичних, нормативних та практичних вад, які знижують її здатність забезпечувати об’єктивний і неупереджений розподіл справ. Зокрема, чинна формула допускає кілька принципово різних технічних реалізацій, кожна з яких дає радикально різний результат розподілу, та некоректно змішує вагу справи зі спроможністю судді через розміщення коефіцієнта адміністративної посади у формулі ваги.</p>
+<p>Ця Концепція пропонує комплексне переосмислення підходів до авторозподілу: від уніфікації вхідних даних і єдиного реєстру спеціалізацій суддів – до екстериторіального розподілу між судами різних регіонів та посилених захисних механізмів.</p>
+<p><em>Концепція виходить з того, що проста математична формула не може бути єдиним засобом забезпечення справедливості. Потрібен системний підхід: достовірні вхідні дані, прозорий алгоритм, незалежний аудит і захисні механізми. Лише сукупність цих елементів може істотно знизити ризик суб’єктивного впливу та створити перевірювані підстави вважати автоматизований розподіл об’єктивним і справедливим для учасників судового процесу.</em></p>
+<h2 id="розділ-i-аналіз-проблематики-чинних-методик-авторозподілу">Розділ I. Аналіз проблематики чинних методик авторозподілу</h2>
+<h3 id="11-еволюція-методики-редакції-2018-та-2024-років">1.1. Еволюція методики: редакції 2018 та 2024 років</h3>
+<p>Чинна редакція Положення про автоматизовану систему документообігу суду зробила суттєвий крок у напрямку спрощення формули. Однак це спрощення не було супроводжено забезпеченням еквівалентної математичної визначеності алгоритму вибору судді. Порівняння ключових елементів двох редакцій наведене у таблиці.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Питання</strong></th><th><strong>Редакція 2018 року</strong></th><th><strong>Редакція 2024/2025 років</strong></th></tr></thead><tbody><tr><td><strong>Формула навантаження</strong></td><td>Два показники: Кнф (фактичне) і Кнс (середньозважене). Кн = Кнф − Кнс. Дй = Кап × (10 + КнMax − Кн). Алгоритм описаний повністю. Примітка: у супровідному моделюванні треба прямо зазначити, яку саме редакцію формули 2018 використано.</td><td>Один показник: К_Н = Σваги/КтРД, Вага = К_СКЛАДН × К_ФУС / К_АДМІН. Формула вибору відсутня.</td></tr><tr><td><strong>Урахування днів відсутності</strong></td><td>Дні відсутності неявно враховувались через сповільнення накопичення Кнф.</td><td>Якщо інше не встановлено зборами суддів, дні без розподілу не враховуються при розрахунку К_Н.</td></tr><tr><td><strong>Протокол і звіт</strong></td><td>Обов’язково містили перелік суддів, коефіцієнти, діапазони ймовірності, загальний діапазон і випадкове число.</td><td>Звіт містить базові дані, але вимога відображати діапазони ймовірностей зникає.</td></tr><tr><td><strong>Роль зборів суддів</strong></td><td>Формула і базова логіка більш нормативно визначені.</td><td>Збори можуть визначати спеціалізацію, складність, коефіцієнти адмін. посад, форму участі. Гнучкість збільшується.</td></tr></tbody></table>
+<h3 id="12-виявлені-проблеми-чинної-формули">1.2. Виявлені проблеми чинної формули</h3>
+<p>Систематичний аналіз чинної формули виявив десять ключових проблем, що мають різну природу – від математичних до нормативно-правових. Нижче наведено перелік цих проблем з пріоритизацією за рівнем критичності.</p>
+<h4 id="критичні-проблеми-вимагають-негайного-вирішення">Критичні проблеми (вимагають негайного вирішення)</h4>
+<p><strong>Відсутність повного алгоритму вибору.</strong> Пункт 2.3.6 описує лише розрахунок К_Н, а пункт 2.3.7 містить лише фразу «обрання судді за випадковим числом здійснюється відповідно до коефіцієнту навантаження». Цей текст сам по собі допускає кілька принципово різних технічних реалізацій (через обернену пропорційність, вибір мінімального К_Н або пряму пропорційність). За поясненням ДП «Інформаційні судові системи» (лист, наданий у відповідь на запит № 3782/0/19-26 від 02.06.2026), фактично застосовано обернено пропорційну реалізацію за формулою Кймов = ОКРУГЛ((1,05 × К_Н.max − К_Н) × 100) з подальшим зваженим випадковим вибором. Ця формула реально працює, проте її немає в Положенні про АСДС – вона існує лише на рівні програмної реалізації. Тому основна вада полягає не в тому, що «реалізацій багато», а в тому, що єдина фактично застосовувана реалізація перебуває поза нормативним актом і не може бути перевірена сторонами процесу.</p>
+<p><strong>Некоректне розміщення К_АДМІН у формулі ваги.</strong> Формула Вага = К_СКЛАДН × К_ФУС / К_АДМІН сама по собі не збільшує кількість справ судді з адміністративною посадою. Навпаки, за коректної реалізації логіки «менший К_Н — більший шанс, більший К_Н — менший шанс» вона робить кожну справу для судді з К_АДМІН = 0,4 обліково важчою у 2,5 раза, тому такий суддя швидше виглядає завантаженим і має отримувати менше наступних фактичних справ. Помилка полягає в іншому: коефіцієнт посади застосовано до ваги справи, ніби справа стала складнішою, а не до спроможності судді. Через відсутність нормативно визначеної формули вибору це може дати різні результати: у коректній реалізації кількість справ зменшується, у помилковій прямій пропорції може самопідсилюватися дисбаланс, а в модельній «основній» реалізації 2024 голова все одно отримує менше справ, ніж звичайний суддя, але більше за справедливу ціль.</p>
+<p>У підсумку К_АДМІН &#x3C; 1 повинен зменшувати очікувану кількість справ. Помилка чинної конструкції не в самій ідеї зменшення навантаження, а в тому, що це зроблено через дільник у вазі справи і без повного правила перетворення К_Н у ймовірність вибору.</p>
+<p><strong>Втрата перевірюваності протоколів.</strong> У редакції 2018 року протоколи містили діапазони імовірності Дй і Дз, що дозволяло будь-якому юристу перевірити коректність розподілу. Чинна редакція цю вимогу виключає, фактично перетворюючи алгоритм на «чорну скриньку».</p>
+<h4 id="серйозні-проблеми-вимагають-пріоритетного-вирішення">Серйозні проблеми (вимагають пріоритетного вирішення)</h4>
+<p><strong>Невизначеність КтРД.</strong> Не визначено, чи це індивідуальний показник кожного судді, чи спільний для суду. Як враховуються відпустки, лікарняні, відрядження окремого судді? Підпункт 2.3.15 дозволяє зборам суддів змінювати трактування, що створює різні правила в різних судах.</p>
+<p><strong>Річне обнулення.</strong> К_Н розраховується від початку поточного року. Якщо у грудні був суттєвий дисбаланс – з 1 січня він математично зникає, попри те що фактичне навантаження судді залишається.</p>
+<p><strong>Втрата самокорегуючого механізму.</strong> Формула 2018 коректувала Кнс ВСІХ компетентних суддів при кожному розподілі (самокорекція). У поточній редакції змінюється лише показник обраного судді – інші не зачіпаються.</p>
+<p><strong>Залежність від класифікатора складності.</strong> Якщо коефіцієнти К_СКЛАДН встановлені некоректно або не відображають реальну трудомісткість, формула формально працює, але фактично розподіляє несправедливо.</p>
+<h4 id="системні-проблеми-вимагають-комплексного-підходу">Системні проблеми (вимагають комплексного підходу)</h4>
+<p><strong>Невраховування фактичної трудомісткості.</strong> К_СКЛАДН – теоретична складність на момент реєстрації. Реальна трудомісткість (кількість засідань, обсяг доказів, тривалість провадження) не впливає на наступні розподіли.</p>
+<p><strong>Неоднозначність пакетного розподілу.</strong> Якщо порядок справ у пакеті не визначений, результат залежатиме від внутрішнього сортування – це потенційне джерело маніпуляцій.</p>
+<p><strong>Надмірна роль локальних Засад.</strong> Збори суддів отримують значні повноваження визначати коефіцієнти і правила. Це підвищує гнучкість, але створює ризик нерівної практики між судами.</p>
+<h3 id="13-статистичне-моделювання-на-даних-печерського-районного-суду-м-києва">1.3. Статистичне моделювання на даних Печерського районного суду м. Києва</h3>
+<p>Для емпіричної ілюстрації виявлених проблем проведено сценарне математичне моделювання роботи різних формул на основі фактичного загального обсягу надходжень Печерського районного суду міста Києва за 2025 рік. Інші параметри моделі (розподіл складності справ, доступність суддів, технічні реалізації перетворення К_Н у ймовірність) мають характер модельних припущень і потребують окремого розкриття для повної відтворюваності.</p>
+<p>Під час моделювання використані моделі штучного інтелекту Claude Opus 4.8, ChatGPT 5.5, Gemini 3.1 Pro, які провели симуляцію автоматизованого розподілу за вихідними параметрами, наведеними на сайті Ради суддів України (<a href="https://rsu.gov.ua/mzs-2025_4-maps">https://rsu.gov.ua/mzs-2025_4-maps</a>) та за даними спільного проєкту Вищої ради правосуддя щодо дослідження робочої групи з питань автоматизації аналітики та судової статистики (JUSCORE (Justice SCOREboard), <a href="https://juscore.court.gov.ua">https://juscore.court.gov.ua</a>).</p>
+<p>Після отримання результатів статистичного моделювання, яке провела кожна з моделей, було застосовано метод перехресної перевірки для виявлення можливих помилок. Перехресна перевірка підтвердила коректність розрахунків.</p>
+<h4 id="131-параметри-моделювання">1.3.1. Параметри моделювання</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Період моделювання</strong></th><th><strong>2025 рік</strong></th></tr></thead><tbody><tr><td><strong>Загальна кількість справ та матеріалів</strong></td><td>68 716 (фактичний загальний обсяг надходжень за 2025 рік; інші параметри моделі є припущеннями)</td></tr><tr><td><strong>Чисельність суддів з повноваженнями</strong></td><td>20 (станом на 31.12.2025)</td></tr><tr><td><strong>Очікувана середня кількість справ при ідеально рівному розподілі</strong></td><td>3 436 справ на одного суддю</td></tr><tr><td><strong>Склад адміністративних посад (модельний)</strong></td><td>1 голова, 2 заступники, 1 член РСУ, 1 викладач НШСУ, 1 секретар судової палати (всього 6 з 20)</td></tr><tr><td><strong>Кількість тестованих формул</strong></td><td>5 (Ф1: 2018, Ф2: модельна інтерпретація 2024, Ф3: 2024 з вибором min К_Н, Ф4: помилкова пряма пропорція, Ф5: запропонована формула; точні результати залежать від розкритих припущень моделювання)</td></tr></tbody></table>
+<h4 id="132-цільові-значення-кількості-справ">1.3.2. Цільові значення кількості справ</h4>
+<p>Об’єктивно справедливим вважається розподіл, пропорційний адміністративному коефіцієнту К_АДМІН. Це означає: суддя з К_АДМІН = 0,4 (Голова) повинен отримувати 40% від навантаження звичайного судді. Сума К_АДМІН для модельного складу суду становить 17,7. Цільові значення на 2025 рік:</p>
+<p>Примітка щодо округлення: неокруглена ціль для голови становить 68 716 × 0,4 / 17,7 = 1 552,90 справи; рядки таблиці нижче округлені, тому сума округлених значень може відрізнятися від загального підсумку.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Категорія</strong></th><th><strong>К_АДМІН</strong></th><th><strong>Частка</strong></th><th><strong>На одного</strong></th><th><strong>Всього (категорія)</strong></th></tr></thead><tbody><tr><td>Голова</td><td>0,40</td><td>2,26%</td><td><strong>1 553</strong></td><td>1 553</td></tr><tr><td>Заступники голови (2)</td><td>0,50</td><td>2,82%</td><td><strong>1 941</strong></td><td>3 882</td></tr><tr><td>Секретар судової палати</td><td>0,70</td><td>3,95%</td><td><strong>2 718</strong></td><td>2 718</td></tr><tr><td>Член РСУ + Викладач НШСУ</td><td>0,80</td><td>4,52%</td><td><strong>3 106</strong></td><td>6 212</td></tr><tr><td>Звичайні судді (14)</td><td>1,00</td><td>5,65%</td><td><strong>3 882</strong></td><td>54 348</td></tr><tr><td><strong>ВСЬОГО</strong></td><td><strong>17,70</strong></td><td><strong>100%</strong></td><td>—</td><td><strong>68 716</strong></td></tr></tbody></table>
+<h4 id="133-результати-моделювання--розподіл-справ-для-голови-суду">1.3.3. Результати моделювання — розподіл справ для Голови суду</h4>
+<p>Найдраматичніша відмінність між формулами виявляється на прикладі Голови суду (К_АДМІН = 0,4, ціль — 1 553 справ):</p>
+<p><img alt="Стовпчикова діаграма: скільки справ отримає Голова Печерського районного суду за рік за п’ятьма формулами авторозподілу проти цілі 1 553 справи" loading="lazy" decoding="async" width="1663" height="963" src="/_astro/rozpodil-sprav-holovy.Dfq5SbuO_Z2myKLj.webp" srcset=""></p>
+<p><em>Рис. 1. Скільки справ отримає Голова Печерського районного суду за рік залежно від застосованої формули. Ціль — 1 553 справи.</em></p>
+<p><em>Технічна примітка до Рис. 1: формула цільового значення на самому зображенні має бути виправлена з «68 716 × 0,4 / 8,2» на «68 716 × 0,4 / 17,7 = 1 553». Оскільки рисунок вбудований як зображення, ця правка внесена як відстежувана текстова примітка.</em></p>
+<p>Цей графік демонструє діапазон можливих результатів у межах обраних модельних припущень — від 1 579 до 4 866 справ. Такий розкид підтверджує проблему неповноти нормативного опису формули 2024 року, але точні значення залежать від конкретного алгоритму, seed випадковості, потоку справ, ваг складності та доступності суддів.</p>
+<h4 id="134-аналіз-справжньої-справедливості-коефіцієнти-варіації">1.3.4. Аналіз справжньої справедливості: коефіцієнти варіації</h4>
+<p><img alt="Дві діаграми коефіцієнтів варіації: ліворуч — розкид кількості справ, праворуч — розкид нормованого навантаження з урахуванням К_АДМІН" loading="lazy" decoding="async" width="2085" height="862" src="/_astro/koefitsiyenty-variatsiyi.YLrLtLzG_Z2eAmQS.webp" srcset=""></p>
+<p><em>Рис. 2. Два показники варіації: ліворуч — за кількістю справ, праворуч — за нормованим навантаженням з урахуванням К_АДМІН.</em></p>
+<p>Цей графік розкриває принципову відмінність між «формальною рівністю кількості справ» і «справжньою справедливістю»:</p>
+<p>За кількістю справ формула 2018 виглядає найкращою (CV = 2,26%), але це створює оманливе враження. Адже Голова отримує ту ж кількість справ, що й звичайний суддя, попри декларовану зниженість навантаження.</p>
+<p>За нормованим навантаженням (чисте фактичне навантаження, приведене до спроможності судді; за рівних інших параметрів — L_i / К_АДМІН) — реальна справедливість — формула 2018 у наведеному сценарії дає CV = 34,37%, формула 2024 (основна модельна реалізація) — 23,60%, а запропонована модель — близько 0,04%. Ці значення слід подавати як результат конкретної симуляції, а не як універсальну гарантію для всіх наборів вхідних даних.</p>
+<p><em>Висновок з моделювання: у наведеному сценарії формула 2018 «розподіляла рівно за кількістю», але не за реальним навантаженням; формула 2024 за кількістю справ гірша за 2018, а за нормованим навантаженням краща за 2018, проте все одно залишає істотний дисбаланс. Запропонована формула забезпечує пропорційний кількісний розподіл і майже однакове нормоване навантаження лише за умови коректних вхідних даних, єдиного класифікатора складності, повного протоколювання та захищеного генератора випадкових чисел.</em></p>
+<h4 id="135-карта-справедливості-теплова-діаграма">1.3.5. Карта справедливості: теплова діаграма</h4>
+<p><img alt="Теплова карта відхилень фактичного розподілу від цільового для 20 суддів за п’ятьма формулами" loading="lazy" decoding="async" width="1945" height="891" src="/_astro/teplova-karta-spravedlyvosti.08A19ofg_Z1n4mtQ.webp" srcset=""></p>
+<p><em>Рис. 3. Теплова карта відхилень від цілі для всіх 20 суддів Печерського районного суду за п’ятьма формулами. Зелений = справедливо, червоний = несправедливо.</em></p>
+<p>Теплова карта дозволяє в одному погляді оцінити справедливість кожної формули для всіх суддів:</p>
+<p><strong>Ф1 (2018):</strong> адміністративні посади перевантажені (+76% до +122%), звичайні судді — недозавантажені (−6% до −15%).</p>
+<p><strong>Ф2 (2024 основна):</strong> м’якший варіант, але дисбаланс зберігається у Голови (+80%) і Заступників (+53%-56%).</p>
+<p><strong>Ф3 (min К_Н):</strong> за нормованим навантаженням практично справедлива для всіх, але такий варіант не описаний у Положенні 2024/2025 і може істотно звужувати випадковість, перетворюючи її на допоміжний механізм лише для рівних або близьких значень К_Н.</p>
+<p><strong>Ф4 (помилкова):</strong> катастрофа — Голова +213%, Заступники +132%-159%, звичайні судді −14% до −21%.</p>
+<p><strong>Ф5 (Ідеальна):</strong> рівномірно-жовта у межах модельного сценарію, відхилення від −4,5% до +5,1%; ці межі потребують підтвердження на фактичних журналах розподілу.</p>
+<h3 id="14-висновки-за-результатами-аналізу">1.4. Висновки за результатами аналізу</h3>
+<p>За результатами комплексного аналізу чинної методики авторозподілу та її моделювання на даних Печерського районного суду м. Києва можна сформулювати такі висновки:</p>
+<p><strong>По-перше,</strong> чинна формула 2024/2025 років не може бути визнана математично завершеною.</p>
+<p>Вона визначає лише коефіцієнт навантаження К_Н, але не описує механізм перетворення цього коефіцієнта на ймовірність вибору конкретного судді. Фактично застосовувану реалізацію (обернено пропорційне перетворення Кймов = ОКРУГЛ((1,05 × К_Н.max − К_Н) × 100)) підтвердило ДП «Інформаційні судові системи», проте її не закріплено в Положенні про АСДС — вона існує лише на рівні програмного коду, що унеможливлює її незалежну перевірку сторонами.</p>
+<p><strong>По-друге,</strong> К_АДМІН у знаменнику створює некоректний спосіб обліку адміністративних посад: він штучно збільшує облікову вагу справи, хоча має зменшувати розподільчу спроможність судді. ДП «Інформаційні судові системи» підтвердило, що К_АДМІН справді застосовується у знаменнику (шляхом ділення кількості умовних справ на коефіцієнт). Це означає, що суддя з нижчим К_АДМІН обліково виглядає завантаженішим і отримує менше справ; тобто наявна формула вже зменшує навантаження адміністративних посад, але робить це непрозоро і без гарантії досягнення цільової пропорції. Тому коректне формулювання проблеми — не «коефіцієнт збільшує кількість справ», а «розміщення К_АДМІН у знаменнику ваги, поєднане з незакріпленим у Положенні алгоритмом вибору, не гарантує пропорційного результату».</p>
+<p>Голова Печерського районного суду за модельною основною реалізацією формули 2024 отримав би 2 794 справи: це менше, ніж середній звичайний суддя, але на 1 241 справу більше за справедливу ціль 1 553. Тому висновок має формулюватися не як «коефіцієнт посади збільшує кількість справ», а як «розміщення К_АДМІН у знаменнику та неповний алгоритм вибору не гарантують досягнення цільової пропорції».</p>
+<p><strong>По-третє,</strong> поточна формула знижує перевірюваність порівняно з 2018 роком.</p>
+<p>Чинна редакція не вимагає відображення діапазонів імовірності у протоколах розподілу. Це фактично перетворює алгоритм на «чорну скриньку», де результат можна побачити, але не можна перевірити.</p>
+<p><strong>По-четверте,</strong> потрібен системний, а не лише математичний підхід.</p>
+<p>Справедливість авторозподілу залежить не тільки від формули, але й від коректності класифікатора складності, повноти даних про доступність суддів, наявності захисних механізмів від маніпуляцій. Реформа має охопити всі ці аспекти.</p>
+<h2 id="розділ-ii-концептуальні-засади-нової-методики-авторозподілу">Розділ II. Концептуальні засади нової методики авторозподілу</h2>
+<p>Концепція нового авторозподілу базується на фундаментальному переосмисленні підходу: справедливий розподіл не може забезпечуватися лише математичною формулою. Він є результатом скоординованої роботи цілого комплексу систем — від уніфікації вхідних даних до незалежного аудиту. Цей розділ описує принципи, на яких базується нова концепція, та узагальнює 27 ключових пропозицій.</p>
+<h3 id="21-принципи-концепції">2.1. Принципи концепції</h3>
+<p>Нова методика авторозподілу спирається на сім фундаментальних принципів:</p>
+<p><strong>Алгоритмічна повнота.</strong> Нормативний акт повинен описувати ВЕСЬ алгоритм від вхідних даних до випадкового вибору, а не лише його окремі елементи.</p>
+<p><strong>Математична прозорість.</strong> Кожен крок розрахунку має бути математично визначеним, відтворюваним і перевірюваним. Незалежна особа, що має доступ до протоколу, повинна мати можливість самостійно перевірити коректність розподілу.</p>
+<p><strong>Симетрія коефіцієнтів.</strong> Коефіцієнт адміністративної посади К_АДМІН повинен впливати на алгоритм симетрично — через спроможність судді, а не через спотворення ваги справи. Менший К_АДМІН → менше очікувань → менше справ, без штучного збільшення «навантаження за вагою».</p>
+<p><strong>Збереження випадковості.</strong> Розподіл має зберігати елемент випадковості, але цей елемент має бути контрольованим: суддя, що відстає від цільового навантаження, отримує більший діапазон імовірності, але не гарантоване автоматичне призначення.</p>
+<p><strong>Кросперевірка даних.</strong> Дані про доступність суддів (відпустки, лікарняні) мають перевірятися через незалежні джерела (ЕСОЗ, кадрові реєстри), а не виключно через ручне внесення.</p>
+<p><strong>Цілісність протоколів.</strong> Протоколи розподілу мають утворювати хеш-ланцюг — кожний наступний протокол містить хеш попереднього. Це робить неможливою непомітну зміну будь-якого окремого протоколу.</p>
+<p><strong>Захист прав учасників.</strong> Учасники справи мають негайно отримувати інформацію про здійснений розподіл — це дозволяє виявити потенційний конфлікт інтересів на ранніх етапах.</p>
+<h3 id="22-архітектура-системи-шість-рівнів">2.2. Архітектура системи: шість рівнів</h3>
+<p>Концепція структурована як архітектура з шести рівнів — кожен рівень виконує самостійну функцію, але всі рівні працюють у єдиній системі. Жоден рівень не може компенсувати недоліки інших — повноцінний справедливий розподіл вимагає одночасної роботи всіх шести.</p>
+<p><img alt="Схема архітектури концепції: шість рівнів — вхідні дані, пул суддів, математична модель, динамічні фактори, екстериторіальність, захист і аудит" loading="lazy" decoding="async" width="892" height="416" src="/_astro/arkhitektura-koncepcii.k7mKrIzq_Z1ESpqG.webp" srcset=""></p>
+<p><em>Рис. 4. Архітектура концепції авторозподілу: шість рівнів від вхідних даних до аудиту.</em></p>
+<h3 id="23-удосконалення-вхідних-даних-рівень-1">2.3. Удосконалення вхідних даних (Рівень 1)</h3>
+<p>Більшість проблем авторозподілу починається ще до запуску формули — на етапі реєстрації справи. Якщо документ некоректно класифікований, картка справи неповна або не виявлені пов’язані справи, жодна, навіть найдосконаліша, формула не дасть справедливого результату. Концепція передбачає чотири системних рішення.</p>
+<p><strong>2.3.1. Затвердження класифікатора процесуальних документів</strong></p>
+<p>Розробка єдиного класифікатора типів процесуальних документів. Класифікатор має бути затверджений на рівні нормативно акта і використовуватися в усіх АСДС. Це усуває розбіжності в інтерпретації того, до якого типу належить конкретний документ.</p>
+<p><strong>2.3.2. Автоматична класифікація вхідних документів (NLP + ШІ)</strong></p>
+<p>Запровадження автоматизованого розпізнавання тексту вхідних документів і визначення їх типу засобами штучного інтелекту та обробки природної мови (NLP). Алгоритм аналізує зміст документа і пропонує найбільш імовірний тип. Працівник суду підтверджує або корегує пропозицію. Це усуває ручні помилки класифікації і прискорює обробку.</p>
+<p><strong>2.3.3. Автоматичне визначення категорії справи</strong></p>
+<p>Після класифікації документа алгоритм автоматично визначає категорію справи відповідно до Загального класифікатора спеціалізацій суддів та категорій справ. Це принципово важливо, бо саме категорія справи визначає Кскл і пул компетентних суддів.</p>
+<p><strong>2.3.4. Валідація заповнення картки справи</strong></p>
+<p>Авторозподіл блокується, якщо у картці справи не заповнені критичні поля: кількість учасників, документів, дані учасників, предмет спору, клопотання та заяви (експертизи, виклик свідків, огляд речових доказів на місці тощо), наявність іноземного елемента тощо. Це усуває ситуації, коли формула працює з неповними даними і дає некоректний результат.</p>
+<p><strong>2.3.5. Автоматичне виявлення пов’язаних справ</strong></p>
+<p>Перед запуском розподілу алгоритм проводить зіставлення:</p>
+<ul>
+<li>учасників справи (за ідентифікатором або іменем);</li>
+<li>категорії справи;</li>
+<li>предмета спору;</li>
+<li>періоду надходження.</li>
+</ul>
+<p>Виявлені співпадіння відображаються у звіті та протоколі авторозподілу. Якщо суддя вже розглядав справу з такими ж учасниками — справа автоматично передається саме йому (з фіксацією у протоколі).</p>
+<p><strong>2.3.6. Автоматичне визначення складності справи</strong></p>
+<p>За результатами аналізу матеріалів справи система автоматично визначає коефіцієнт складності, базуючись на об’єктивних факторах:</p>
+<ul>
+<li>кількість сторін у справі;</li>
+<li>кількість документів;</li>
+<li>наявність експертиз (актуальних або тих, що потребуватимуть проведення);</li>
+<li>наявність іноземного елемента;</li>
+<li>попередня історія справи (за нововиявленими обставинами, перегляд);</li>
+<li>процесуальна форма провадження.</li>
+<li>установлені законом усічені строки розгляду.</li>
+</ul>
+<h3 id="24-визначення-пулу-суддів-рівень-2">2.4. Визначення пулу суддів (Рівень 2)</h3>
+<p>Другий рівень концепції — це система визначення кола суддів, які можуть взяти участь у розподілі конкретної справи. На відміну від чинної моделі, де ця функція реалізована частково, концепція передбачає комплексний підхід.</p>
+<p><strong>2.4.1. Єдиний реєстр спеціалізацій суддів (ЄРСС)</strong></p>
+<p>Запровадження реєстру, який містить актуальні дані про спеціалізацію кожного судді. Збори суддів зберігають право визначати спеціалізацію, але виключно в межах Загального класифікатора з обов’язковим внесенням інформації про зміну до ЄРСС. Усі зміни в ЄРСС фіксуються і моніторяться щодо нетипової поведінки — наприклад, зміна спеціалізації безпосередньо перед надходженням резонансної справи.</p>
+<p><strong>2.4.2. Реєстр пов’язаних осіб</strong></p>
+<p>Створення на базі Суддівського досьє розширеного переліку осіб, які перебувають (перебували) із суддею у сімейних, родинних, ділових чи інших відносинах. Такий перелік частково наявний у ВККСУ. Концепція передбачає його оновлення на основі даних:</p>
+<ul>
+<li>самостійного декларування суддею (кандидатом на посаду судді) в кабінеті судді на сайті ВККСУ.</li>
+<li>з офіційних державних реєстрів:
+<ol>
+<li>Єдиного державного демографічного реєстру (ЄДДР)</li>
+<li>Державного реєстру актів цивільного стану громадян (ДРАЦС);</li>
+<li>Єдиного державного реєстру декларацій осіб, уповноважених на виконання функцій держави або місцевого самоврядування (НАЗК);</li>
+<li>Державного реєстру фізичних осіб – платників податків (ДРФО);</li>
+<li>Пенсійного фонду України (ПФУ);</li>
+<li>Єдиного державного реєстру транспортних засобів (ЄДРТЗ);</li>
+<li>Державного реєстру речових прав на нерухоме майно (ДРРП);</li>
+<li>Єдиного реєстру довіреностей (ЄРД);</li>
+<li>тощо.</li>
+</ol>
+</li>
+</ul>
+<p>Вказаний реєстр є важливою складовою Суддівського досьє як такого, оскільки дозволяє забезпечувати актуалізацію даних як на етапах конкурсного добору, так і на етапах здійснення суддею повноважень.</p>
+<p>Наявні в ВККСУ та ДСА України модуль збору інформації дозволяє забезпечити актуальний стан вказаного реєстру з мінімальними часовими та адміністративними витратами, а також зняти навантаження з суддів щодо оновлення таких даних.</p>
+<p><strong>2.4.3. Автоматичне виключення з конфлікту інтересів</strong></p>
+<p>На основі даних Реєстру пов’язаних осіб перед включенням судді до переліку кандидатів авторозподілу система проводить автоматичну перевірку учасників справи. За наявності будь-якого співпадіння суддя автоматично виключається з кандидатів, із відповідним записом у протоколі. Це усуває ризик того, що справа потрапить до судді, який мав би заявити самовідвід.</p>
+<p><strong>2.4.4. Автоматична перевірка лікарняного через ЕСОЗ</strong></p>
+<p>Чинне Положення передбачає виключення з розподілу суддів, що перебувають у відпустці чи на лікарняному, на підставі первинних документів. Однак ця процедура залежить від своєчасного внесення інформації працівниками суду. Концепція пропонує: суддя автоматично виключається з розподілу за наявності підтвердженого електронного лікарняного листа в Електронній системі охорони здоров’я (ЕСОЗ). Це усуває можливість маніпуляцій із внесенням/невнесенням даних про тимчасову непрацездатність.</p>
+<h3 id="25-захисні-механізми-рівень-6">2.5. Захисні механізми (Рівень 6)</h3>
+<p>Захисні механізми становлять окремий рівень концепції, який забезпечує цілісність системи в цілому. Їх метою є не оптимізація формули, а унеможливлення непомітної підробки результату розподілу після його завершення та створення технічної можливості швидко виявити будь-яку спробу ретроспективної зміни.</p>
+<p><strong>2.5.1. Хеш-ланцюг протоколів</strong></p>
+<p>Кожний наступний протокол розподілу містить криптографічний хеш попереднього протоколу. Таким чином, протоколи утворюють блокчейноподібний ланцюг. Будь-яка спроба змінити окремий протокол post factum призведе до незбігу хешів у всіх наступних протоколах, що буде негайно виявлено при першій же перевірці.</p>
+<p>Це принципово важливо, оскільки забезпечує не фізичну неможливість зміни даних, а неможливість їх непомітної підміни навіть з боку адміністратора системи. Якщо у разі чинної системи теоретично можливо змінити окремий протокол без явних слідів, у системі з хеш-ланцюгом така зміна призведе до незбігу хешів або потребуватиме зміни всіх наступних протоколів, що має бути зафіксовано аудитом.</p>
+<p><strong>2.5.2. Фіксація змін АСДС за 3 попередні дні</strong></p>
+<p>У протоколі розподілу фіксується інформація про зміни, які мали місце в АСДС упродовж 3 останніх днів і могли вплинути на цей розподіл. Це включає:</p>
+<ul>
+<li>зміни у списку суддів та їх спеціалізацій;</li>
+<li>внесення/скасування інформації про тимчасову непрацездатність;</li>
+<li>зміни в адміністративних посадах;</li>
+<li>зміни у налаштуваннях системи (Засадах використання АСДС).</li>
+</ul>
+<p>Це дозволяє учасникам справи та зовнішнім аудиторам зрозуміти, чи мали місце «підозрілі» зміни безпосередньо перед розподілом конкретної справи.</p>
+<p><strong>2.5.3. Сповіщення учасників про здійснений розподіл</strong></p>
+<p>Учасники справи (позивач, відповідач, треті особи) автоматично інформуються про здійснений розподіл шляхом надсилання повідомлення через електронний кабінет. Повідомлення містить ПІБ судді, до якого передано справу. Це дозволяє учасникам ще на ранніх етапах виявити потенційний конфлікт інтересів і подати заяву про відвід без зайвої затримки.</p>
+<p><strong>2.5.4. Протокол зміни категорії справи</strong></p>
+<p>У чинній системі категорія справи може бути змінена працівником суду після авторозподілу. Це створює простір для маніпуляцій. Концепція передбачає: після будь-якої зміни категорії справи автоматично формується окремий протокол, який містить:</p>
+<ul>
+<li>
+<p>стару категорію та новий;</p>
+</li>
+<li>
+<p>обґрунтування зміни;</p>
+</li>
+<li>
+<p>дату і час;</p>
+</li>
+<li>
+<p>ПІБ працівника, що ініціював зміну;</p>
+</li>
+<li>
+<p>аналіз, чи мала б ця зміна вплив на результат авторозподілу.</p>
+</li>
+</ul>
+<p>Протокол зберігається в електронному кабінеті як невід’ємна частина матеріалів справи.</p>
+<h3 id="26-новітні-підходи-до-оптимізації-судового-розгляду">2.6. Новітні підходи до оптимізації судового розгляду</h3>
+<p>Концепція пропонує низку інноваційних підходів, які використовують можливості автоматизованої системи для оптимізації самого судового розгляду.</p>
+<p><strong>2.6.1. Динамічне балансування навантаження</strong></p>
+<p>Чинна формула враховує статичні коефіцієнти. Концепція передбачає, що АСДС враховує також динамічні показники:</p>
+<ul>
+<li>кількість нерозглянутих (“живих”) справ судді на момент розподілу;</li>
+<li>середній фактичний час до відкриття провадження;</li>
+<li>середній час до першого засідання у даній категорії справ для цього судді;</li>
+<li>середня тривалість розгляду в цій категорії.</li>
+</ul>
+<p>Це дозволяє враховувати не тільки кількість і складність уже розподілених справ, але й їх реальну «вагу» в роботі судді.</p>
+<p><strong>2.6.2. Прогнозований строк розгляду</strong></p>
+<p>На підставі аналітичних та статистичних розрахунків АСДС визначає прогнозований строк розгляду конкретної справи. У його основі — статистичні дані про:</p>
+<ul>
+<li>строк розгляду аналогічних спорів цим самим суддею;</li>
+<li>строк розгляду аналогічних спорів іншими суддями цього ж суду;</li>
+<li>строк розгляду аналогічних спорів іншими суддями (за відсутності статистично достатніх даних на рівні суду).</li>
+</ul>
+<p>Цей показник доводиться до відома позивача на початку подання позовної заяви чи інших процесуальних заяв. Він не замінює процесуальні строки, але доповнює їх — забезпечуючи розумне очікування і запобігаючи виникненню необґрунтованих скарг на тривалість розгляду.</p>
+<p><em>Надавши «Прогнозованому строку розгляду» значення певної правової категорії можна суттєво зменшити соціальну напруженість між судами та учасниками справи, оскільки такий строк: (1) доводиться до відома позивача перед поданням позову – формування реальних сподівань; (2) розраховуються системою без участі людини – формування довіри; (3) закріплено в законодавстві як строк, упродовж якого держава гарантує розгляд або забезпечить заміну судді – формується визначеність.</em></p>
+<p><strong>2.6.3. Повторний авторозподіл у разі перевищення прогнозованого строку</strong></p>
+<p>Концепція передбачає механізм автоматичного перерозподілу справи у разі, якщо строк її розгляду конкретним суддею перевищує прогнозований більш ніж на певний відсоток (наприклад, на 30%). Це дозволяє вчасно реагувати на ситуації, коли справа “зависла” в одного судді, не чекаючи скарг учасників.</p>
+<p><strong>2.6.4. Динамічний контрольний період замість календарного року</strong></p>
+<p>Замість обнулення коефіцієнтів навантаження з 1 січня кожного року, концепція передбачає динамічний контрольний період (наприклад, 12 місяців від поточного дня). Це означає, що дисбаланс грудня не зникає автоматично у січні, а поступово «вимивається» новими розподілами протягом наступних місяців.</p>
+<h2 id="розділ-iii-нова-формула-внутрішньосудового-авторозподілу">Розділ III. Нова формула внутрішньосудового авторозподілу</h2>
+<p>Цей розділ містить математичний опис нової формули авторозподілу для класичної моделі — розподілу справ між суддями одного суду. Формула усуває всі виявлені у Розділі I проблеми чинної редакції 2024/2025 років та формули 2018 року, забезпечує симетричний вплив адміністративного коефіцієнта і пропонує повний детермінований алгоритм від вхідних даних до фінального вибору.</p>
+<h3 id="31-загальна-структура-алгоритму">3.1. Загальна структура алгоритму</h3>
+<p>Алгоритм складається з шести послідовних кроків, кожний з яких математично визначений:</p>
+<p><strong>Крок 1:</strong> розрахунок ваги справи V (тільки складність і форма участі судді, <strong>БЕЗ К_АДМІН</strong>)</p>
+<p><strong>Крок 2:</strong> розрахунок ефективної спроможності кожного судді C_i (К_АДМІН входить у розрахунок)</p>
+<p><strong>Крок 3:</strong> розрахунок цільового навантаження T_i для кожного судді</p>
+<p><strong>Крок 4:</strong> розрахунок відставання B_i кожного судді від цільового навантаження</p>
+<p><strong>Крок 5:</strong> розрахунок діапазону імовірності R_i для кожного судді</p>
+<p><strong>Крок 6:</strong> генерація випадкового числа X і вибір судді, на чий діапазон припало X</p>
+<h3 id="32-формула-ваги-судової-справи">3.2. Формула ваги судової справи</h3>
+<p><strong>V = Кскл × Кфус × Кінш</strong></p>
+<p>де:</p>
+<p><strong>V —</strong> вага судової справи (величина, що визначає очікувану трудомісткість для одного судді);</p>
+<p><strong>Кскл —</strong> коефіцієнт складності категорії справи відповідно до затвердженої методики (з урахуванням кількості учасників, документів, наявності експертиз, іноземного елемента тощо). Діапазон: 1–60. Визначається автоматично відповідно до пункту 2.3.6 цієї Концепції;</p>
+<p><strong>Кфус —</strong> коефіцієнт форми участі судді у розгляді справи (одноособово, головуючий, суддя-доповідач, член колегії). Діапазон: 0,5–1,0;</p>
+<p><strong>Кінш —</strong> додатковий коефіцієнт за нормативно передбачених обставин (терміновість, особливий процесуальний режим, екстериторіальність тощо). За замовчуванням Кінш = 1,0.</p>
+<p><em>Ключова відмінність від чинної формули: К_АДМІН НЕ входить до формули ваги справи. Вага описує саму справу, а не суддю, який її отримає. Це усуває некоректне змішування складності справи зі спроможністю судді та робить вплив адміністративної посади прозорим.</em></p>
+<h3 id="33-формула-ефективної-спроможності-судді">3.3. Формула ефективної спроможності судді</h3>
+<p><strong>C_i = Кадм_i × D_i × Кзайм_i × S_i</strong></p>
+<p>де:</p>
+<p><strong>C_i —</strong> ефективна розподільча спроможність судді i;</p>
+<p><strong>Кадм_i —</strong> коефіцієнт адміністративної посади. Діапазон: 0,4–1,0 (зберігається з чинної редакції);</p>
+<p><strong>D_i —</strong> кількість робочих днів за контрольний період, у які суддя був доступний для розподілу (виключаючи відпустки, відрядження, лікарняні);</p>
+<p><strong>Кзайм_i —</strong> коефіцієнт часткової зайнятості (для частково доступних днів — участь у відрядженні на частину дня, навчанні, узагальненні судової практики). За замовчуванням Кзайм_i = 1,0;</p>
+<p><strong>S_i —</strong> коефіцієнт спеціалізації / допуску до справи цієї категорії. Дорівнює 1, якщо суддя може розглядати цю категорію справ; 0 — якщо ні.</p>
+<p><em>Принципова зміна: Кадм впливає на спроможність судді (а не на вагу справи). Якщо у судді менший Кадм, його очікувана частка від загального навантаження пропорційно менша. Це симетричний, математично коректний підхід.</em></p>
+<h3 id="34-формула-цільового-навантаження">3.4. Формула цільового навантаження</h3>
+<p><strong>T_i = (ΣL + V) × C_i / ΣC</strong></p>
+<p>де:</p>
+<p><strong>T_i —</strong> цільове навантаження судді i після гіпотетичного включення поточної справи у загальний масив;</p>
+<p><strong>ΣL —</strong> сума ваги всіх справ, уже розподілених між усіма суддями за контрольний період;</p>
+<p><strong>V —</strong> вага поточної справи;</p>
+<p><strong>C_i —</strong> ефективна спроможність судді i (з формули 3.3);</p>
+<p><strong>ΣC —</strong> сума спроможностей усіх суддів, що беруть участь у розподілі.</p>
+<p>Економічний зміст: T_i показує, скільки навантаження суддя i мав би мати, якби розподіл відбувався ідеально пропорційно до спроможності. Якщо C_i становить 5% від ΣC, то T_i — це 5% від загального навантаження.</p>
+<h3 id="35-формула-діапазону-імовірності">3.5. Формула діапазону імовірності</h3>
+<p><strong>B_i = max(ε; T_i − L_i)</strong></p>
+<p>де:</p>
+<p><strong>B_i —</strong> відставання судді i від цільового навантаження;</p>
+<p><strong>L_i —</strong> сума ваги справ, фактично розподілених судді i у контрольному періоді;</p>
+<p><strong>ε —</strong> малий стабілізатор (наприклад, 0,001), щоб усі допущені судді мали ненульовий шанс. Цей стабілізатор не є новацією: у фактично застосовуваній формулі Кймов = ОКРУГЛ((1,05 × К_Н.max − К_Н) × 100) роль аналогічного запобіжника виконує коефіцієнт запасу 1,05, який не дає коефіцієнту імовірності стати нульовим. Запропонований ε виконує ту саму функцію, але робить її нормативно визначеною і прозорою. Таким чином, нова формула не вводить стабілізатор «з нуля», а формалізує наявний у системі механізм.</p>
+<p><strong>R_i = max(1; round(Q × B_i / V))</strong></p>
+<p>де:</p>
+<p><strong>R_i —</strong> цілочисельний діапазон імовірності судді i;</p>
+<p><strong>Q —</strong> масштабний коефіцієнт для перетворення дробових значень у цілі діапазони (за замовчуванням Q = 10 000).</p>
+<p>Чим більше суддя відстає від цільового навантаження, тим більший його діапазон R_i, і тим більший шанс отримати наступну справу. При цьому додатне ε забезпечує мінімальний ненульовий шанс навіть для судді, на якого вже розподілено достатню кількість справ, за умови що нормативно визначено масштабування R_i та правила округлення. Це підтримує принцип випадковості, але не повинно перетворюватися на прихований канал істотного відхилення від цільових пропорцій.</p>
+<h3 id="36-випадковий-вибір-та-фіксація">3.6. Випадковий вибір та фіксація</h3>
+<p><strong>X = random(1; ΣR_i)</strong></p>
+<p>Випадкове число X генерується в межах від 1 до загального діапазону ΣR_i. Справа передається судді, на чий діапазон R_i припало значення X. У протоколі обов’язково фіксуються: V, Кадм, D_i, Кзайм_i, S_i, L_i, T_i, B_i, R_i кожного судді, ΣR_i, X, версія алгоритму, точна дата і час, хеш попереднього протоколу.</p>
+<h3 id="37-workflow-процесу">3.7. Workflow процесу</h3>
+<p><img alt="Схема повного workflow авторозподілу: десять кроків від реєстрації документа до сповіщення учасників" loading="lazy" decoding="async" width="1177" height="598" src="/_astro/workflow-avtorozpodilu.UXhgqF-f_ZL7rTB.webp" srcset=""></p>
+<p><em>Рис. 5. Повний workflow авторозподілу: 10 кроків від реєстрації документа до сповіщення учасників, з гілкою екстериторіального модуля.</em></p>
+<p>Workflow процесу показує, як алгоритм взаємодіє з іншими рівнями архітектури. Класифікація, валідація, перевірка пов’язаних справ і формування пулу суддів відбуваються ДО запуску формули. Після випадкового вибору формується протокол (з хеш-ланцюгом), сповіщаються учасники і визначається прогнозований строк розгляду.</p>
+<p><strong>3.7.1. Перевірка результату на даних Печерського суду</strong></p>
+<p>За модельними припущеннями на основі загального обсягу надходжень Печерського районного суду м. Києва (68 716 справ за 2025 рік, 20 суддів) запропонована формула дає такий розподіл. Наведені середні значення округлені, тому категорійні підсумки можуть не дорівнювати точно 68 716 без таблиці неокруглених значень:</p>
+<p>Для повної перевірюваності цього блоку до концепції треба додати додаток з кодом або псевдокодом симуляції, seed генератора випадкових чисел, розподілом ваг справ і неокругленими підсумками по кожній категорії суддів. Додатково: оскільки фактично застосовувану формулу перетворення К_Н у ймовірність тепер достовірно відомо (Кймов = ОКРУГЛ((1,05 × К_Н.max − К_Н) × 100), підтверджено ДП «Інформаційні судові системи»), моделювання доцільно повторити саме на цій формулі, а не на гіпотетичній «основній реалізації 2024 року». Це зробить результати співставними з реальною поведінкою системи й усуне закид у тому, що порівняння будується на припущенні. Усі числові результати слід послідовно маркувати як модельний сценарій, узгодивши формулювання між основним текстом, підписами до рисунків і висновками.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Категорія</strong></th><th><strong>Поточна 2024</strong></th><th><strong>Нова формула</strong></th><th><strong>Зміна для категорії</strong></th></tr></thead><tbody><tr><td>Голова суду (1 чол.)</td><td>2 794</td><td><strong>1 624</strong></td><td>Розвантажений на 1 170 справ/рік (5 справ/день)</td></tr><tr><td>Заступники голови (2 чол.)</td><td>3 001 (сер.)</td><td><strong>2 027 (сер.)</strong></td><td>Розвантажений на 974 справ/рік на кожного</td></tr><tr><td>Інші адмін. посади (3 чол.)</td><td>3 408 (сер.)</td><td><strong>2 968 (сер.)</strong></td><td>Розвантажений на 440 справ/рік на кожного</td></tr><tr><td>Звичайні судді (14 чол.)</td><td>3 545 (сер.)</td><td>3 874 (сер.)</td><td>Збільшення на 329 справ/рік (1-2 справи/день)</td></tr></tbody></table>
+<p><em>Звичайні судді у наведеному модельному сценарії отримують у середньому на 329 справ більше — приблизно 1-2 справи на робочий день. Такий перерозподіл може бути справедливою компенсацією лише за умови, що адміністративне навантаження відповідних суддів фактично підтверджене, а коефіцієнти посади встановлені єдино й прозоро (а не лише як пільга на папері).</em></p>
+<h2 id="розділ-iv-нова-формула-екстериторіального-авторозподілу">Розділ IV. Нова формула екстериторіального авторозподілу</h2>
+<p>Поряд із класичним внутрішньосудовим розподілом концепція передбачає окрему модель — екстериторіальний авторозподіл. Це нова для української судової системи модель, яка дозволяє розподіляти справи не тільки між суддями одного суду, а й між суддями різних судів. Її необхідність зумовлена як можливими тимчасовими обставинами (відсутність достатньої кількості суддів у конкретному суді), так і системними викликами — нерівномірним навантаженням між судами, особливостями військового часу, малозначністю справ для процесуальної економії.</p>
+<p><strong>Передумова щодо технічної здійсненності.</strong> Екстериторіальний розподіл технічно неможливий до запуску централізованого модуля авторозподілу. За результатами технічного аудиту ЄСІТС (ТОВ «CIVITTA»), підтвердженими листами ДСА України та ДП «Інформаційні судові системи» у відповідь на запит № 3782/0/19-26 від 02.06.2026, централізованого модуля авторозподілу як окремого елемента наразі не існує: авторозподіл реалізований лише як локальна функція кожної автоматизованої системи документообігу суду. Централізований модуль лише планується у складі підсистеми ЄСІКС «Електронний документообіг суду» і не має затверджених строків запуску. З огляду на це етапи екстериторіального розподілу, описані нижче, слід реалізовувати не за календарними строками, а в прив’язці до фактичного створення централізованого модуля відповідно до Дорожньої карти з розроблення ІТ-рішень у судовій системі (наказ ДСА № 534 від 02.12.2024) та Концепції ЄСІКС (наказ ДСА № 178 від 30.04.2025).</p>
+<h3 id="41-передумови-екстериторіальності">4.1. Передумови екстериторіальності</h3>
+<p>Концепція передбачає три основні випадки, коли застосовується екстериторіальний розподіл:</p>
+<p><strong>4.1.1. Брак суддів з необхідною спеціалізацією</strong></p>
+<p>Якщо у конкретному суді відсутня достатня кількість суддів з потрібною спеціалізацією (через тимчасові вакансії, відпустки, відсторонення тощо), справа автоматично включається до розподілу між суддями інших судів. Це усуває необхідність формальної передачі справи за підсудністю і значно скорочує час розгляду.</p>
+<p><strong>4.1.2. Балансування справ між судами</strong></p>
+<p>Якщо нерівномірне навантаження між судами стало системним — наприклад, один регіональний суд має 1 500 справ на одного суддю, а інший — 5 000 — концепція передбачає автоматизований розподіл справ для зменшення цього дисбалансу. Це особливо актуально для районних судів у великих містах, де навантаження може значно перевищувати середнє по країні.</p>
+<p><strong>4.1.3. Малозначні спори та письмове провадження</strong></p>
+<p>Для категорій справ, які розглядаються у письмовому провадженні, чи малозначних спорів територіальна підсудність часто не має критичного значення для якості розгляду. Концепція передбачає автоматичний розподіл таких справ між усіма суддями України (з відповідною спеціалізацією), без територіальної прив’язки. Це створює пул великого обсягу і дозволяє ефективніше балансувати навантаження.</p>
+<h3 id="42-багаторівневий-пул-судів">4.2. Багаторівневий пул судів</h3>
+<p>Ключовою новелою концепції є шестирівневий пул судів, який визначає пріоритет включення суддів у пул кандидатів на отримання справи. Розподіл здійснюється від найвищого рівня пріоритету (територіально найближчі суди) до найнижчого. Перехід до нижчого рівня відбувається тільки тоді, коли у попередньому рівні недостатньо суддів.</p>
+<p><img alt="Схема багаторівневого пулу судів для екстериторіального розподілу: шість рівнів пріоритету за віддаленістю" loading="lazy" decoding="async" width="1223" height="585" src="/_astro/bagatorivnevyi-pul-sudiv.CEw9Aq3R_fGRUi.webp" srcset=""></p>
+<p><em>Рис. 6. Багаторівневий пул судів для екстериторіального розподілу: 6 рівнів пріоритету за віддаленістю.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Рівень</strong></th><th><strong>Опис рівня</strong></th><th><strong>К_ТЕР</strong></th><th><strong>Застосування</strong></th></tr></thead><tbody><tr><td><strong>Рівень 1</strong></td><td>Суди, які знаходяться в межах однієї області та територіально наближені до первинного суду</td><td><strong>1,00</strong></td><td>Перший пріоритет — мінімальні незручності для учасників</td></tr><tr><td><strong>Рівень 2</strong></td><td>Суди в межах однієї області, розташовані в обласному центрі або територіально наближені до нього</td><td><strong>0,95</strong></td><td>Якщо Рівень 1 недоступний</td></tr><tr><td><strong>Рівень 3</strong></td><td>Суди в межах областей, які межують з областю первинного суду, розташовані в обласному центрі або територіально наближені</td><td><strong>0,85</strong></td><td>Якщо Рівні 1-2 недоступні</td></tr><tr><td><strong>Рівень 4</strong></td><td>Суди в межах областей, які межують з областю первинного суду, розташовані найближче до первинного суду</td><td><strong>0,80</strong></td><td>Якщо Рівні 1-3 недоступні</td></tr><tr><td><strong>Рівень 5</strong></td><td>Суди в межах областей, які не межують з областю первинного суду, проте є найближче, в обласному центрі або територіально наближені</td><td><strong>0,70</strong></td><td>Якщо Рівні 1-4 недоступні</td></tr><tr><td><strong>Рівень 6</strong></td><td>Інші суди України з відповідною спеціалізацією</td><td><strong>0,50</strong></td><td>Тільки для письмового провадження та малозначних спорів</td></tr></tbody></table>
+<h3 id="43-розширена-формула-спроможності">4.3. Розширена формула спроможності</h3>
+<p>Для екстериторіального розподілу формула ефективної спроможності розширюється двома новими коефіцієнтами:</p>
+<p><strong>C_i = Кадм_i × D_i × Кзайм_i × S_i × Ктер_i × Кбезп_i</strong></p>
+<p>де нові коефіцієнти означають:</p>
+<p><strong>Ктер_i —</strong> коефіцієнт територіальності, що враховує рівень пріоритету (від 0,50 для Рівня 6 до 1,00 для Рівня 1, відповідно до таблиці вище);</p>
+<p><strong>Кбезп_i —</strong> коефіцієнт безпеки, що враховує безпекову ситуацію в регіоні розташування суду. Для територій, на яких введено воєнний стан або які перебувають у зоні бойових дій, Кбезп може бути зниженим (наприклад, 0,3) або дорівнювати 0 (повне виключення суду з пулу).</p>
+<p>За мирних умов і нормальних обставин Ктер = 1,0 (для основного суду) і Кбезп = 1,0. Тобто внутрішньосудовий розподіл (Розділ III) є окремим випадком екстериторіального з Ктер = Кбезп = 1.</p>
+<h3 id="44-спеціальні-правила-малозначні-справи-та-письмове-провадження">4.4. Спеціальні правила: малозначні справи та письмове провадження</h3>
+<p>Для категорій справ, які розглядаються у письмовому провадженні (без необхідності особистої участі учасників), та малозначних спорів, концепція передбачає спеціальний режим:</p>
+<p><strong>Розподіл без територіальної прив’язки.</strong> Усі судді України з відповідною спеціалізацією включаються в єдиний пул. Ктер = 1,0 для всіх. Це створює пул великого обсягу, що дозволяє автоматично балансувати навантаження між судами.</p>
+<p><strong>Розгляд за наявними матеріалами.</strong> Оскільки розгляд письмовий, фізична присутність учасників не потрібна. Суддя, до якого передано справу, отримує доступ до повних матеріалів через електронний кабінет.</p>
+<p><strong>Електронне підписання рішень.</strong> Рішення підписується кваліфікованим електронним підписом і автоматично передається до Єдиного державного реєстру судових рішень.</p>
+<h3 id="45-електронна-нарадча-кімната-для-міжсудових-колегій">4.5. Електронна нарадча кімната для міжсудових колегій</h3>
+<p>Для випадків, коли екстериторіальна справа має розглядатися колегіально (наприклад, апеляційний перегляд), концепція передбачає створення захищеної «Електронної нарадчої кімнати».</p>
+<p>Технічно це окремий захищений канал з’єднання P2P (peer-to-peer) між суддями, які входять до складу колегії. Канал створюється в обхід основного сервера системи відеоконференцій (ВКЗ) — сервер бере участь лише на етапі ініціації з’єднання. По завершенні наради тонкий клієнт інформує ВКЗ про закінчення сеансу.</p>
+<p>Принципово важлива риса: відеозапис такого з’єднання не здійснюється штатними засобами системи. Це може забезпечити таємницю нарадчої кімнати лише за умови технічної заборони запису на клієнтських пристроях, журналювання факту створення та завершення сеансу без запису змісту наради, а також процесуальної відповідальності за сторонню фіксацію.</p>
+<h2 id="розділ-v-імплементація-концепції">Розділ V. Імплементація концепції</h2>
+<p>Імплементація концепції вимагає скоординованих змін на трьох рівнях: нормативно-правовому, технічному та організаційному. Цей розділ систематизує необхідні дії на кожному рівні.</p>
+<h3 id="51-нормативно-правові-зміни">5.1. Нормативно-правові зміни</h3>
+<p>Для повноцінної імплементації концепції необхідні зміни до законодавчих та підзаконних нормативно-правових актів.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Захід</strong></th><th><strong>Зміна НА</strong></th><th><strong>Зміна НПА</strong></th><th><strong>Зміна ЗУ</strong></th></tr></thead><tbody><tr><td>Впровадження централізованого авторозподілу</td><td><strong>Так</strong></td><td>Ні</td><td>Ні</td></tr><tr><td>Затвердження класифікатора процесуальних документів</td><td><strong>Так</strong></td><td>Ні</td><td>Ні</td></tr><tr><td>Автоматична класифікація вхідних документів (ШІ)</td><td><strong>Так</strong></td><td><strong>Так</strong></td><td>Ні</td></tr><tr><td>Єдиний реєстр спеціалізацій суддів</td><td><strong>Так</strong></td><td><strong>Так</strong></td><td>Ні</td></tr><tr><td>Методика формування коефіцієнта складності</td><td><strong>Так</strong></td><td>Ні</td><td>Ні</td></tr><tr><td>Реєстр пов’язаних осіб суддів</td><td><strong>Так</strong></td><td><strong>Так</strong></td><td>Ні</td></tr><tr><td>Балансування справ між судами</td><td><strong>Так</strong></td><td><strong>Так</strong></td><td><strong>Так</strong></td></tr><tr><td>Захищена «Електронна нарадча кімната»</td><td><strong>Так</strong></td><td><strong>Так</strong></td><td><strong>Так</strong></td></tr><tr><td>Прогнозований строк розгляду</td><td><strong>Так</strong></td><td><strong>Так</strong></td><td><strong>Так</strong></td></tr></tbody></table>
+<p><strong>Примітка:</strong> НА — нормативний акт (Положення про АСДС); НПА — нормативно-правовий акт інших органів; ЗУ — Закон України.</p>
+<h3 id="52-технічні-зміни-в-асдс">5.2. Технічні зміни в АСДС</h3>
+<p>Більшість запропонованих рішень вимагає внесення змін до програмного забезпечення АСДС. Конкретний обсяг технічних робіт включає:</p>
+<ul>
+<li>реалізацію нової математичної моделі (формули V, C_i, T_i, B_i, R_i);</li>
+<li>інтеграцію з ЕСОЗ для перевірки лікарняних;</li>
+<li>інтеграцію з НАЗК, ДРФО, ПФУ для оновлення Реєстру пов’язаних осіб;</li>
+<li>реалізацію ШІ-модуля для класифікації документів;</li>
+<li>реалізацію хеш-ланцюга протоколів;</li>
+<li>реалізацію механізму сповіщення учасників справ;</li>
+<li>створення модуля екстериторіального розподілу;</li>
+<li>створення Електронної нарадчої кімнати з P2P-протоколом;</li>
+<li>реалізацію розрахунку прогнозованого строку розгляду на базі статистичних даних.</li>
+</ul>
+<h3 id="53-перехідні-положення">5.3. Перехідні положення</h3>
+<p>Враховуючи комплексність концепції, її імплементація доцільна поетапно:</p>
+<p><strong>Етап 1 (короткостроковий — 1 місяць)</strong></p>
+<ol>
+<li>заміна формули у Положенні про АСДС на математично коректну формулу з симетричним К_АДМІН;</li>
+<li>повернення обов’язкової вимоги відображати діапазони імовірності у протоколах;</li>
+<li>впровадження хеш-ланцюга протоколів;</li>
+<li>впровадження автоматичного сповіщення учасників.</li>
+</ol>
+<p><strong>Етап 2 (середньостроковий — 1-6 місяців)</strong></p>
+<ol>
+<li>розробка і затвердження класифікатора процесуальних документів;</li>
+<li>створення Єдиного реєстру спеціалізацій суддів;</li>
+<li>розробка методики коефіцієнта складності справ;</li>
+<li>розширення Реєстру пов’язаних осіб і автоматичне виключення з конфлікту інтересів;</li>
+<li>інтеграція з ЕСОЗ;</li>
+<li>впровадження динамічного балансування навантаження;</li>
+<li>впровадження прогнозованого строку розгляду.</li>
+</ol>
+<p><strong>Етап 3 (довгостроковий — 1-12 місяців)</strong></p>
+<ol>
+<li>розробка ШІ-модуля автоматичної класифікації документів;</li>
+<li>впровадження екстериторіального авторозподілу для письмового провадження;</li>
+<li>створення Електронної нарадчої кімнати з P2P;</li>
+<li>повний перехід на динамічний контрольний період замість календарного року.</li>
+</ol>
+<h2 id="висновки">Висновки</h2>
+<p>Чинна формула автоматизованого розподілу судових справ, закріплена у Положенні редакції 2024/2025 років, має низку математичних та нормативних вад, які не дозволяють їй у повній мірі забезпечити справедливий і неупереджений розподіл. Найбільш серйозними є відсутність повного алгоритму випадкового вибору, некоректне розміщення адміністративного коефіцієнта у знаменнику ваги справи, а також знижена перевірюваність протоколів.</p>
+<p>Додаткове застереження: наведені статистичні результати слід подавати як результати модельного сценарію, а не як точний прогноз для Печерського районного суду без фактичних журналів АСДС, календаря доступності суддів та реального розподілу складності справ.</p>
+<p>Моделювання на основі загального обсягу надходжень Печерського районного суду м. Києва (68 716 справ за 2025 рік, 20 суддів) та модельних припущень щодо коефіцієнтів, складності справ і доступності суддів ілюструє, що модельні реалізації неповного алгоритму формули 2024 року можуть приводити до різниці у розподілі справ для Голови суду від 1 579 до 4 866 справ — тобто у 3,1 раза, причому це залежить від технічної реалізації. Запропонована нова формула за наведеним модельним сценарієм забезпечує відхилення від справедливого цільового значення менше 5% для всіх категорій суддів; за базових припущень однакової ваги справ і однакової доступності вона має давати майже точний цільовий розподіл. Для нормативного впровадження цей висновок слід підтвердити на відтворюваній симуляції з оприлюдненим алгоритмом, вхідними даними та правилами округлення.</p>
+<p>Концепція пропонує не тільки заміну формули, а й комплексну архітектуру з шести рівнів — від уніфікації вхідних даних і єдиного реєстру спеціалізацій до екстериторіального розподілу і захисних механізмів. Усього в межах концепції систематизовано 27 пропозицій, які стосуються технічних змін в АСДС, нормативно-правових актів та законодавства.</p>
+<p>Ключові переваги запропонованої концепції:</p>
+<ol>
+<li>Математично коректна формула з симетричним впливом адміністративного коефіцієнта.</li>
+<li>Повний алгоритм у нормативному акті — без можливості різних технічних інтерпретацій.</li>
+<li>Підвищена перевірюваність — повне відновлення діапазонів імовірності у протоколах та запровадження хеш-ланцюга.</li>
+<li>Захист від маніпуляцій — автоматична перевірка даних через ЕСОЗ, НАЗК, ДРФО, Реєстр пов’язаних осіб.</li>
+<li>Раннє виявлення конфлікту інтересів — сповіщення учасників про результат розподілу.</li>
+<li>Готовність до екстериторіального розподілу — шестирівневий пул судів з К_ТЕР і К_БЕЗП.</li>
+<li>Підтримка нових форм роботи — Електронна нарадча кімната, малозначні справи без територіальної прив’язки.</li>
+<li>Оптимізація судового розгляду — динамічне балансування, прогнозований строк, повторний розподіл у разі затримки.</li>
+</ol>
+<p>Імплементація концепції потребує скоординованих змін на рівні нормативно-правових актів, технічних рішень АСДС та організаційних процесів. Запропонований триетапний підхід (короткостроковий, середньостроковий, довгостроковий) дозволяє реалізувати концепцію поступово, починаючи з найбільш критичних змін — заміни формули та відновлення повноти протоколів.</p>
+<p><em>Метою цієї Концепції є не лише вирішення наявних математичних проблем, а й створення системи, у якій справедливість авторозподілу не залежить від доброї волі окремих осіб і не може бути поставлена під сумнів. Це є фундаментальною умовою забезпечення довіри до судової влади і реалізації конституційного права на справедливий суд.</em></p>
+<p><strong>* * *</strong></p>  </div> </div>  <nav class="toc-container" data-astro-cid-xvrfupwn><div class="toc-inner" data-astro-cid-xvrfupwn><h2 class="toc-title" data-astro-cid-xvrfupwn>Contents</h2><ul class="toc-list" data-astro-cid-xvrfupwn><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#преамбула" data-astro-cid-xvrfupwn>Преамбула</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#розділ-i-аналіз-проблематики-чинних-методик-авторозподілу" data-astro-cid-xvrfupwn>Розділ I. Аналіз проблематики чинних методик авторозподілу</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#11-еволюція-методики-редакції-2018-та-2024-років" data-astro-cid-xvrfupwn>1.1. Еволюція методики: редакції 2018 та 2024 років</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#12-виявлені-проблеми-чинної-формули" data-astro-cid-xvrfupwn>1.2. Виявлені проблеми чинної формули</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#13-статистичне-моделювання-на-даних-печерського-районного-суду-м-києва" data-astro-cid-xvrfupwn>1.3. Статистичне моделювання на даних Печерського районного суду м. Києва</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#14-висновки-за-результатами-аналізу" data-astro-cid-xvrfupwn>1.4. Висновки за результатами аналізу</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#розділ-ii-концептуальні-засади-нової-методики-авторозподілу" data-astro-cid-xvrfupwn>Розділ II. Концептуальні засади нової методики авторозподілу</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#21-принципи-концепції" data-astro-cid-xvrfupwn>2.1. Принципи концепції</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#22-архітектура-системи-шість-рівнів" data-astro-cid-xvrfupwn>2.2. Архітектура системи: шість рівнів</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#23-удосконалення-вхідних-даних-рівень-1" data-astro-cid-xvrfupwn>2.3. Удосконалення вхідних даних (Рівень 1)</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#24-визначення-пулу-суддів-рівень-2" data-astro-cid-xvrfupwn>2.4. Визначення пулу суддів (Рівень 2)</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#25-захисні-механізми-рівень-6" data-astro-cid-xvrfupwn>2.5. Захисні механізми (Рівень 6)</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#26-новітні-підходи-до-оптимізації-судового-розгляду" data-astro-cid-xvrfupwn>2.6. Новітні підходи до оптимізації судового розгляду</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#розділ-iii-нова-формула-внутрішньосудового-авторозподілу" data-astro-cid-xvrfupwn>Розділ III. Нова формула внутрішньосудового авторозподілу</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#31-загальна-структура-алгоритму" data-astro-cid-xvrfupwn>3.1. Загальна структура алгоритму</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#32-формула-ваги-судової-справи" data-astro-cid-xvrfupwn>3.2. Формула ваги судової справи</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#33-формула-ефективної-спроможності-судді" data-astro-cid-xvrfupwn>3.3. Формула ефективної спроможності судді</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#34-формула-цільового-навантаження" data-astro-cid-xvrfupwn>3.4. Формула цільового навантаження</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#35-формула-діапазону-імовірності" data-astro-cid-xvrfupwn>3.5. Формула діапазону імовірності</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#36-випадковий-вибір-та-фіксація" data-astro-cid-xvrfupwn>3.6. Випадковий вибір та фіксація</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#37-workflow-процесу" data-astro-cid-xvrfupwn>3.7. Workflow процесу</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#розділ-iv-нова-формула-екстериторіального-авторозподілу" data-astro-cid-xvrfupwn>Розділ IV. Нова формула екстериторіального авторозподілу</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#41-передумови-екстериторіальності" data-astro-cid-xvrfupwn>4.1. Передумови екстериторіальності</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#42-багаторівневий-пул-судів" data-astro-cid-xvrfupwn>4.2. Багаторівневий пул судів</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#43-розширена-формула-спроможності" data-astro-cid-xvrfupwn>4.3. Розширена формула спроможності</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#44-спеціальні-правила-малозначні-справи-та-письмове-провадження" data-astro-cid-xvrfupwn>4.4. Спеціальні правила: малозначні справи та письмове провадження</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#45-електронна-нарадча-кімната-для-міжсудових-колегій" data-astro-cid-xvrfupwn>4.5. Електронна нарадча кімната для міжсудових колегій</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#розділ-v-імплементація-концепції" data-astro-cid-xvrfupwn>Розділ V. Імплементація концепції</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#51-нормативно-правові-зміни" data-astro-cid-xvrfupwn>5.1. Нормативно-правові зміни</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#52-технічні-зміни-в-асдс" data-astro-cid-xvrfupwn>5.2. Технічні зміни в АСДС</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#53-перехідні-положення" data-astro-cid-xvrfupwn>5.3. Перехідні положення</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#висновки" data-astro-cid-xvrfupwn>Висновки</a></li></ul></div></nav> </div> </article> </main> <footer class="site-footer" data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <div class="footer-col brand-col" data-astro-cid-sz7xmlte> <h3 data-astro-cid-sz7xmlte>Public Report by Roman Maselko</h3> <p data-astro-cid-sz7xmlte> on the work as a member of the High Council of Justice. </p> <div class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2026 Roman Maselko<br data-astro-cid-sz7xmlte>Report materials are CC BY 4.0: free to quote, translate, republish, and mirror, with attribution. Site code is MIT. </div> </div>  <div class="footer-col" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Sections</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="/en/about" data-astro-cid-sz7xmlte>About me</a></li> <li data-astro-cid-sz7xmlte><a href="/en/publications" data-astro-cid-sz7xmlte>Publications</a></li> <li data-astro-cid-sz7xmlte><a href="/en/moments" data-astro-cid-sz7xmlte>Moments</a></li> <li data-astro-cid-sz7xmlte><a href="/en/thanks" data-astro-cid-sz7xmlte>Acknowledgements</a></li> <li data-astro-cid-sz7xmlte><a href="/en/plans" data-astro-cid-sz7xmlte>Plans</a></li> </ul> </div> <div class="footer-col" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Areas of work</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte> <a href="/en/directions/dyscyplinarni-provadzhennya" data-astro-cid-sz7xmlte>Disciplinary proceedings</a> </li><li data-astro-cid-sz7xmlte> <a href="/en/directions/formuvannya-suddivskogo-korpusu" data-astro-cid-sz7xmlte>Building the judiciary</a> </li><li data-astro-cid-sz7xmlte> <a href="/en/directions/avtorytet-pravosuddya" data-astro-cid-sz7xmlte>Strengthening the authority of justice</a> </li><li data-astro-cid-sz7xmlte> <a href="/en/directions/cyfrovizaciya" data-astro-cid-sz7xmlte>Digital transformation</a> </li> </ul> </div>  <div class="footer-col" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Contact</h4> <div class="social-links" data-astro-cid-sz7xmlte> <a href="https://github.com/maselkor" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-astro-cid-sz7xmlte>    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" data-astro-cid-sz7xmlte></path></svg>   </a><a href="mailto:maselko.r@gmail.com" aria-label="Email" data-astro-cid-sz7xmlte>  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-astro-cid-sz7xmlte></path><polyline points="22,6 12,13 2,6" data-astro-cid-sz7xmlte></polyline></svg>     </a><a href="https://www.linkedin.com/in/roman-maselko-527262340/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-astro-cid-sz7xmlte>     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" data-astro-cid-sz7xmlte></path><rect x="2" y="9" width="4" height="12" data-astro-cid-sz7xmlte></rect><circle cx="4" cy="4" r="2" data-astro-cid-sz7xmlte></circle></svg>  </a><a href="https://www.facebook.com/roman.maselko" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-astro-cid-sz7xmlte>      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" data-astro-cid-sz7xmlte></path></svg> </a> </div> </div> </div>  </footer> <div id="search-overlay" class="search-overlay hidden" data-astro-cid-otpdt6jm> <div id="search-backdrop" class="search-backdrop" data-astro-cid-otpdt6jm></div> <div class="search-panel-wrapper" data-astro-cid-otpdt6jm> <div id="search-panel" class="search-panel" data-astro-cid-otpdt6jm> <div class="search-panel-header" data-astro-cid-otpdt6jm> <span class="search-title" data-astro-cid-otpdt6jm>Search</span> <button id="search-close-btn" class="search-close-btn" data-astro-cid-otpdt6jm>Esc</button> </div> <div class="search-panel-content" data-astro-cid-otpdt6jm> <div id="pagefind__search" data-astro-cid-otpdt6jm></div> </div> </div> </div> </div> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.mnDh6bwG.js"></script> <dialog id="author-modal" class="author-modal" data-astro-cid-sz7xmlte> <button id="close-modal" class="close-btn" aria-label="Close modal" data-astro-cid-sz7xmlte>&times;</button> <div class="modal-flex" data-astro-cid-sz7xmlte> <img id="modal-avatar" src="" alt="Avatar" class="modal-avatar" data-astro-cid-sz7xmlte> <div data-astro-cid-sz7xmlte> <h3 id="modal-name" data-astro-cid-sz7xmlte></h3> <span id="modal-title" data-astro-cid-sz7xmlte></span> <span id="modal-role" data-astro-cid-sz7xmlte></span> </div> </div> <p id="modal-bio" data-astro-cid-sz7xmlte></p> <div id="modal-socials" data-astro-cid-sz7xmlte></div> </dialog> <script type="module" src="/_astro/Footer.astro_astro_type_script_index_0_lang.WDfCEJ-K.js"></script> <script data-astro-rerun>
+			function getCodeBlockLabel(pre) {
+				const explicitLabel =
+					pre.getAttribute('data-file') ||
+					pre.getAttribute('data-filename') ||
+					pre.dataset.file ||
+					pre.dataset.filename;
+				if (explicitLabel) return explicitLabel;
+
+				const code = pre.querySelector('code');
+				const languageClass = code
+					? Array.from(code.classList).find((className) => className.startsWith('language-'))
+					: null;
+				const language =
+					pre.getAttribute('data-language') ||
+					pre.dataset.language ||
+					(languageClass ? languageClass.replace('language-', '') : '');
+				const normalized = language.toLowerCase();
+
+				const labels = {
+					astro: 'Astro',
+					bash: 'Bash',
+					css: 'CSS',
+					diff: 'Diff',
+					html: 'HTML',
+					js: 'JavaScript',
+					json: 'JSON',
+					md: 'Markdown',
+					plaintext: 'Code',
+					sh: 'Shell',
+					shell: 'Shell',
+					text: 'Code',
+					toml: 'TOML',
+					ts: 'TypeScript',
+					tsx: 'TSX',
+					yaml: 'YAML',
+					yml: 'YAML',
+				};
+
+				if (!normalized) return 'Code';
+				return labels[normalized] || normalized.toUpperCase();
+			}
+
+			async function writeToClipboard(text) {
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					await navigator.clipboard.writeText(text);
+					return;
+				}
+
+				const textarea = document.createElement('textarea');
+				textarea.value = text;
+				textarea.setAttribute('readonly', 'true');
+				textarea.style.position = 'absolute';
+				textarea.style.left = '-9999px';
+				document.body.appendChild(textarea);
+				textarea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textarea);
+			}
+
+			function enhanceCodeBlocks() {
+				const codeBlocks = Array.from(document.querySelectorAll('.prose pre'));
+
+				for (const pre of codeBlocks) {
+					if (pre.dataset.enhancedCodeBlock === 'true') continue;
+
+					const code = pre.querySelector('code');
+					if (!code) continue;
+
+					pre.dataset.enhancedCodeBlock = 'true';
+					pre.setAttribute('tabindex', '0');
+
+					const wrapper = document.createElement('div');
+					wrapper.className = 'code-block-frame';
+
+					pre.parentNode?.insertBefore(wrapper, pre);
+					wrapper.appendChild(pre);
+
+					const label = document.createElement('span');
+					label.className = 'code-block-label';
+					label.textContent = getCodeBlockLabel(pre);
+
+					const copyButton = document.createElement('button');
+					copyButton.type = 'button';
+					copyButton.className = 'copy-code-button';
+					copyButton.innerHTML =
+						'<span class="copy-code-button__default">Copy</span><span class="copy-code-button__success">Copied</span>';
+					copyButton.setAttribute('aria-label', `Copy ${label.textContent} code`);
+
+					copyButton.addEventListener('click', async () => {
+						try {
+							await writeToClipboard(code.innerText || '');
+							copyButton.dataset.copied = 'true';
+							window.setTimeout(() => {
+								copyButton.dataset.copied = 'false';
+							}, 1200);
+						} catch (error) {
+							console.error('Failed to copy code block', error);
+						}
+					});
+
+					wrapper.appendChild(label);
+					wrapper.appendChild(copyButton);
+				}
+			}
+
+			enhanceCodeBlocks();
+
+			if (!window.__academicPortfolioCodeBlockListener) {
+				document.addEventListener('astro:after-swap', enhanceCodeBlocks);
+				window.__academicPortfolioCodeBlockListener = true;
+			}
+		</script> </body> </html>

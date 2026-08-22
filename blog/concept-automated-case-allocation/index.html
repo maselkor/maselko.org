@@ -1,0 +1,825 @@
+<!DOCTYPE html><html lang="uk" data-astro-cid-bvzihdzo> <head><meta charset="utf-8"><script data-cfasync="false">
+	(() => {
+		const root = document.documentElement;
+		const paintTheme = (theme) => {
+			const dark = theme === 'dark';
+			root.setAttribute('data-theme', dark ? 'dark' : 'light');
+			root.style.setProperty('background-color', 'var(--color-bg)');
+			root.style.colorScheme = dark ? 'dark' : 'light';
+		};
+		let theme = 'light';
+		try {
+			const s = localStorage.getItem('theme');
+			if (s === 'dark' || s === 'light') theme = s;
+			else if (matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+		} catch {
+			if (matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+		}
+		paintTheme(theme);
+		window.addEventListener('load', () => root.setAttribute('data-theme-ready', 'true'), { once: true });
+		window.__setPreferredTheme = paintTheme;
+	})();
+</script><style>
+	/* CSS variables inline — available immediately in all modes (dev + prod), before any external CSS */
+	:root {
+		--color-bg: #ffffff;
+		--color-bg-offset: #ffffff;
+		--color-bg-header: rgba(255, 255, 255, 0.85);
+		--color-text-main: #1a1a1a;
+		--color-text-muted: #555555;
+		--color-accent: #003366;
+		--color-border: #eaeaea;
+	}
+	[data-theme='dark'] {
+		--color-bg: #0f172a;
+		--color-bg-offset: #0f172a;
+		--color-bg-header: rgba(15, 23, 42, 0.8);
+		--color-text-main: #e2e8f0;
+		--color-text-muted: #94a3b8;
+		--color-accent: #60a5fa;
+		--color-border: #334155;
+	}
+	html, body { min-height: 100%; background-color: var(--color-bg); }
+	@media (prefers-color-scheme: dark) {
+		html:not([data-theme='light']), html:not([data-theme='light']) body { background-color: var(--color-bg); }
+	}
+	html[data-theme='dark'], html[data-theme='dark'] body { background-color: var(--color-bg); color-scheme: dark; }
+	html[data-theme='light'], html[data-theme='light'] body { background-color: var(--color-bg); color-scheme: light; }
+	/* Critical header layout — prevents FOUC before component CSS loads */
+	header {
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		padding: 0 1em;
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+	}
+	header nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 960px;
+		margin: 0 auto;
+		height: 4.5rem;
+	}
+	header { background-color: var(--color-bg-header); }
+	/* Critical card backgrounds — prevents white flash in dark mode */
+	.project-card, .interactive-card, .pi-card, .collab-card, .team-card {
+		background-color: var(--color-bg-offset);
+		border-color: var(--color-border);
+	}
+	.team-hero h1 { color: var(--color-text-main); }
+	.team-hero p { color: var(--color-text-muted); }
+	body {
+		background-color: var(--color-bg);
+		color: var(--color-text-main);
+		margin: 0;
+	}
+	/* Suppress all transitions until page is fully styled */
+	html:not([data-theme-ready]) *, html:not([data-theme-ready]) *::before, html:not([data-theme-ready]) *::after {
+		transition: none !important;
+		animation: none !important;
+	}
+</style><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" hreflang="uk" href="https://maselko.org/blog/koncepciya-avtorozpodilu"><link rel="alternate" hreflang="en" href="https://maselko.org/en/blog/concept-automated-case-allocation"><link rel="alternate" hreflang="x-default" href="https://maselko.org/blog/koncepciya-avtorozpodilu"><meta property="og:locale" content="uk_UA"><link rel="alternate" type="application/rss+xml" title="Публічний звіт Романа Маселка" href="https://maselko.org/rss.xml"><meta name="generator" content="Astro v6.4.5"><meta name="color-scheme" content="light dark"><style>
+		@font-face {
+			font-family: "Atkinson";
+			src: url("/fonts/atkinson-regular.woff") format("woff");
+			font-weight: 400;
+			font-style: normal;
+			font-display: swap;
+		}
+
+		@font-face {
+			font-family: "Atkinson";
+			src: url("/fonts/atkinson-bold.woff") format("woff");
+			font-weight: 700;
+			font-style: normal;
+			font-display: swap;
+		}
+	</style><link rel="canonical" href="https://maselko.org/blog/concept-automated-case-allocation/"><title>A Concept for the Automated Allocation of Court Cases in Ukraine</title><meta name="title" content="A Concept for the Automated Allocation of Court Cases in Ukraine"><meta name="description" content="The full text of the Concept: an analysis of the current allocation model, its conceptual foundations, and proposed new formulas for within-court and extraterritorial case allocation."><meta property="og:type" content="website"><meta property="og:url" content="https://maselko.org/blog/concept-automated-case-allocation/"><meta property="og:title" content="A Concept for the Automated Allocation of Court Cases in Ukraine"><meta property="og:description" content="The full text of the Concept: an analysis of the current allocation model, its conceptual foundations, and proposed new formulas for within-court and extraterritorial case allocation."><meta property="og:image" content="https://maselko.org/blog/concept-automated-case-allocation.png"><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://maselko.org/blog/concept-automated-case-allocation/"><meta property="twitter:title" content="A Concept for the Automated Allocation of Court Cases in Ukraine"><meta property="twitter:description" content="The full text of the Concept: an analysis of the current allocation model, its conceptual foundations, and proposed new formulas for within-court and extraterritorial case allocation."><meta property="twitter:image" content="https://maselko.org/blog/concept-automated-case-allocation.png"><!-- Umami Analytics --><style>:root{--font-sans: "Atkinson", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;--font-serif: "Georgia", "Times New Roman", Times, serif;--color-bg: #ffffff;--color-bg-offset: #ffffff;--color-bg-header: rgba(255, 255, 255, .85);--color-text-main: #1a1a1a;--color-text-muted: #555555;--color-accent: #003366;--color-accent-light: #e6f0fa;--color-border: #eaeaea;--color-header-border: rgba(0, 0, 0, .08);--color-bg-mobile-menu: rgba(255, 255, 255, .95);--max-width: 1200px;--radius: 8px;--shadow-sm: 0 1px 3px rgba(0, 0, 0, .05);--shadow-md: 0 4px 6px rgba(0, 0, 0, .08);--shadow-lg: 0 10px 15px rgba(0, 0, 0, .1)}[data-theme=dark]{--color-bg: #0f172a;--color-bg-offset: #0f172a;--color-bg-header: rgba(15, 23, 42, .8);--color-text-main: #e2e8f0;--color-text-muted: #94a3b8;--color-accent: #60a5fa;--color-accent-light: #1e3a8a;--color-border: #334155;--color-header-border: rgba(255, 255, 255, .1);--color-bg-mobile-menu: rgba(15, 23, 42, .95);--shadow-sm: 0 1px 3px rgba(0, 0, 0, .5);--shadow-md: 0 4px 6px rgba(0, 0, 0, .5);--shadow-lg: 0 10px 15px rgba(0, 0, 0, .5)}html{box-sizing:border-box;scroll-behavior:smooth;overflow-y:scroll}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:var(--color-bg)}::-webkit-scrollbar-thumb{background-color:var(--color-border);border-radius:10px;border:2px solid var(--color-bg)}::-webkit-scrollbar-thumb:hover{background-color:var(--color-text-muted)}*,*:before,*:after{box-sizing:inherit}body{font-family:var(--font-sans);background-color:var(--color-bg);color:var(--color-text-main);line-height:1.6;margin:0;font-size:18px;transition:background-color .3s ease,color .3s ease}main{width:100%;max-width:var(--max-width);margin:0 auto;padding:3rem 1rem}h1,h2,h3,h4,h5{font-family:var(--font-serif);color:var(--color-text-main);line-height:1.2;margin-bottom:.75rem}h1{font-size:2.5rem;margin-top:0}h2{font-size:2rem;margin-top:2rem;border-bottom:2px solid var(--color-accent);padding-bottom:.5rem;display:inline-block}h3{font-size:1.5rem;color:var(--color-accent);margin-top:1.5rem}p{margin-bottom:1.5rem;color:var(--color-text-muted)}a{color:var(--color-accent);text-decoration:none;transition:.2s}a:hover{opacity:.8;text-decoration:underline}.btn{display:inline-block;background-color:var(--color-accent);color:var(--color-bg);font-weight:600;padding:.5rem 1rem;border-radius:4px;text-decoration:none!important}.btn-outline{background:transparent;border:1px solid var(--color-accent);color:var(--color-accent);padding:.5rem 1rem;border-radius:4px}.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-top:2rem}.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:2rem}.author-link{position:relative;display:inline-block;cursor:pointer;border-bottom:1px dotted var(--color-accent);color:var(--color-text-main)}.author-link:hover .author-tooltip{opacity:1;visibility:visible;transform:translate(-50%) translateY(-10px)}.author-tooltip{position:absolute;bottom:100%;left:50%;transform:translate(-50%) translateY(0);background-color:var(--color-bg);color:var(--color-text-main);border:1px solid var(--color-border);box-shadow:var(--shadow-lg);padding:1rem;width:max-content;max-width:320px;border-radius:8px;opacity:0;visibility:hidden;transition:all .2s ease-in-out;z-index:1000;text-align:left;pointer-events:none}.author-tooltip img{width:50px;height:50px;border-radius:50%;float:left;margin-right:1rem;object-fit:cover}.author-tooltip h4{margin:0;font-size:1rem;font-family:var(--font-sans);color:var(--color-text-main)}.author-tooltip p{margin:0;font-size:.85rem;line-height:1.4;color:var(--color-text-muted)}.author-tooltip .role{font-size:.8rem;color:var(--color-accent);display:block;margin-bottom:.25rem}.bibtex-panel::-webkit-scrollbar{height:6px}.bibtex-panel::-webkit-scrollbar-track{background:transparent}.bibtex-panel::-webkit-scrollbar-thumb{background-color:var(--color-border);border-radius:10px}.blog-row{display:flex;gap:1.5rem;border-bottom:1px solid var(--color-border);padding:1.5rem 0;align-items:flex-start}.blog-row:first-child{padding-top:0}.blog-row:last-child{border-bottom:none}.blog-row img{width:200px;height:120px;object-fit:cover;border-radius:6px;flex-shrink:0}.blog-content{flex:1}.blog-title{margin:0 0 .5rem;font-size:1.4rem;font-family:var(--font-serif);color:var(--color-text-main)}.blog-meta{font-size:.9rem;color:var(--color-text-muted);margin-bottom:.5rem}.blog-desc{margin:0;font-size:1rem;color:var(--color-text-muted)}.publication-item{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--color-border)}.pub-title{font-weight:700;font-size:1.1rem;color:var(--color-text-main);display:block}.pub-authors{margin:.25rem 0;color:var(--color-text-muted)}.pub-venue{font-style:italic;color:var(--color-text-muted)}.team-card{text-align:center}.team-avatar{width:140px;height:140px;border-radius:50%;object-fit:cover;margin-bottom:1rem;border:3px solid var(--color-accent-light)}.team-name{font-weight:700;font-size:1.1rem;display:block;color:var(--color-text-main)}.team-role{font-size:.9rem;color:var(--color-accent);display:block;margin-bottom:.5rem}.project-card{background-color:var(--color-bg-offset);border:1px solid var(--color-border);border-radius:var(--radius)}[data-theme=dark] img{filter:brightness(.9)}@media(max-width:720px){.blog-row{flex-direction:column}.blog-row img{width:100%;height:auto}}.pagefind-ui__result.svelte-j9e30.svelte-j9e30{list-style-type:none;display:flex;align-items:flex-start;gap:min(calc(40px * var(--pagefind-ui-scale)),3%);padding:calc(30px * var(--pagefind-ui-scale)) 0 calc(40px * var(--pagefind-ui-scale));border-top:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result.svelte-j9e30.svelte-j9e30:last-of-type{border-bottom:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result-thumb.svelte-j9e30.svelte-j9e30{width:min(30%,calc((30% - (100px * var(--pagefind-ui-scale))) * 100000));max-width:calc(120px * var(--pagefind-ui-scale));margin-top:calc(10px * var(--pagefind-ui-scale));aspect-ratio:var(--pagefind-ui-image-box-ratio);position:relative}.pagefind-ui__result-image.svelte-j9e30.svelte-j9e30{display:block;position:absolute;left:50%;transform:translate(-50%);font-size:0;width:auto;height:auto;max-width:100%;max-height:100%;border-radius:var(--pagefind-ui-image-border-radius)}.pagefind-ui__result-inner.svelte-j9e30.svelte-j9e30{flex:1;display:flex;flex-direction:column;align-items:flex-start;margin-top:calc(10px * var(--pagefind-ui-scale))}.pagefind-ui__result-title.svelte-j9e30.svelte-j9e30{display:inline-block;font-weight:700;font-size:calc(21px * var(--pagefind-ui-scale));margin-top:0;margin-bottom:0}.pagefind-ui__result-title.svelte-j9e30 .pagefind-ui__result-link.svelte-j9e30{color:var(--pagefind-ui-text);text-decoration:none}.pagefind-ui__result-title.svelte-j9e30 .pagefind-ui__result-link.svelte-j9e30:hover{text-decoration:underline}.pagefind-ui__result-excerpt.svelte-j9e30.svelte-j9e30{display:inline-block;font-weight:400;font-size:calc(16px * var(--pagefind-ui-scale));margin-top:calc(4px * var(--pagefind-ui-scale));margin-bottom:0;min-width:calc(250px * var(--pagefind-ui-scale))}.pagefind-ui__loading.svelte-j9e30.svelte-j9e30{color:var(--pagefind-ui-text);background-color:var(--pagefind-ui-text);border-radius:var(--pagefind-ui-border-radius);opacity:.1;pointer-events:none}.pagefind-ui__result-tags.svelte-j9e30.svelte-j9e30{list-style-type:none;padding:0;display:flex;gap:calc(20px * var(--pagefind-ui-scale));flex-wrap:wrap;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__result-tag.svelte-j9e30.svelte-j9e30{padding:calc(4px * var(--pagefind-ui-scale)) calc(8px * var(--pagefind-ui-scale));font-size:calc(14px * var(--pagefind-ui-scale));border-radius:var(--pagefind-ui-border-radius);background-color:var(--pagefind-ui-tag)}.pagefind-ui__result.svelte-4xnkmf.svelte-4xnkmf{list-style-type:none;display:flex;align-items:flex-start;gap:min(calc(40px * var(--pagefind-ui-scale)),3%);padding:calc(30px * var(--pagefind-ui-scale)) 0 calc(40px * var(--pagefind-ui-scale));border-top:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result.svelte-4xnkmf.svelte-4xnkmf:last-of-type{border-bottom:solid var(--pagefind-ui-border-width) var(--pagefind-ui-border)}.pagefind-ui__result-nested.svelte-4xnkmf.svelte-4xnkmf{display:flex;flex-direction:column;padding-left:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__result-nested.svelte-4xnkmf.svelte-4xnkmf:first-of-type{padding-top:calc(10px * var(--pagefind-ui-scale))}.pagefind-ui__result-nested.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf{font-size:.9em;position:relative}.pagefind-ui__result-nested.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf:before{content:"⤷ ";position:absolute;top:0;right:calc(100% + .1em)}.pagefind-ui__result-thumb.svelte-4xnkmf.svelte-4xnkmf{width:min(30%,calc((30% - (100px * var(--pagefind-ui-scale))) * 100000));max-width:calc(120px * var(--pagefind-ui-scale));margin-top:calc(10px * var(--pagefind-ui-scale));aspect-ratio:var(--pagefind-ui-image-box-ratio);position:relative}.pagefind-ui__result-image.svelte-4xnkmf.svelte-4xnkmf{display:block;position:absolute;left:50%;transform:translate(-50%);font-size:0;width:auto;height:auto;max-width:100%;max-height:100%;border-radius:var(--pagefind-ui-image-border-radius)}.pagefind-ui__result-inner.svelte-4xnkmf.svelte-4xnkmf{flex:1;display:flex;flex-direction:column;align-items:flex-start;margin-top:calc(10px * var(--pagefind-ui-scale))}.pagefind-ui__result-title.svelte-4xnkmf.svelte-4xnkmf{display:inline-block;font-weight:700;font-size:calc(21px * var(--pagefind-ui-scale));margin-top:0;margin-bottom:0}.pagefind-ui__result-title.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf{color:var(--pagefind-ui-text);text-decoration:none}.pagefind-ui__result-title.svelte-4xnkmf .pagefind-ui__result-link.svelte-4xnkmf:hover{text-decoration:underline}.pagefind-ui__result-excerpt.svelte-4xnkmf.svelte-4xnkmf{display:inline-block;font-weight:400;font-size:calc(16px * var(--pagefind-ui-scale));margin-top:calc(4px * var(--pagefind-ui-scale));margin-bottom:0;min-width:calc(250px * var(--pagefind-ui-scale))}.pagefind-ui__loading.svelte-4xnkmf.svelte-4xnkmf{color:var(--pagefind-ui-text);background-color:var(--pagefind-ui-text);border-radius:var(--pagefind-ui-border-radius);opacity:.1;pointer-events:none}.pagefind-ui__result-tags.svelte-4xnkmf.svelte-4xnkmf{list-style-type:none;padding:0;display:flex;gap:calc(20px * var(--pagefind-ui-scale));flex-wrap:wrap;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__result-tag.svelte-4xnkmf.svelte-4xnkmf{padding:calc(4px * var(--pagefind-ui-scale)) calc(8px * var(--pagefind-ui-scale));font-size:calc(14px * var(--pagefind-ui-scale));border-radius:var(--pagefind-ui-border-radius);background-color:var(--pagefind-ui-tag)}legend.svelte-1v2r7ls.svelte-1v2r7ls{position:absolute;clip:rect(0 0 0 0)}.pagefind-ui__filter-panel.svelte-1v2r7ls.svelte-1v2r7ls{min-width:min(calc(260px * var(--pagefind-ui-scale)),100%);flex:1;display:flex;flex-direction:column;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__filter-group.svelte-1v2r7ls.svelte-1v2r7ls{border:0;padding:0}.pagefind-ui__filter-block.svelte-1v2r7ls.svelte-1v2r7ls{padding:0;display:block;border-bottom:solid calc(2px * var(--pagefind-ui-scale)) var(--pagefind-ui-border);padding:calc(20px * var(--pagefind-ui-scale)) 0}.pagefind-ui__filter-name.svelte-1v2r7ls.svelte-1v2r7ls{font-size:calc(16px * var(--pagefind-ui-scale));position:relative;display:flex;align-items:center;list-style:none;font-weight:700;cursor:pointer;height:calc(24px * var(--pagefind-ui-scale))}.pagefind-ui__filter-name.svelte-1v2r7ls.svelte-1v2r7ls::-webkit-details-marker{display:none}.pagefind-ui__filter-name.svelte-1v2r7ls.svelte-1v2r7ls:after{position:absolute;content:"";right:calc(6px * var(--pagefind-ui-scale));top:50%;width:calc(8px * var(--pagefind-ui-scale));height:calc(8px * var(--pagefind-ui-scale));border:solid calc(2px * var(--pagefind-ui-scale)) currentColor;border-right:0;border-top:0;transform:translateY(-70%) rotate(-45deg)}.pagefind-ui__filter-block[open].svelte-1v2r7ls .pagefind-ui__filter-name.svelte-1v2r7ls:after{transform:translateY(-70%) rotate(-225deg)}.pagefind-ui__filter-group.svelte-1v2r7ls.svelte-1v2r7ls{display:flex;flex-direction:column;gap:calc(20px * var(--pagefind-ui-scale));padding-top:calc(30px * var(--pagefind-ui-scale))}.pagefind-ui__filter-value.svelte-1v2r7ls.svelte-1v2r7ls{position:relative;display:flex;align-items:center;gap:calc(8px * var(--pagefind-ui-scale))}.pagefind-ui__filter-value.svelte-1v2r7ls.svelte-1v2r7ls:before{position:absolute;content:"";top:50%;left:calc(8px * var(--pagefind-ui-scale));width:0px;height:0px;border:solid 1px #fff;opacity:0;transform:translate(calc(4.5px * var(--pagefind-ui-scale) * -1),calc(.8px * var(--pagefind-ui-scale))) skew(-5deg) rotate(-45deg);transform-origin:top left;border-top:0;border-right:0;pointer-events:none}.pagefind-ui__filter-value.pagefind-ui__filter-value--checked.svelte-1v2r7ls.svelte-1v2r7ls:before{opacity:1;width:calc(9px * var(--pagefind-ui-scale));height:calc(4px * var(--pagefind-ui-scale));transition:width .1s ease-out .1s,height .1s ease-in}.pagefind-ui__filter-checkbox.svelte-1v2r7ls.svelte-1v2r7ls{margin:0;width:calc(16px * var(--pagefind-ui-scale));height:calc(16px * var(--pagefind-ui-scale));border:solid 1px var(--pagefind-ui-border);appearance:none;-webkit-appearance:none;border-radius:calc(var(--pagefind-ui-border-radius) / 2);background-color:var(--pagefind-ui-background);cursor:pointer}.pagefind-ui__filter-checkbox.svelte-1v2r7ls.svelte-1v2r7ls:checked{background-color:var(--pagefind-ui-primary);border:solid 1px var(--pagefind-ui-primary)}.pagefind-ui__filter-label.svelte-1v2r7ls.svelte-1v2r7ls{cursor:pointer;font-size:calc(16px * var(--pagefind-ui-scale));font-weight:400}.pagefind-ui--reset *:where(:not(html,iframe,canvas,img,svg,video):not(svg *,symbol *)){all:unset;display:revert;outline:revert}.pagefind-ui--reset *,.pagefind-ui--reset *:before,.pagefind-ui--reset *:after{box-sizing:border-box}.pagefind-ui--reset a,.pagefind-ui--reset button{cursor:revert}.pagefind-ui--reset ol,.pagefind-ui--reset ul,.pagefind-ui--reset menu{list-style:none}.pagefind-ui--reset img{max-width:100%}.pagefind-ui--reset table{border-collapse:collapse}.pagefind-ui--reset input,.pagefind-ui--reset textarea{-webkit-user-select:auto}.pagefind-ui--reset textarea{white-space:revert}.pagefind-ui--reset meter{-webkit-appearance:revert;appearance:revert}.pagefind-ui--reset ::placeholder{color:unset}.pagefind-ui--reset :where([hidden]){display:none}.pagefind-ui--reset :where([contenteditable]:not([contenteditable=false])){-moz-user-modify:read-write;-webkit-user-modify:read-write;overflow-wrap:break-word;-webkit-line-break:after-white-space;-webkit-user-select:auto}.pagefind-ui--reset :where([draggable=true]){-webkit-user-drag:element}.pagefind-ui--reset mark{all:revert}:root{--pagefind-ui-scale:.8;--pagefind-ui-primary:#393939;--pagefind-ui-text:#393939;--pagefind-ui-background:#ffffff;--pagefind-ui-border:#eeeeee;--pagefind-ui-tag:#eeeeee;--pagefind-ui-border-width:2px;--pagefind-ui-border-radius:8px;--pagefind-ui-image-border-radius:8px;--pagefind-ui-image-box-ratio:3 / 2;--pagefind-ui-font:system, -apple-system, "BlinkMacSystemFont", ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", "Ubuntu", "arial", sans-serif}.pagefind-ui.svelte-e9gkc3{width:100%;color:var(--pagefind-ui-text);font-family:var(--pagefind-ui-font)}.pagefind-ui__hidden.svelte-e9gkc3{display:none!important}.pagefind-ui__suppressed.svelte-e9gkc3{opacity:0;pointer-events:none}.pagefind-ui__form.svelte-e9gkc3{position:relative}.pagefind-ui__form.svelte-e9gkc3:before{background-color:var(--pagefind-ui-text);width:calc(18px * var(--pagefind-ui-scale));height:calc(18px * var(--pagefind-ui-scale));top:calc(23px * var(--pagefind-ui-scale));left:calc(20px * var(--pagefind-ui-scale));content:"";position:absolute;display:block;opacity:.7;-webkit-mask-image:url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.7549 11.255H11.9649L11.6849 10.985C12.6649 9.845 13.2549 8.365 13.2549 6.755C13.2549 3.165 10.3449 0.255005 6.75488 0.255005C3.16488 0.255005 0.254883 3.165 0.254883 6.755C0.254883 10.345 3.16488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255ZM6.75488 11.255C4.26488 11.255 2.25488 9.245 2.25488 6.755C2.25488 4.26501 4.26488 2.255 6.75488 2.255C9.24488 2.255 11.2549 4.26501 11.2549 6.755C11.2549 9.245 9.24488 11.255 6.75488 11.255Z' fill='%23000000'/%3E%3C/svg%3E%0A");mask-image:url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.7549 11.255H11.9649L11.6849 10.985C12.6649 9.845 13.2549 8.365 13.2549 6.755C13.2549 3.165 10.3449 0.255005 6.75488 0.255005C3.16488 0.255005 0.254883 3.165 0.254883 6.755C0.254883 10.345 3.16488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255ZM6.75488 11.255C4.26488 11.255 2.25488 9.245 2.25488 6.755C2.25488 4.26501 4.26488 2.255 6.75488 2.255C9.24488 2.255 11.2549 4.26501 11.2549 6.755C11.2549 9.245 9.24488 11.255 6.75488 11.255Z' fill='%23000000'/%3E%3C/svg%3E%0A");-webkit-mask-size:100%;mask-size:100%;z-index:9;pointer-events:none}.pagefind-ui__search-input.svelte-e9gkc3{height:calc(64px * var(--pagefind-ui-scale));padding:0 calc(70px * var(--pagefind-ui-scale)) 0 calc(54px * var(--pagefind-ui-scale));background-color:var(--pagefind-ui-background);border:var(--pagefind-ui-border-width) solid var(--pagefind-ui-border);border-radius:var(--pagefind-ui-border-radius);font-size:calc(21px * var(--pagefind-ui-scale));position:relative;appearance:none;-webkit-appearance:none;display:flex;width:100%;box-sizing:border-box;font-weight:700}.pagefind-ui__search-input.svelte-e9gkc3::placeholder{opacity:.2}.pagefind-ui__search-clear.svelte-e9gkc3{position:absolute;top:calc(3px * var(--pagefind-ui-scale));right:calc(3px * var(--pagefind-ui-scale));height:calc(58px * var(--pagefind-ui-scale));padding:0 calc(15px * var(--pagefind-ui-scale)) 0 calc(2px * var(--pagefind-ui-scale));color:var(--pagefind-ui-text);font-size:calc(14px * var(--pagefind-ui-scale));cursor:pointer;background-color:var(--pagefind-ui-background);border-radius:var(--pagefind-ui-border-radius)}.pagefind-ui__drawer.svelte-e9gkc3{gap:calc(60px * var(--pagefind-ui-scale));display:flex;flex-direction:row;flex-wrap:wrap}.pagefind-ui__results-area.svelte-e9gkc3{min-width:min(calc(400px * var(--pagefind-ui-scale)),100%);flex:1000;margin-top:calc(20px * var(--pagefind-ui-scale))}.pagefind-ui__results.svelte-e9gkc3{padding:0}.pagefind-ui__message.svelte-e9gkc3{box-sizing:content-box;font-size:calc(16px * var(--pagefind-ui-scale));height:calc(24px * var(--pagefind-ui-scale));padding:calc(20px * var(--pagefind-ui-scale)) 0;display:flex;align-items:center;font-weight:700;margin-top:0}.pagefind-ui__button.svelte-e9gkc3{margin-top:calc(40px * var(--pagefind-ui-scale));border:var(--pagefind-ui-border-width) solid var(--pagefind-ui-border);border-radius:var(--pagefind-ui-border-radius);height:calc(48px * var(--pagefind-ui-scale));padding:0 calc(12px * var(--pagefind-ui-scale));font-size:calc(16px * var(--pagefind-ui-scale));color:var(--pagefind-ui-primary);background:var(--pagefind-ui-background);width:100%;text-align:center;font-weight:700;cursor:pointer}.pagefind-ui__button.svelte-e9gkc3:hover{border-color:var(--pagefind-ui-primary);color:var(--pagefind-ui-primary);background:var(--pagefind-ui-background)}.search-overlay[data-astro-cid-otpdt6jm]{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1000}.search-overlay[data-astro-cid-otpdt6jm].hidden{display:none}.search-backdrop[data-astro-cid-otpdt6jm]{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#00000080;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}.search-panel-wrapper[data-astro-cid-otpdt6jm]{position:relative;display:flex;justify-content:center;align-items:flex-start;padding-top:10vh;padding-left:1rem;padding-right:1rem;height:100%;pointer-events:none}.search-panel[data-astro-cid-otpdt6jm]{pointer-events:auto;width:100%;max-width:42rem;max-height:80vh;background-color:var(--color-bg);border:1px solid var(--color-border);border-radius:12px;box-shadow:0 25px 50px -12px #00000040;display:flex;flex-direction:column;overflow:hidden}.search-panel-header[data-astro-cid-otpdt6jm]{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem .5rem}.search-title[data-astro-cid-otpdt6jm]{font-size:.75rem;font-family:monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--color-text-muted)}.search-close-btn[data-astro-cid-otpdt6jm]{cursor:pointer;border-radius:.375rem;background-color:var(--color-bg-offset);border:1px solid var(--color-border);padding:.25rem .75rem;font-size:.875rem;font-weight:500;color:var(--color-text-muted);transition:color .15s ease,background-color .15s ease}.search-close-btn[data-astro-cid-otpdt6jm]:hover{color:var(--color-text-main);background-color:var(--color-border)}.search-panel-content[data-astro-cid-otpdt6jm]{padding:.5rem 1.5rem 1.5rem;overflow-y:auto;flex:1;min-height:0}.search-dev-msg[data-astro-cid-otpdt6jm]{text-align:center;padding:2rem 0;color:var(--color-text-muted)}#pagefind__search[data-astro-cid-otpdt6jm]{--pagefind-ui-primary: var(--color-accent);--pagefind-ui-text: var(--color-text-main);--pagefind-ui-background: var(--color-bg);--pagefind-ui-border: var(--color-border);--pagefind-ui-border-width: 1px;--pagefind-ui-font: var(--font-sans)}.pagefind-ui__search-input,.pagefind-ui__button{background-color:var(--color-bg-offset)!important;color:var(--color-text-main)!important}#pagefind__search .pagefind-ui__search-input:focus{outline:none;border-color:var(--color-accent)}#pagefind__search .pagefind-ui__search-clear{width:calc(60px * var(--pagefind-ui-scale));padding:0;background-color:transparent;overflow:hidden}#pagefind__search .pagefind-ui__search-clear:focus{outline:1px solid var(--color-accent)}#pagefind__search .pagefind-ui__search-clear:before{content:"";-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E") center / 60% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E") center / 60% no-repeat;background-color:var(--color-accent);display:block;width:100%;height:100%}#pagefind__search .pagefind-ui__result{border:0}#pagefind__search .pagefind-ui__result-link{background-size:100% 6px;background-position:bottom;background-repeat:repeat-x;background-image:linear-gradient(transparent,transparent 5px,var(--color-text-main) 5px,var(--color-text-main))}#pagefind__search .pagefind-ui__result-link:hover{text-decoration:none;background-image:linear-gradient(transparent,transparent 4px,var(--color-accent) 4px,var(--color-accent))}#pagefind__search mark{color:var(--color-bg);background-color:var(--color-accent);font-weight:600}.site-footer[data-astro-cid-sz7xmlte]{background-color:var(--color-bg-offset);color:var(--color-text-main);padding:4rem 1rem;margin-top:auto;transition:background-color .3s ease;position:relative;padding-bottom:.5%!important}.site-footer[data-astro-cid-sz7xmlte]:before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--color-border) 20%,var(--color-border) 80%,transparent 100%);opacity:.6}.footer-content[data-astro-cid-sz7xmlte]{max-width:var(--max-width);margin:0 auto;display:grid;grid-template-columns:2fr 1fr max-content 1fr;gap:3rem}.footer-col[data-astro-cid-sz7xmlte] h3[data-astro-cid-sz7xmlte]{font-family:var(--font-serif);font-size:1.5rem;margin-bottom:1rem;color:var(--color-accent)}.footer-col[data-astro-cid-sz7xmlte] ul[data-astro-cid-sz7xmlte]{list-style:none;padding:0;margin:0}.footer-col[data-astro-cid-sz7xmlte] li[data-astro-cid-sz7xmlte]{list-style:none;margin-bottom:.4rem}.brand-col[data-astro-cid-sz7xmlte] h3[data-astro-cid-sz7xmlte]{margin-bottom:0}.brand-col[data-astro-cid-sz7xmlte] p[data-astro-cid-sz7xmlte]{margin-top:0;font-size:.95rem;line-height:1.6;color:var(--color-text-muted);margin-bottom:1.5rem}.copyright[data-astro-cid-sz7xmlte]{font-size:.85rem;color:var(--color-text-muted);line-height:1.5}address[data-astro-cid-sz7xmlte]{font-style:normal;font-size:.95rem;line-height:1.6;color:var(--color-text-muted)}.social-links[data-astro-cid-sz7xmlte]{display:flex;gap:1rem}.social-links[data-astro-cid-sz7xmlte] a[data-astro-cid-sz7xmlte]{color:var(--color-text-muted);transition:all .2s}.social-links[data-astro-cid-sz7xmlte] a[data-astro-cid-sz7xmlte]:hover{color:var(--color-accent);transform:translateY(-2px)}@media(max-width:900px){.footer-content[data-astro-cid-sz7xmlte]{grid-template-columns:1fr 1fr;gap:2rem}.brand-col[data-astro-cid-sz7xmlte]{grid-column:span 2}}@media(max-width:600px){.footer-content[data-astro-cid-sz7xmlte]{grid-template-columns:1fr;text-align:center}.brand-col[data-astro-cid-sz7xmlte]{grid-column:span 1}.social-links[data-astro-cid-sz7xmlte]{justify-content:center}}.author-modal[data-astro-cid-sz7xmlte]{padding:2.5rem 2rem;border:1px solid var(--color-border);border-radius:16px;background-color:var(--color-bg);color:var(--color-text-main);max-width:500px;width:90%;box-shadow:var(--shadow-lg);margin:auto}.author-modal[data-astro-cid-sz7xmlte]::backdrop{background:#0009;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}.close-btn[data-astro-cid-sz7xmlte]{position:absolute;top:1rem;right:1.25rem;background:transparent;border:none;font-size:2rem;cursor:pointer;color:var(--color-text-muted);line-height:1;padding:0}.close-btn[data-astro-cid-sz7xmlte]:hover{color:var(--color-accent)}.modal-flex[data-astro-cid-sz7xmlte]{display:flex;gap:1.5rem;align-items:center;margin-bottom:1.5rem}.modal-avatar[data-astro-cid-sz7xmlte]{width:80px;height:80px;border-radius:50%;object-fit:cover}#modal-name[data-astro-cid-sz7xmlte]{margin:0 0 .25rem;font-size:1.5rem}#modal-title[data-astro-cid-sz7xmlte]{color:var(--color-accent);font-size:1rem;font-weight:500;display:block}#modal-role[data-astro-cid-sz7xmlte]{font-size:.85rem;color:var(--color-text-muted);display:block;margin-top:.25rem}#modal-bio[data-astro-cid-sz7xmlte]{line-height:1.6;color:var(--color-text-main);margin-bottom:2rem}#modal-socials[data-astro-cid-sz7xmlte]{display:flex;gap:1rem;flex-wrap:wrap}.social-icon-btn[data-astro-cid-sz7xmlte]{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background-color:var(--color-bg-offset);border:1px solid var(--color-border);color:var(--color-text-muted);transition:all .2s ease}.social-icon-btn[data-astro-cid-sz7xmlte]:hover{background-color:var(--color-accent);color:var(--color-bg);border-color:var(--color-accent);transform:translateY(-2px)}.author-link[data-astro-cid-sz7xmlte].author-modal-trigger{cursor:pointer;border-bottom:1px dotted var(--color-accent);transition:opacity .2s}.author-link[data-astro-cid-sz7xmlte].author-modal-trigger:hover{opacity:.8}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{text-decoration:none}.lang-switcher[data-astro-cid-a2mxz4y6]{display:inline-flex;align-items:center;gap:.15rem;font-family:var(--font-sans);font-size:.8rem;font-weight:600;letter-spacing:.03em;border:1px solid var(--color-border);border-radius:6px;padding:.15rem;flex-shrink:0}.lang-switcher[data-astro-cid-a2mxz4y6] a[data-astro-cid-a2mxz4y6],.lang-current[data-astro-cid-a2mxz4y6]{padding:.2rem .45rem;border-radius:4px;line-height:1}.lang-switcher[data-astro-cid-a2mxz4y6] a[data-astro-cid-a2mxz4y6]{color:var(--color-text-muted);text-decoration:none}.lang-switcher[data-astro-cid-a2mxz4y6] a[data-astro-cid-a2mxz4y6]:hover{color:var(--color-accent);background:var(--color-bg-offset);opacity:1}.lang-current[data-astro-cid-a2mxz4y6]{background:var(--color-accent);color:var(--color-bg)}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background-color:var(--color-bg-header);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;z-index:100;transition:background-color .3s ease}header[data-astro-cid-3ef6ksr2]:after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--color-border) 20%,var(--color-border) 80%,transparent 100%);opacity:.6}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between;max-width:var(--max-width);margin:0 auto;height:4.5rem}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1.3em;font-family:var(--font-sans);font-weight:700;letter-spacing:-.02em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{text-decoration:none;color:var(--color-text-main);border:none}.internal-links[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;gap:.25rem}.internal-links[data-astro-cid-3ef6ksr2] a{padding:.5em .75em;color:var(--color-text-main);border-bottom:2px solid transparent;text-decoration:none;font-size:.95rem;font-weight:500;transition:all .2s ease}.internal-links[data-astro-cid-3ef6ksr2] a:hover{color:var(--color-accent)}.internal-links[data-astro-cid-3ef6ksr2] a.active{text-decoration:none;border-bottom-color:var(--color-accent);color:var(--color-accent)}.dropdown[data-astro-cid-3ef6ksr2]{position:relative;display:inline-block}.dropbtn[data-astro-cid-3ef6ksr2]{background-color:transparent;color:var(--color-text-main);padding:.5em .75em;font-size:.95rem;font-weight:500;line-height:inherit;border:none;cursor:pointer;font-family:inherit;transition:all .2s ease;border-bottom:2px solid transparent}.dropdown[data-astro-cid-3ef6ksr2]:hover .dropbtn[data-astro-cid-3ef6ksr2]{color:var(--color-accent)}.dropdown-content[data-astro-cid-3ef6ksr2]{display:none;position:absolute;background-color:var(--color-bg-mobile-menu);backdrop-filter:blur(40px) saturate(150%);-webkit-backdrop-filter:blur(40px) saturate(150%);min-width:120px;box-shadow:0 8px 16px #0003;z-index:1;border-radius:8px;overflow:hidden;border:1px solid var(--color-header-border);top:100%;left:50%;transform:translate(-50%)}.dropdown-content[data-astro-cid-3ef6ksr2] a{color:var(--color-text-main);padding:12px 16px;text-decoration:none;display:block;border-bottom:none}.dropdown-content[data-astro-cid-3ef6ksr2] a:hover{background-color:var(--color-bg-offset)}.dropdown[data-astro-cid-3ef6ksr2]:hover .dropdown-content[data-astro-cid-3ef6ksr2],.dropdown[data-astro-cid-3ef6ksr2]:focus-within .dropdown-content[data-astro-cid-3ef6ksr2]{display:block}.header-actions[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;gap:.5rem}.search-toggle[data-astro-cid-3ef6ksr2],#theme-toggle[data-astro-cid-3ef6ksr2]{background:transparent;border:none;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text-main);transition:background-color .2s ease}.search-toggle[data-astro-cid-3ef6ksr2]:hover,#theme-toggle[data-astro-cid-3ef6ksr2]:hover{background-color:var(--color-bg-offset);color:var(--color-accent)}.github-link[data-astro-cid-3ef6ksr2]{background:transparent;border:none;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--color-text-main);transition:background-color .2s ease}.github-link[data-astro-cid-3ef6ksr2]:hover{background-color:var(--color-bg-offset);color:var(--color-accent)}.mobile-menu-header[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between;padding-bottom:.25rem;border-bottom:1px solid var(--color-border);margin-bottom:.25rem}.mobile-menu-title[data-astro-cid-3ef6ksr2]{font-size:.9rem;font-weight:600;color:var(--color-text-muted);padding-left:.5rem;text-transform:uppercase;letter-spacing:.05em}#menu-toggle[data-astro-cid-3ef6ksr2]{display:none;background:transparent;border:none;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--color-text-main)}.mobile-menu[data-astro-cid-3ef6ksr2]{position:absolute;top:calc(100% + .5rem);right:1rem;width:fit-content;min-width:180px;background-color:var(--color-bg-mobile-menu);backdrop-filter:blur(40px) saturate(150%);-webkit-backdrop-filter:blur(40px) saturate(150%);border:1px solid var(--color-header-border);border-radius:12px;padding:.5rem;display:flex;flex-direction:column;gap:.125rem;box-shadow:0 8px 32px #0000001f,0 2px 8px #00000014;z-index:200;animation:menuFadeIn .2s ease}@keyframes menuFadeIn{0%{opacity:0;transform:translateY(-8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}.mobile-menu[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:.5rem .875rem;text-decoration:none;color:var(--color-text-main);font-weight:500;font-size:.9rem;border-radius:8px;transition:background-color .2s,color .2s}.mobile-menu[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]:hover{background-color:var(--color-bg-offset);color:var(--color-accent)}.mobile-menu-section[data-astro-cid-3ef6ksr2]{padding:.75rem .875rem .5rem;font-weight:600;font-size:.9rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem;border-top:1px solid var(--color-border)}.mobile-submenu[data-astro-cid-3ef6ksr2]{display:flex;flex-direction:column;padding-left:1rem;border-left:2px solid var(--color-border);margin-left:1rem;margin-bottom:.5rem}.hidden[data-astro-cid-3ef6ksr2],.moon-icon[data-astro-cid-3ef6ksr2]{display:none}.sun-icon[data-astro-cid-3ef6ksr2],html[data-theme=dark] .moon-icon[data-astro-cid-3ef6ksr2]{display:block}html[data-theme=dark] .sun-icon[data-astro-cid-3ef6ksr2]{display:none}@media(min-width:721px){#menu-toggle[data-astro-cid-3ef6ksr2]{display:none}.mobile-menu[data-astro-cid-3ef6ksr2]{display:none!important}}@media(max-width:720px){.internal-links[data-astro-cid-3ef6ksr2]{display:none}.header-actions[data-astro-cid-3ef6ksr2]{width:100%}#menu-toggle[data-astro-cid-3ef6ksr2]{display:flex;margin-left:auto}#search-toggle-desktop[data-astro-cid-3ef6ksr2]{display:none!important}}
+.toc-container[data-astro-cid-xvrfupwn]{display:none;margin-top:1.5rem}@media(min-width:1200px){.toc-container[data-astro-cid-xvrfupwn]{display:block;width:100%}.toc-inner[data-astro-cid-xvrfupwn]{position:sticky;top:6.5rem;padding-left:1rem;border-left:1px solid var(--color-border);max-height:calc(100vh - 8rem);overflow-y:auto}}.toc-title[data-astro-cid-xvrfupwn]{font-weight:700;font-size:.82rem;margin-top:0;margin-bottom:.45rem;color:var(--color-text-main);text-transform:uppercase;letter-spacing:.08em}.toc-list[data-astro-cid-xvrfupwn]{display:flex;flex-direction:column;gap:.02rem;font-size:.86rem;line-height:1.22;list-style:none;padding:0;margin:0}.toc-item[data-astro-cid-xvrfupwn]{margin:0}.toc-item[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]{display:block;border-left:2px solid transparent;padding-top:.06rem;padding-bottom:.06rem;padding-left:1rem;color:var(--color-text-muted);text-decoration:none;margin-left:-1.05rem;transition:color .2s ease,border-color .2s ease}.toc-item[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]:hover{color:var(--color-accent)}.toc-item[data-astro-cid-xvrfupwn].active a[data-astro-cid-xvrfupwn]{color:var(--color-accent);border-color:var(--color-accent);font-weight:500}.toc-item[data-astro-cid-xvrfupwn].depth-3{margin-left:.75rem}.toc-mobile-details[data-astro-cid-xvrfupwn]{margin-top:1.5rem;margin-bottom:2rem;border-radius:var(--radius);border:1px solid var(--color-border);background:var(--color-bg-offset)}@media(min-width:1200px){.toc-mobile-details[data-astro-cid-xvrfupwn]{display:none}}.toc-mobile-summary[data-astro-cid-xvrfupwn]{display:flex;align-items:center;justify-content:space-between;padding:1rem;font-weight:700;color:var(--color-text-main);cursor:pointer;list-style:none}.toc-mobile-summary[data-astro-cid-xvrfupwn]::-webkit-details-marker{display:none}.toc-mobile-summary[data-astro-cid-xvrfupwn] svg[data-astro-cid-xvrfupwn]{transition:transform .3s ease}.toc-mobile-details[data-astro-cid-xvrfupwn][open] .toc-mobile-summary[data-astro-cid-xvrfupwn] svg[data-astro-cid-xvrfupwn]{transform:rotate(180deg)}.toc-mobile-content[data-astro-cid-xvrfupwn]{padding:.2rem 1rem .85rem;border-top:1px solid var(--color-border)}.toc-list-mobile[data-astro-cid-xvrfupwn]{display:flex;flex-direction:column;gap:.02rem;font-size:.86rem;line-height:1.22;list-style:none;padding:0;margin:0}.toc-item-mobile[data-astro-cid-xvrfupwn]{margin:0}.toc-item-mobile[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]{display:block;padding-top:.1rem;padding-bottom:.1rem;color:var(--color-text-muted);text-decoration:none;transition:color .2s ease}.toc-item-mobile[data-astro-cid-xvrfupwn] a[data-astro-cid-xvrfupwn]:hover{color:var(--color-accent)}.toc-item-mobile[data-astro-cid-xvrfupwn].active a[data-astro-cid-xvrfupwn]{color:var(--color-accent);font-weight:500}.toc-item-mobile[data-astro-cid-xvrfupwn].depth-3{margin-left:.75rem;border-left:1px solid var(--color-border);padding-left:.75rem}
+html{scroll-padding-top:5.5rem}main[data-astro-cid-bvzihdzo]{width:100%;max-width:100%;margin:0}.blog-container[data-astro-cid-bvzihdzo]{position:relative;max-width:var(--max-width);margin:0 auto;display:flex;justify-content:center}@media(min-width:1200px){.blog-container[data-astro-cid-bvzihdzo]{display:grid;grid-template-columns:minmax(0,880px) 250px;gap:2rem;justify-content:center;align-items:stretch}}.prose-wrapper[data-astro-cid-bvzihdzo]{position:relative;width:880px;max-width:100%}.prose[data-astro-cid-bvzihdzo]{width:100%;padding:1rem;color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] p{text-align:justify;hyphens:auto}.prose[data-astro-cid-bvzihdzo] ul,.prose[data-astro-cid-bvzihdzo] ol{margin:0 0 1.5rem;padding-left:1.5rem}.prose[data-astro-cid-bvzihdzo] li{margin:.45rem 0}.prose[data-astro-cid-bvzihdzo] li>p{margin-bottom:.75rem}.prose[data-astro-cid-bvzihdzo] blockquote{position:relative;margin:2.25rem 0;padding:1.3rem 3.25rem;border:1px solid var(--color-border);border-left:4px solid var(--color-accent);background:linear-gradient(135deg,var(--color-accent-light) 0%,transparent 100%),var(--color-bg-offset);border-radius:18px;box-shadow:var(--shadow-sm);overflow:hidden;quotes:'"' '"' "'" "'"}.prose[data-astro-cid-bvzihdzo] blockquote:before{content:open-quote;position:absolute;top:.35rem;left:.95rem;font-family:var(--font-serif);font-size:4rem;line-height:1;color:var(--color-accent);opacity:.22}.prose[data-astro-cid-bvzihdzo] blockquote:after{content:close-quote;position:absolute;right:.95rem;bottom:-.45rem;font-family:var(--font-serif);font-size:4rem;line-height:1;color:var(--color-accent);opacity:.18}.prose[data-astro-cid-bvzihdzo] blockquote p{margin:.3rem 0;color:var(--color-text-main);text-align:left;font-size:1.02rem}.prose[data-astro-cid-bvzihdzo] blockquote p:first-child{margin-top:0}.prose[data-astro-cid-bvzihdzo] blockquote p:last-child{margin-bottom:0}.prose[data-astro-cid-bvzihdzo] blockquote cite{display:block;margin-top:.85rem;font-style:normal;font-size:.92rem;color:var(--color-text-muted)}.prose[data-astro-cid-bvzihdzo] hr{margin:2.5rem 0;border:0;border-top:1px solid var(--color-border)}.prose[data-astro-cid-bvzihdzo] code{font-family:ui-monospace,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:.92em;background:var(--color-accent-light);padding:.15rem .35rem;border-radius:.35rem}.prose[data-astro-cid-bvzihdzo] pre{margin:1.75rem 0;overflow-x:auto;line-height:1.1}.prose[data-astro-cid-bvzihdzo] pre code{display:block;background:transparent;padding:0;border-radius:0;font-size:.88rem;font-family:ui-monospace,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;line-height:1.5!important;letter-spacing:-.01em}.prose[data-astro-cid-bvzihdzo] .code-block-frame{position:relative;margin:2.5rem 0 2rem}.prose[data-astro-cid-bvzihdzo] .code-block-frame:after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;box-shadow:inset 0 1px #ffffff14}.prose[data-astro-cid-bvzihdzo] .code-block-frame pre{margin:0}.prose[data-astro-cid-bvzihdzo] pre.astro-code{border:1px solid rgba(148,163,184,.22);border-radius:18px;padding:1.2rem 1.35rem!important;box-shadow:0 20px 45px #0f172a24;background-image:radial-gradient(circle at top right,rgba(96,165,250,.16),transparent 32%),linear-gradient(180deg,#ffffff0a,#fff0);scrollbar-color:rgba(148,163,184,.75) transparent}html[data-theme=dark] .prose[data-astro-cid-bvzihdzo] pre.astro-code{border-color:#94a3b83d;box-shadow:0 20px 45px #02061766}html[data-theme=dark] .prose[data-astro-cid-bvzihdzo] pre.astro-code,html[data-theme=dark] .prose[data-astro-cid-bvzihdzo] pre.astro-code span{color:var(--shiki-dark)!important;background-color:var(--shiki-dark-bg)!important;font-style:var(--shiki-dark-font-style)!important;font-weight:var(--shiki-dark-font-weight)!important;text-decoration:var(--shiki-dark-text-decoration)!important}.prose[data-astro-cid-bvzihdzo] pre.astro-code:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}.prose[data-astro-cid-bvzihdzo] pre.astro-code code{min-width:max-content}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line{display:inline-block;line-height:1.5!important;margin:0;padding:0}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line span{line-height:inherit!important}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line.diff.add{background:#22c55e26}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line.diff.remove{background:#ef444426}.prose[data-astro-cid-bvzihdzo] pre.astro-code .line.highlighted{background:#60a5fa2e}.prose[data-astro-cid-bvzihdzo] .code-block-label,.prose[data-astro-cid-bvzihdzo] .copy-code-button{position:absolute;top:0;z-index:2;transform:translateY(-50%);display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--color-border);border-radius:999px;background:var(--color-bg);box-shadow:var(--shadow-md);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.prose[data-astro-cid-bvzihdzo] .code-block-label{left:1rem;padding:.45rem .85rem;font-size:.72rem;font-weight:700;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] .code-block-label:before{content:"";width:.5rem;height:.5rem;border-radius:999px;background:var(--color-accent);box-shadow:0 0 0 .2rem #60a5fa29}.prose[data-astro-cid-bvzihdzo] .copy-code-button{right:1rem;padding:.45rem .85rem;font:inherit;font-size:.78rem;font-weight:700;line-height:1;color:var(--color-text-muted);cursor:pointer;transition:transform .2s ease,color .2s ease,background-color .2s ease,border-color .2s ease}.prose[data-astro-cid-bvzihdzo] .copy-code-button:hover{color:var(--color-accent)}.prose[data-astro-cid-bvzihdzo] .copy-code-button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}.prose[data-astro-cid-bvzihdzo] .copy-code-button:active{transform:translateY(-50%) scale(.97)}.prose[data-astro-cid-bvzihdzo] .copy-code-button__success{display:none}.prose[data-astro-cid-bvzihdzo] .copy-code-button[data-copied=true]{color:var(--color-accent);background:var(--color-accent-light);border-color:#60a5fa59}.prose[data-astro-cid-bvzihdzo] .copy-code-button[data-copied=true] .copy-code-button__default{display:none}.prose[data-astro-cid-bvzihdzo] .copy-code-button[data-copied=true] .copy-code-button__success{display:inline}.prose[data-astro-cid-bvzihdzo] table{width:100%;margin:2rem 0;border-collapse:collapse;display:block;overflow-x:auto;font-size:.95rem}.prose[data-astro-cid-bvzihdzo] th,.prose[data-astro-cid-bvzihdzo] td{padding:.75rem 1rem;border:1px solid var(--color-border);text-align:left}.prose[data-astro-cid-bvzihdzo] th{background:var(--color-accent-light);color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] img{max-width:100%;height:auto;border-radius:12px;box-shadow:var(--shadow-sm)}.prose[data-astro-cid-bvzihdzo] details{margin:1.5rem 0;padding:1rem 1.25rem;border:1px solid var(--color-border);border-radius:12px;background:var(--color-bg-offset)}.prose[data-astro-cid-bvzihdzo] summary{cursor:pointer;font-weight:700;color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] input[type=checkbox]{margin-right:.6rem;accent-color:var(--color-accent)}.prose[data-astro-cid-bvzihdzo] section[data-footnotes]{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--color-border)}.prose[data-astro-cid-bvzihdzo] section[data-footnotes] p{text-align:left}.prose[data-astro-cid-bvzihdzo] .callout{--callout-accent: var(--color-accent);--callout-surface: rgba(0, 51, 102, .08);position:relative;margin:2rem 0;padding:1rem 1.2rem 1rem 1.25rem;border:1px solid color-mix(in srgb,var(--callout-accent) 22%,var(--color-border));border-left:4px solid var(--callout-accent);border-radius:16px;background:linear-gradient(135deg,var(--callout-surface) 0%,transparent 100%),var(--color-bg-offset);box-shadow:var(--shadow-sm)}.prose[data-astro-cid-bvzihdzo] .callout:before{content:attr(data-callout);display:inline-flex;align-items:center;margin-bottom:.7rem;padding:.32rem .62rem;border-radius:999px;background:color-mix(in srgb,var(--callout-accent) 14%,transparent);color:var(--callout-accent);font-size:.72rem;font-weight:800;letter-spacing:.08em;line-height:1;text-transform:uppercase}.prose[data-astro-cid-bvzihdzo] .callout p{margin:.35rem 0;text-align:left}.prose[data-astro-cid-bvzihdzo] .callout p:first-child{margin-top:0}.prose[data-astro-cid-bvzihdzo] .callout p:last-child{margin-bottom:0}.prose[data-astro-cid-bvzihdzo] .callout strong{color:var(--color-text-main)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=note]{--callout-accent: #7c3aed;--callout-surface: rgba(124, 58, 237, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=info]{--callout-accent: #2563eb;--callout-surface: rgba(37, 99, 235, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=tip]{--callout-accent: #0f766e;--callout-surface: rgba(15, 118, 110, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=success]{--callout-accent: #15803d;--callout-surface: rgba(21, 128, 61, .12)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=warning]{--callout-accent: #d97706;--callout-surface: rgba(217, 119, 6, .14)}.prose[data-astro-cid-bvzihdzo] .callout[data-callout=danger]{--callout-accent: #dc2626;--callout-surface: rgba(220, 38, 38, .12)}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1.2}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em;font-size:2.2rem}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:var(--color-text-muted)}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.blog-authors[data-astro-cid-bvzihdzo]{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;font-size:.9rem;color:var(--color-text-muted)}.blog-authors[data-astro-cid-bvzihdzo] span[data-astro-cid-bvzihdzo]{font-size:.9rem}@media(max-width:768px){.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{font-size:1.6rem}.prose[data-astro-cid-bvzihdzo]{padding:1rem .5rem}.prose[data-astro-cid-bvzihdzo] blockquote{padding:1.1rem 2.7rem;border-radius:14px}.prose[data-astro-cid-bvzihdzo] blockquote:before{top:.45rem;left:.75rem;font-size:3.2rem}.prose[data-astro-cid-bvzihdzo] blockquote:after{right:.7rem;bottom:-.3rem;font-size:3.2rem}.prose[data-astro-cid-bvzihdzo] .code-block-frame{margin:2.3rem 0 1.8rem}.prose[data-astro-cid-bvzihdzo] pre.astro-code{border-radius:14px;padding:1rem 1rem 1.1rem!important}.prose[data-astro-cid-bvzihdzo] .code-block-label{left:.75rem;padding:.4rem .7rem;font-size:.66rem}.prose[data-astro-cid-bvzihdzo] .copy-code-button{right:.75rem;padding:.4rem .7rem;font-size:.72rem}.prose[data-astro-cid-bvzihdzo] .callout{padding:.95rem 1rem;border-radius:14px}}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2>  <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Головна </a> <a href="/about" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Про мене </a> <a href="/publications" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Публікації </a> <a href="/moments" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Моменти </a> <a href="/thanks" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Подяки </a> <a href="/plans" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Плани </a> </div> <div class="header-actions" data-astro-cid-3ef6ksr2> <div class="lang-switcher" role="group" aria-label="Перемкнути мову" data-astro-cid-a2mxz4y6> <span class="lang-current" aria-current="true" data-astro-cid-a2mxz4y6> UK </span><a href="/en/blog/concept-automated-case-allocation" hreflang="en" lang="en" data-astro-cid-a2mxz4y6> EN </a> </div> <button id="search-toggle-desktop" class="search-toggle" aria-label="Пошук" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="11" cy="11" r="8" data-astro-cid-3ef6ksr2></circle><line x1="21" y1="21" x2="16.65" y2="16.65" data-astro-cid-3ef6ksr2></line></svg> </button> <button id="theme-toggle" aria-label="Перемкнути тему" data-astro-cid-3ef6ksr2> <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> <button id="menu-toggle" aria-label="Меню" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><line x1="3" y1="12" x2="21" y2="12" data-astro-cid-3ef6ksr2></line><line x1="3" y1="6" x2="21" y2="6" data-astro-cid-3ef6ksr2></line><line x1="3" y1="18" x2="21" y2="18" data-astro-cid-3ef6ksr2></line></svg> </button> </div> </nav> <div id="mobile-menu" class="mobile-menu hidden" data-astro-cid-3ef6ksr2> <div class="mobile-menu-header" data-astro-cid-3ef6ksr2> <span class="mobile-menu-title" data-astro-cid-3ef6ksr2>Меню</span> <button id="search-toggle-mobile" class="search-toggle" aria-label="Пошук" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="11" cy="11" r="8" data-astro-cid-3ef6ksr2></circle><line x1="21" y1="21" x2="16.65" y2="16.65" data-astro-cid-3ef6ksr2></line></svg> </button> </div> <a href="/" data-astro-cid-3ef6ksr2>Головна</a> <a href="/about" data-astro-cid-3ef6ksr2>Про мене</a> <a href="/publications" data-astro-cid-3ef6ksr2>Публікації</a> <a href="/moments" data-astro-cid-3ef6ksr2>Моменти</a> <a href="/thanks" data-astro-cid-3ef6ksr2>Подяки</a> <a href="/plans" data-astro-cid-3ef6ksr2>Плани</a> </div> </header> <script type="module">document.getElementById("theme-toggle")?.addEventListener("click",()=>{const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";window.__setPreferredTheme?.(t),localStorage.setItem("theme",t)});document.getElementById("menu-toggle")?.addEventListener("click",()=>{document.getElementById("mobile-menu")?.classList.toggle("hidden")});document.querySelectorAll(".search-toggle").forEach(e=>{e.addEventListener("click",()=>{document.dispatchEvent(new CustomEvent("open-search"))})});</script> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo>  <div class="blog-container" style="position: relative;" data-astro-cid-bvzihdzo> <div class="prose-wrapper" data-astro-cid-bvzihdzo> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-08-14T00:00:00.000Z"> Aug 14, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>A Concept for the Automated Allocation of Court Cases in Ukraine</h1>  <div class="blog-tags" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.75rem;" data-astro-cid-bvzihdzo> <a href="/tags/digitalisation" style="text-decoration: none; font-size: 0.85rem; font-weight: 600; color: var(--color-accent); background: var(--color-bg-offset); padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid var(--color-border);" data-astro-cid-bvzihdzo>
+#digitalisation </a> </div> <hr data-astro-cid-bvzihdzo> </div> <details class="toc-mobile-details" data-astro-cid-xvrfupwn><summary class="toc-mobile-summary" data-astro-cid-xvrfupwn>Зміст<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-xvrfupwn><path stroke="none" d="M0 0h24v24H0z" fill="none" data-astro-cid-xvrfupwn></path><polyline points="6 9 12 15 18 9" data-astro-cid-xvrfupwn></polyline></svg></summary><nav class="toc-mobile-content" data-astro-cid-xvrfupwn><ul class="toc-list-mobile" data-astro-cid-xvrfupwn><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#preamble" data-astro-cid-xvrfupwn>Preamble</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#part-i-an-analysis-of-the-problems-with-the-current-allocation-methodologies" data-astro-cid-xvrfupwn>Part I. An analysis of the problems with the current allocation methodologies</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#11-how-the-methodology-evolved-the-2018-and-2024-editions" data-astro-cid-xvrfupwn>1.1. How the methodology evolved: the 2018 and 2024 editions</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#12-the-defects-identified-in-the-current-formula" data-astro-cid-xvrfupwn>1.2. The defects identified in the current formula</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#13-statistical-modelling-on-the-data-of-the-pechersk-district-court-of-kyiv" data-astro-cid-xvrfupwn>1.3. Statistical modelling on the data of the Pechersk District Court of Kyiv</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#14-conclusions-from-the-analysis" data-astro-cid-xvrfupwn>1.4. Conclusions from the analysis</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#part-ii-the-conceptual-foundations-of-the-new-allocation-methodology" data-astro-cid-xvrfupwn>Part II. The conceptual foundations of the new allocation methodology</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#21-principles-of-the-concept" data-astro-cid-xvrfupwn>2.1. Principles of the Concept</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#22-the-architecture-of-the-system-six-levels" data-astro-cid-xvrfupwn>2.2. The architecture of the system: six levels</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#23-improving-the-input-data-level-1" data-astro-cid-xvrfupwn>2.3. Improving the input data (Level 1)</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#24-determining-the-pool-of-judges-level-2" data-astro-cid-xvrfupwn>2.4. Determining the pool of judges (Level 2)</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#25-safeguards-level-6" data-astro-cid-xvrfupwn>2.5. Safeguards (Level 6)</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#26-new-approaches-to-optimising-the-conduct-of-proceedings" data-astro-cid-xvrfupwn>2.6. New approaches to optimising the conduct of proceedings</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#part-iii-the-new-formula-for-allocation-within-a-court" data-astro-cid-xvrfupwn>Part III. The new formula for allocation within a court</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#31-the-overall-structure-of-the-algorithm" data-astro-cid-xvrfupwn>3.1. The overall structure of the algorithm</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#32-the-formula-for-the-weight-of-a-case" data-astro-cid-xvrfupwn>3.2. The formula for the weight of a case</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#33-the-formula-for-a-judges-effective-capacity" data-astro-cid-xvrfupwn>3.3. The formula for a judge’s effective capacity</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#34-the-formula-for-the-target-workload" data-astro-cid-xvrfupwn>3.4. The formula for the target workload</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#35-the-formula-for-the-probability-range" data-astro-cid-xvrfupwn>3.5. The formula for the probability range</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#36-random-selection-and-recording" data-astro-cid-xvrfupwn>3.6. Random selection and recording</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#37-the-workflow" data-astro-cid-xvrfupwn>3.7. The workflow</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#part-iv-the-new-formula-for-extraterritorial-allocation" data-astro-cid-xvrfupwn>Part IV. The new formula for extraterritorial allocation</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#41-the-grounds-for-extraterritoriality" data-astro-cid-xvrfupwn>4.1. The grounds for extraterritoriality</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#42-the-multi-level-pool-of-courts" data-astro-cid-xvrfupwn>4.2. The multi-level pool of courts</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#43-the-extended-capacity-formula" data-astro-cid-xvrfupwn>4.3. The extended capacity formula</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#44-special-rules-minor-cases-and-written-proceedings" data-astro-cid-xvrfupwn>4.4. Special rules: minor cases and written proceedings</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#45-an-electronic-deliberation-room-for-cross-court-panels" data-astro-cid-xvrfupwn>4.5. An electronic deliberation room for cross-court panels</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#part-v-implementing-the-concept" data-astro-cid-xvrfupwn>Part V. Implementing the Concept</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#51-legal-changes" data-astro-cid-xvrfupwn>5.1. Legal changes</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#52-technical-changes-to-the-acdms" data-astro-cid-xvrfupwn>5.2. Technical changes to the ACDMS</a></li><li class="toc-item-mobile depth-3" data-astro-cid-xvrfupwn><a href="#53-transitional-arrangements" data-astro-cid-xvrfupwn>5.3. Transitional arrangements</a></li><li class="toc-item-mobile depth-2" data-astro-cid-xvrfupwn><a href="#conclusions" data-astro-cid-xvrfupwn>Conclusions</a></li></ul></nav></details><script type="module">let e;function i(){e&&e.disconnect();const n=t=>{t.forEach(c=>{const o=c.target.getAttribute("id");if(!o)return;const a=document.querySelector(`.toc-item a[href="#${o}"]`),l=document.querySelector(`.toc-item-mobile a[href="#${o}"]`);c.isIntersecting&&(document.querySelectorAll(".toc-item").forEach(r=>r.classList.remove("active")),document.querySelectorAll(".toc-item-mobile").forEach(r=>r.classList.remove("active")),a?.parentElement?.classList.add("active"),l?.parentElement?.classList.add("active"))})},s={root:null,rootMargin:"-100px 0px -60% 0px",threshold:0};e=new IntersectionObserver(n,s),document.querySelectorAll("h2, h3").forEach(t=>{e?.observe(t)})}i();document.addEventListener("astro:after-swap",i);</script>  <p>Years of work on the automated allocation of court cases — from the analysis of individual courts and queries to the State Judicial Administration and the state enterprise “Information Judicial Systems”, through to the High Council of Justice’s appeal to Parliament on extraterritorial allocation — produced a list of problems that reach far beyond any single formula. They are institutional (who decides, and under what rules, a judge’s specialisation, the complexity coefficients, the days of availability), technical (a centralised allocation module still does not exist, and the formula actually used to select a judge lives only in the software code), legal (the regulation describes the algorithm incompletely, so the outcome of an allocation cannot be verified) and organisational.</p>
+<p>Drawing on that work, Ihor Bilyk prepared a <strong>Concept for the Automated Allocation of Court Cases in Ukraine</strong> — a document that brings the identified problems together and proposes not only a new formula, but a six-level architecture running from the standardisation of input data to safeguards and independent audit. The Concept was submitted by memorandum to the Chair of the High Council of Justice for the further development of this strand of work.</p>
+<p>Below is the full text of the Concept, preserving the structure, tables and figures of the original.</p>
+<hr>
+<h2 id="preamble">Preamble</h2>
+<p>The automated allocation of court cases is a fundamental component of the right to a fair trial guaranteed by Article 6 of the Convention for the Protection of Human Rights and Fundamental Freedoms and Article 55 of the Constitution of Ukraine. It is through this mechanism that the constitutional principles of judicial independence and of equality before the law and the court are given effect, and that the independence of the judiciary is secured.</p>
+<p>Ukraine has had a system for the automated allocation of court cases since 2010, its foundations having been laid down by decision No. 30 of the Council of Judges of Ukraine of 26 November 2010.</p>
+<p>Over more than 15 years of operation the system has been complicated, simplified and gradually improved. Yet a critical analysis of the current formula, carried out in the studies accompanying this Concept, revealed a range of mathematical, regulatory and practical defects that weaken its capacity to deliver objective and impartial allocation. In particular, the current formula admits of several fundamentally different technical implementations, each producing a radically different allocation outcome, and it improperly conflates the weight of a case with the capacity of a judge by placing the administrative-post coefficient inside the case-weight formula.</p>
+<p>This Concept proposes a comprehensive rethinking of the approach to automated allocation: from the standardisation of input data and a single register of judges’ specialisations through to extraterritorial allocation between courts in different regions and strengthened safeguards.</p>
+<p><em>The Concept proceeds from the premise that a simple mathematical formula cannot on its own secure fairness. What is required is a systemic approach: reliable input data, a transparent algorithm, independent audit and safeguards. Only the combination of these elements can substantially reduce the risk of subjective influence and create verifiable grounds for regarding automated allocation as objective and fair to the parties to proceedings.</em></p>
+<h2 id="part-i-an-analysis-of-the-problems-with-the-current-allocation-methodologies">Part I. An analysis of the problems with the current allocation methodologies</h2>
+<h3 id="11-how-the-methodology-evolved-the-2018-and-2024-editions">1.1. How the methodology evolved: the 2018 and 2024 editions</h3>
+<p>The current edition of the Regulation on the automated court document management system (ACDMS) took a significant step towards simplifying the formula. That simplification was not, however, accompanied by an equivalent degree of mathematical certainty in the algorithm for selecting a judge. A comparison of the key elements of the two editions is set out in the table below.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Issue</strong></th><th><strong>2018 edition</strong></th><th><strong>2024/2025 edition</strong></th></tr></thead><tbody><tr><td><strong>Workload formula</strong></td><td>Two indicators: K_af (actual) and K_aw (weighted average). K_load = K_af − K_aw. Range = K_admin × (10 + K_load.max − K_load). The algorithm is described in full. Note: the accompanying modelling must state explicitly which edition of the 2018 formula was used.</td><td>A single indicator: K_LOAD = Σweights/WD, Weight = K_COMPL × K_FORM / K_ADMIN. No selection formula.</td></tr><tr><td><strong>Accounting for days of absence</strong></td><td>Days of absence were taken into account implicitly, by slowing the accumulation of K_af.</td><td>Unless the assembly of judges provides otherwise, days on which no allocation takes place are disregarded in calculating K_LOAD.</td></tr><tr><td><strong>Record and report</strong></td><td>These necessarily contained the list of judges, the coefficients, the probability ranges, the total range and the random number.</td><td>The report contains basic data, but the requirement to show the probability ranges disappears.</td></tr><tr><td><strong>Role of the assembly of judges</strong></td><td>The formula and the underlying logic are more fully fixed in the regulation.</td><td>The assembly may determine specialisation, complexity, the coefficients for administrative posts and the form of participation. Flexibility increases.</td></tr></tbody></table>
+<h3 id="12-the-defects-identified-in-the-current-formula">1.2. The defects identified in the current formula</h3>
+<p>A systematic analysis of the current formula identified ten key problems of differing character — from the mathematical to the legal. They are listed below in order of criticality.</p>
+<h4 id="critical-problems-requiring-immediate-resolution">Critical problems (requiring immediate resolution)</h4>
+<p><strong>No complete selection algorithm.</strong> Paragraph 2.3.6 describes only the calculation of K_LOAD, while paragraph 2.3.7 contains no more than the phrase “the selection of a judge by random number is carried out in accordance with the workload coefficient”. That wording on its own admits of several fundamentally different technical implementations (inverse proportionality, selection of the minimum K_LOAD, or direct proportionality). According to the explanation given by the state enterprise “Information Judicial Systems” (a letter provided in reply to query No. 3782/0/19-26 of 2 June 2026), the implementation actually used is the inversely proportional one, under the formula K_prob = ROUND((1.05 × K_LOAD.max − K_LOAD) × 100), followed by a weighted random selection. That formula does work in practice, but it does not appear in the Regulation on the ACDMS — it exists only at the level of the software implementation. The principal defect therefore lies not in the fact that “there are many possible implementations”, but in the fact that the single implementation actually in use sits outside the regulation and cannot be verified by the parties to proceedings.</p>
+<p><strong>K_ADMIN is placed incorrectly in the weight formula.</strong> The formula Weight = K_COMPL × K_FORM / K_ADMIN does not, in itself, increase the number of cases going to a judge who holds an administrative post. On the contrary, where the logic “lower K_LOAD — greater chance, higher K_LOAD — smaller chance” is implemented correctly, it makes every case count 2.5 times heavier for a judge with K_ADMIN = 0.4, so that judge appears loaded sooner and should receive fewer subsequent cases. The error lies elsewhere: the coefficient for the post is applied to the weight of the case, as though the case had become more complex, rather than to the capacity of the judge. Because no selection formula is fixed in the regulation, this can produce different outcomes: in a correct implementation the number of cases falls; in a mistaken direct-proportionality implementation the imbalance may become self-reinforcing; and in the modelled “main” 2024 implementation the court president still receives fewer cases than an ordinary judge, but more than the fair target.</p>
+<p>In sum, K_ADMIN &#x3C; 1 ought to reduce the expected number of cases. The flaw in the current construction is not the idea of reducing workload as such, but the fact that this is done through a divisor in the weight of the case and without any complete rule for converting K_LOAD into a probability of selection.</p>
+<p><strong>Loss of verifiability of the records.</strong> Under the 2018 edition the records contained the probability ranges (the individual range and the aggregate range), which allowed any lawyer to check that an allocation had been carried out correctly. The current edition removes that requirement, effectively turning the algorithm into a “black box”.</p>
+<h4 id="serious-problems-requiring-priority-resolution">Serious problems (requiring priority resolution)</h4>
+<p><strong>The number of working days is undefined.</strong> It is not specified whether this is an indicator individual to each judge or one shared across the court. How are an individual judge’s holidays, sick leave and official trips accounted for? Sub-paragraph 2.3.15 allows the assembly of judges to vary the interpretation, which produces different rules in different courts.</p>
+<p><strong>The annual reset.</strong> K_LOAD is calculated from the beginning of the current year. If a substantial imbalance existed in December, it disappears mathematically on 1 January, even though the judge’s actual workload remains.</p>
+<p><strong>Loss of the self-correcting mechanism.</strong> The 2018 formula adjusted the weighted-average indicator of ALL competent judges on every allocation (self-correction). Under the current edition only the indicator of the selected judge changes — the others are untouched.</p>
+<p><strong>Dependence on the complexity classifier.</strong> If the K_COMPL coefficients are set incorrectly or do not reflect real workload, the formula works formally while in fact allocating unfairly.</p>
+<h4 id="systemic-problems-requiring-a-comprehensive-approach">Systemic problems (requiring a comprehensive approach)</h4>
+<p><strong>Actual workload is not taken into account.</strong> K_COMPL is the theoretical complexity as at the moment of registration. Real workload (the number of hearings, the volume of evidence, the duration of proceedings) has no effect on subsequent allocations.</p>
+<p><strong>Batch allocation is ambiguous.</strong> If the order of cases within a batch is not defined, the outcome will depend on internal sorting — a potential source of manipulation.</p>
+<p><strong>The local rules carry too much weight.</strong> Assemblies of judges are given considerable power to set coefficients and rules. That increases flexibility, but creates a risk of unequal practice between courts.</p>
+<h3 id="13-statistical-modelling-on-the-data-of-the-pechersk-district-court-of-kyiv">1.3. Statistical modelling on the data of the Pechersk District Court of Kyiv</h3>
+<p>To illustrate the identified problems empirically, scenario-based mathematical modelling of how the various formulas operate was carried out using the actual total volume of incoming cases at the Pechersk District Court of Kyiv for 2025. The other parameters of the model (the distribution of case complexity, judges’ availability, the technical implementations converting K_LOAD into a probability) are modelling assumptions and require separate disclosure for full reproducibility.</p>
+<p>The modelling used the artificial-intelligence models Claude Opus 4.8, ChatGPT 5.5 and Gemini 3.1 Pro, which simulated automated allocation on the basis of the source parameters published on the website of the Council of Judges of Ukraine (<a href="https://rsu.gov.ua/mzs-2025_4-maps">https://rsu.gov.ua/mzs-2025_4-maps</a>) and the data of the joint High Council of Justice project on the work of the working group on the automation of analytics and judicial statistics (JUSCORE (Justice SCOREboard), <a href="https://juscore.court.gov.ua">https://juscore.court.gov.ua</a>).</p>
+<p>Once each model had produced its results, cross-checking was applied to detect possible errors. The cross-check confirmed that the calculations were correct.</p>
+<h4 id="131-parameters-of-the-modelling">1.3.1. Parameters of the modelling</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Period modelled</strong></th><th><strong>2025</strong></th></tr></thead><tbody><tr><td><strong>Total number of cases and materials</strong></td><td>68,716 (the actual total volume of filings for 2025; the other parameters of the model are assumptions)</td></tr><tr><td><strong>Number of judges empowered to sit</strong></td><td>20 (as at 31 December 2025)</td></tr><tr><td><strong>Expected average number of cases under perfectly equal allocation</strong></td><td>3,436 cases per judge</td></tr><tr><td><strong>Composition of administrative posts (modelled)</strong></td><td>1 court president, 2 deputies, 1 member of the Council of Judges, 1 lecturer at the National School of Judges, 1 secretary of a judicial chamber (6 out of 20 in total)</td></tr><tr><td><strong>Number of formulas tested</strong></td><td>5 (F1: 2018; F2: modelled interpretation of 2024; F3: 2024 with selection of the minimum K_LOAD; F4: the mistaken direct proportionality; F5: the proposed formula. Precise results depend on the modelling assumptions once disclosed)</td></tr></tbody></table>
+<h4 id="132-target-case-numbers">1.3.2. Target case numbers</h4>
+<p>An allocation is regarded as objectively fair if it is proportionate to the administrative coefficient K_ADMIN. That means a judge with K_ADMIN = 0.4 (the court president) should receive 40% of the workload of an ordinary judge. The sum of K_ADMIN for the modelled composition of the court is 17.7. The target figures for 2025 are:</p>
+<p>A note on rounding: the unrounded target for the court president is 68,716 × 0.4 / 17.7 = 1,552.90 cases; the rows of the table below are rounded, so the sum of the rounded figures may differ from the overall total.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Category</strong></th><th><strong>K_ADMIN</strong></th><th><strong>Share</strong></th><th><strong>Per judge</strong></th><th><strong>Total (category)</strong></th></tr></thead><tbody><tr><td>Court president</td><td>0.40</td><td>2.26%</td><td><strong>1,553</strong></td><td>1,553</td></tr><tr><td>Deputy presidents (2)</td><td>0.50</td><td>2.82%</td><td><strong>1,941</strong></td><td>3,882</td></tr><tr><td>Secretary of a judicial chamber</td><td>0.70</td><td>3.95%</td><td><strong>2,718</strong></td><td>2,718</td></tr><tr><td>Council of Judges member + NSJ lecturer</td><td>0.80</td><td>4.52%</td><td><strong>3,106</strong></td><td>6,212</td></tr><tr><td>Ordinary judges (14)</td><td>1.00</td><td>5.65%</td><td><strong>3,882</strong></td><td>54,348</td></tr><tr><td><strong>TOTAL</strong></td><td><strong>17.70</strong></td><td><strong>100%</strong></td><td>—</td><td><strong>68,716</strong></td></tr></tbody></table>
+<h4 id="133-modelling-results--the-allocation-of-cases-to-the-court-president">1.3.3. Modelling results — the allocation of cases to the court president</h4>
+<p>The starkest difference between the formulas emerges in the case of the court president (K_ADMIN = 0.4, target — 1,553 cases):</p>
+<p><img alt="Bar chart: how many cases the president of the Pechersk District Court would receive in a year under each of five allocation formulas, against a target of 1,553 cases" loading="lazy" decoding="async" width="1663" height="963" src="/_astro/rozpodil-sprav-holovy.Dfq5SbuO_Z2myKLj.webp" srcset=""></p>
+<p><em>Fig. 1. How many cases the president of the Pechersk District Court receives in a year depending on the formula applied. The target is 1,553 cases.</em></p>
+<p><em>Technical note to Fig. 1: the target formula shown in the image itself needs to be corrected from “68,716 × 0.4 / 8.2” to “68,716 × 0.4 / 17.7 = 1,553”. As the figure is embedded as an image, this correction is recorded here as a traceable textual note.</em></p>
+<p>The chart shows the range of possible outcomes within the chosen modelling assumptions — from 1,579 to 4,866 cases. That spread confirms the problem of the incomplete regulatory description of the 2024 formula, but the precise values depend on the specific algorithm, the random seed, the flow of cases, the complexity weights and judges’ availability.</p>
+<h4 id="134-assessing-genuine-fairness-coefficients-of-variation">1.3.4. Assessing genuine fairness: coefficients of variation</h4>
+<p><img alt="Two charts of coefficients of variation: on the left, the spread in case numbers; on the right, the spread in normalised workload taking K_ADMIN into account" loading="lazy" decoding="async" width="2085" height="862" src="/_astro/koefitsiyenty-variatsiyi.YLrLtLzG_Z2eAmQS.webp" srcset=""></p>
+<p><em>Fig. 2. Two measures of variation: on the left, by number of cases; on the right, by normalised workload taking K_ADMIN into account.</em></p>
+<p>This chart reveals the fundamental difference between “formal equality in the number of cases” and “genuine fairness”:</p>
+<p>By number of cases the 2018 formula looks the best (CV = 2.26%), but that impression is misleading. The court president receives the same number of cases as an ordinary judge, notwithstanding the reduced workload the rules declare.</p>
+<p>By normalised workload (actual workload adjusted to the judge’s capacity; all else being equal, L_i / K_ADMIN) — that is, by real fairness — the 2018 formula gives a CV of 34.37% in the scenario modelled, the 2024 formula (in its main modelled implementation) 23.60%, and the proposed model around 0.04%. These figures should be presented as the result of a specific simulation, not as a universal guarantee for every set of input data.</p>
+<p><em>The conclusion from the modelling: in the scenario set out here the 2018 formula “allocated equally by number”, but not by real workload; the 2024 formula is worse than 2018 by number of cases and better than 2018 by normalised workload, yet still leaves a substantial imbalance. The proposed formula delivers a proportionate allocation by number and an almost identical normalised workload — but only where the input data are correct, the complexity classifier is uniform, the records are complete and the random number generator is secure.</em></p>
+<h4 id="135-a-map-of-fairness-the-heat-map">1.3.5. A map of fairness: the heat map</h4>
+<p><img alt="Heat map of deviations of actual allocation from the target for 20 judges under five formulas" loading="lazy" decoding="async" width="1945" height="891" src="/_astro/teplova-karta-spravedlyvosti.08A19ofg_Z1n4mtQ.webp" srcset=""></p>
+<p><em>Fig. 3. Heat map of deviations from the target for all 20 judges of the Pechersk District Court under five formulas. Green = fair, red = unfair.</em></p>
+<p>The heat map makes it possible to assess at a glance how fair each formula is for every judge:</p>
+<p><strong>F1 (2018):</strong> administrative posts are overloaded (+76% to +122%), ordinary judges are underloaded (−6% to −15%).</p>
+<p><strong>F2 (2024, main):</strong> a milder variant, but the imbalance persists for the president (+80%) and the deputies (+53%–56%).</p>
+<p><strong>F3 (minimum K_LOAD):</strong> by normalised workload this is fair for practically everyone, but that variant is not described in the 2024/2025 Regulation and may narrow randomness substantially, reducing it to an auxiliary mechanism used only where K_LOAD values are equal or close.</p>
+<p><strong>F4 (mistaken):</strong> a disaster — the president +213%, the deputies +132%–159%, ordinary judges −14% to −21%.</p>
+<p><strong>F5 (ideal):</strong> uniformly yellow within the modelled scenario, with deviations from −4.5% to +5.1%; these bounds need confirmation against actual allocation logs.</p>
+<h3 id="14-conclusions-from-the-analysis">1.4. Conclusions from the analysis</h3>
+<p>The comprehensive analysis of the current allocation methodology and its modelling on the data of the Pechersk District Court of Kyiv supports the following conclusions:</p>
+<p><strong>First,</strong> the current 2024/2025 formula cannot be regarded as mathematically complete.</p>
+<p>It defines only the workload coefficient K_LOAD, but does not describe the mechanism for converting that coefficient into a probability of selecting a particular judge. The implementation actually in use (the inversely proportional conversion K_prob = ROUND((1.05 × K_LOAD.max − K_LOAD) × 100)) has been confirmed by the state enterprise “Information Judicial Systems”, but it is not fixed in the Regulation on the ACDMS — it exists only in the software code, which makes independent verification by the parties impossible.</p>
+<p><strong>Second,</strong> placing K_ADMIN in the denominator is an incorrect way of accounting for administrative posts: it artificially increases the recorded weight of the case when it should be reducing the judge’s allocative capacity. The state enterprise “Information Judicial Systems” confirmed that K_ADMIN is indeed applied in the denominator (by dividing the number of notional cases by the coefficient). This means that a judge with a lower K_ADMIN appears more loaded on the books and receives fewer cases; in other words, the existing formula already reduces the workload of administrative posts, but does so opaquely and without any guarantee that the target proportion will be reached. The correct statement of the problem is therefore not that “the coefficient increases the number of cases”, but that “placing K_ADMIN in the denominator of the weight, combined with a selection algorithm not fixed in the Regulation, does not guarantee a proportionate result”.</p>
+<p>Under the main modelled implementation of the 2024 formula the president of the Pechersk District Court would have received 2,794 cases: fewer than the average ordinary judge, but 1,241 cases more than the fair target of 1,553. The conclusion should accordingly be framed not as “the coefficient for the post increases the number of cases”, but as “placing K_ADMIN in the denominator, together with an incomplete selection algorithm, does not guarantee that the target proportion is achieved”.</p>
+<p><strong>Third,</strong> the current formula reduces verifiability compared with 2018.</p>
+<p>The current edition does not require probability ranges to be shown in allocation records. That effectively turns the algorithm into a “black box”, where the result can be seen but not checked.</p>
+<p><strong>Fourth,</strong> what is needed is a systemic approach, not merely a mathematical one.</p>
+<p>The fairness of automated allocation depends not only on the formula but also on the accuracy of the complexity classifier, the completeness of data on judges’ availability, and the existence of safeguards against manipulation. Reform must address all of these.</p>
+<h2 id="part-ii-the-conceptual-foundations-of-the-new-allocation-methodology">Part II. The conceptual foundations of the new allocation methodology</h2>
+<p>The new concept of automated allocation rests on a fundamental rethinking of the approach: fair allocation cannot be secured by a mathematical formula alone. It is the product of a coordinated set of systems working together — from the standardisation of input data to independent audit. This part sets out the principles underlying the new concept and summarises its 27 key proposals.</p>
+<h3 id="21-principles-of-the-concept">2.1. Principles of the Concept</h3>
+<p>The new allocation methodology rests on seven fundamental principles:</p>
+<p><strong>Algorithmic completeness.</strong> The regulation must describe the WHOLE algorithm, from input data through to the random selection, and not merely individual elements of it.</p>
+<p><strong>Mathematical transparency.</strong> Every step of the calculation must be mathematically defined, reproducible and verifiable. An independent person with access to the record must be able to check for themselves that the allocation was carried out correctly.</p>
+<p><strong>Symmetry of coefficients.</strong> The administrative-post coefficient K_ADMIN must affect the algorithm symmetrically — through the capacity of the judge, not by distorting the weight of the case. A lower K_ADMIN → lower expectations → fewer cases, without artificially inflating “workload by weight”.</p>
+<p><strong>Preservation of randomness.</strong> Allocation must retain an element of randomness, but that element must be controlled: a judge who is behind the target workload receives a wider probability range, not a guaranteed automatic assignment.</p>
+<p><strong>Cross-checking of data.</strong> Data on judges’ availability (holidays, sick leave) must be verified against independent sources (the eHealth system, personnel registers) rather than relying solely on manual entry.</p>
+<p><strong>Integrity of the records.</strong> Allocation records must form a hash chain — each record containing the hash of the preceding one. This makes it impossible to alter any individual record unnoticed.</p>
+<p><strong>Protection of the parties’ rights.</strong> Parties to a case must be informed of the allocation immediately — which allows a potential conflict of interest to be identified at an early stage.</p>
+<h3 id="22-the-architecture-of-the-system-six-levels">2.2. The architecture of the system: six levels</h3>
+<p>The Concept is structured as an architecture of six levels — each level performs a function of its own, but all of them operate as a single system. No level can compensate for the shortcomings of the others: genuinely fair allocation requires all six to work at once.</p>
+<p><img alt="Diagram of the architecture of the Concept: six levels — input data, the pool of judges, the mathematical model, dynamic factors, extraterritoriality, safeguards and audit" loading="lazy" decoding="async" width="892" height="416" src="/_astro/arkhitektura-koncepcii.k7mKrIzq_Z1ESpqG.webp" srcset=""></p>
+<p><em>Fig. 4. The architecture of the allocation Concept: six levels, from input data to audit.</em></p>
+<h3 id="23-improving-the-input-data-level-1">2.3. Improving the input data (Level 1)</h3>
+<p>Most problems with automated allocation begin before the formula is ever run — at the stage of registering the case. If a document is classified incorrectly, if the case record is incomplete, or if related cases go undetected, then no formula, however perfect, will produce a fair result. The Concept provides for four systemic solutions.</p>
+<p><strong>2.3.1. Adoption of a classifier of procedural documents</strong></p>
+<p>A single classifier of types of procedural document is to be developed. It must be approved at the level of a regulation and used across all automated court document management systems. This removes discrepancies in the interpretation of which type a particular document belongs to.</p>
+<p><strong>2.3.2. Automatic classification of incoming documents (NLP + AI)</strong></p>
+<p>Automated recognition of the text of incoming documents and identification of their type by means of artificial intelligence and natural language processing (NLP). The algorithm analyses the content of the document and proposes the most probable type. A member of court staff confirms or corrects the proposal. This removes manual classification errors and speeds up processing.</p>
+<p><strong>2.3.3. Automatic determination of the category of the case</strong></p>
+<p>Once the document has been classified, the algorithm automatically determines the category of the case in accordance with the General Classifier of Judges’ Specialisations and Categories of Cases. This is critically important, because it is the category of the case that determines the complexity coefficient and the pool of competent judges.</p>
+<p><strong>2.3.4. Validation of the case record</strong></p>
+<p>Allocation is blocked if critical fields in the case record are not filled in: the number of parties, the number of documents, the details of the parties, the subject matter of the dispute, motions and applications (expert examinations, the summoning of witnesses, on-site inspection of physical evidence and so on), the presence of a foreign element, and the like. This removes situations in which the formula operates on incomplete data and produces an incorrect result.</p>
+<p><strong>2.3.5. Automatic detection of related cases</strong></p>
+<p>Before allocation is run, the algorithm carries out a comparison of:</p>
+<ul>
+<li>the parties to the case (by identifier or by name);</li>
+<li>the category of the case;</li>
+<li>the subject matter of the dispute;</li>
+<li>the period of filing.</li>
+</ul>
+<p>Any matches found are shown in the report and in the allocation record. If a judge has already heard a case involving the same parties, the case is automatically transferred to that judge (with a corresponding entry in the record).</p>
+<p><strong>2.3.6. Automatic determination of case complexity</strong></p>
+<p>Following analysis of the case materials, the system automatically determines the complexity coefficient on the basis of objective factors:</p>
+<ul>
+<li>the number of parties to the case;</li>
+<li>the number of documents;</li>
+<li>the presence of expert examinations (existing or likely to be required);</li>
+<li>the presence of a foreign element;</li>
+<li>the prior history of the case (newly discovered circumstances, review);</li>
+<li>the procedural form of the proceedings;</li>
+<li>statutory shortened time limits for adjudication.</li>
+</ul>
+<h3 id="24-determining-the-pool-of-judges-level-2">2.4. Determining the pool of judges (Level 2)</h3>
+<p>The second level of the Concept is the system for determining the range of judges who may take part in the allocation of a particular case. Unlike the current model, where this function is only partly implemented, the Concept provides for a comprehensive approach.</p>
+<p><strong>2.4.1. A Single Register of Judges’ Specialisations</strong></p>
+<p>A register is to be introduced containing up-to-date data on the specialisation of every judge. Assemblies of judges retain the right to determine specialisation, but only within the bounds of the General Classifier and with a mandatory entry recording the change in the Register. All changes in the Register are logged and monitored for atypical behaviour — for example, a change of specialisation immediately before a high-profile case is filed.</p>
+<p><strong>2.4.2. A register of connected persons</strong></p>
+<p>An extended list is to be created, on the basis of the judicial dossier, of persons who are (or have been) in family, kinship, business or other relations with a judge. Such a list partly exists at the High Qualification Commission of Judges. The Concept provides for it to be updated using:</p>
+<ul>
+<li>self-declaration by the judge (or candidate for judicial office) in the judge’s cabinet on the website of the High Qualification Commission of Judges;</li>
+<li>official state registers:
+<ol>
+<li>the Unified State Demographic Register;</li>
+<li>the State Register of Civil Status Acts;</li>
+<li>the Unified State Register of Declarations of Persons Authorised to Perform the Functions of the State or Local Self-Government (NACP);</li>
+<li>the State Register of Individual Taxpayers;</li>
+<li>the Pension Fund of Ukraine;</li>
+<li>the Unified State Register of Vehicles;</li>
+<li>the State Register of Real Property Rights;</li>
+<li>the Unified Register of Powers of Attorney;</li>
+<li>and so on.</li>
+</ol>
+</li>
+</ul>
+<p>That register is an important component of the judicial dossier as such, since it allows the data to be kept current both at the competitive-selection stage and while a judge is exercising their powers.</p>
+<p>The information-gathering module already available at the High Qualification Commission of Judges and the State Judicial Administration makes it possible to keep the register up to date with minimal time and administrative cost, and to relieve judges of the burden of updating such data themselves.</p>
+<p><strong>2.4.3. Automatic exclusion for conflict of interest</strong></p>
+<p>Using the data in the register of connected persons, the system checks the parties to the case before including a judge in the list of candidates for allocation. If there is any match, the judge is automatically excluded from the candidates, with a corresponding entry in the record. This removes the risk of a case reaching a judge who would have had to recuse themselves.</p>
+<p><strong>2.4.4. Automatic verification of sick leave through the eHealth system</strong></p>
+<p>The current Regulation provides for the exclusion from allocation of judges who are on leave or on sick leave, on the basis of primary documents. That procedure depends, however, on court staff entering the information in good time. The Concept proposes that a judge be excluded from allocation automatically where a confirmed electronic sick-leave certificate exists in the Electronic Health Care System (eHealth). This removes the scope for manipulation through entering — or failing to enter — data on temporary incapacity for work.</p>
+<h3 id="25-safeguards-level-6">2.5. Safeguards (Level 6)</h3>
+<p>The safeguards form a separate level of the Concept, one that secures the integrity of the system as a whole. Their purpose is not to optimise the formula but to make it impossible to falsify the result of an allocation unnoticed after the event, and to create the technical means of detecting any attempt at retrospective alteration quickly.</p>
+<p><strong>2.5.1. A hash chain of records</strong></p>
+<p>Each successive allocation record contains a cryptographic hash of the preceding record. The records thus form a blockchain-like chain. Any attempt to alter an individual record after the fact will cause a mismatch of hashes in all subsequent records, which will be detected at the very first check.</p>
+<p>This is fundamentally important because it secures not the physical impossibility of altering the data, but the impossibility of substituting them unnoticed, even by the system administrator. Whereas under the current system it is theoretically possible to alter an individual record without obvious traces, in a system with a hash chain such an alteration will produce a mismatch of hashes or will require every subsequent record to be altered too, which an audit should register.</p>
+<p><strong>2.5.2. Recording changes made to the ACDMS over the preceding 3 days</strong></p>
+<p>The allocation record is to include information on changes made in the ACDMS during the preceding 3 days that could have affected the allocation. This includes:</p>
+<ul>
+<li>changes to the list of judges and their specialisations;</li>
+<li>the entry or cancellation of information about temporary incapacity for work;</li>
+<li>changes in administrative posts;</li>
+<li>changes to the system settings (the local rules on the use of the ACDMS).</li>
+</ul>
+<p>This allows the parties and external auditors to see whether any “suspicious” changes were made immediately before a particular case was allocated.</p>
+<p><strong>2.5.3. Notifying the parties of the allocation made</strong></p>
+<p>The parties to the case (claimant, defendant, third parties) are automatically informed of the allocation by a message sent through the electronic cabinet. The message contains the name of the judge to whom the case has been transferred. This allows the parties to identify a potential conflict of interest at an early stage and to apply for recusal without needless delay.</p>
+<p><strong>2.5.4. A record of any change to the category of the case</strong></p>
+<p>Under the current system the category of a case may be changed by court staff after allocation. That creates scope for manipulation. The Concept provides that, following any change to the category of a case, a separate record is generated automatically containing:</p>
+<ul>
+<li>the old category and the new one;</li>
+<li>the reasons for the change;</li>
+<li>the date and time;</li>
+<li>the name of the member of staff who initiated the change;</li>
+<li>an analysis of whether the change would have affected the outcome of the allocation.</li>
+</ul>
+<p>The record is stored in the electronic cabinet as an integral part of the case materials.</p>
+<h3 id="26-new-approaches-to-optimising-the-conduct-of-proceedings">2.6. New approaches to optimising the conduct of proceedings</h3>
+<p>The Concept proposes a number of innovative approaches that use the capabilities of the automated system to optimise the conduct of proceedings themselves.</p>
+<p><strong>2.6.1. Dynamic workload balancing</strong></p>
+<p>The current formula takes static coefficients into account. The Concept provides that the ACDMS also takes account of dynamic indicators:</p>
+<ul>
+<li>the number of the judge’s undecided (“live”) cases at the moment of allocation;</li>
+<li>the average actual time to the opening of proceedings;</li>
+<li>the average time to the first hearing in the given category of case for that judge;</li>
+<li>the average duration of proceedings in that category.</li>
+</ul>
+<p>This makes it possible to take account not only of the number and complexity of the cases already allocated, but of their real “weight” in the judge’s work.</p>
+<p><strong>2.6.2. The projected time to disposal</strong></p>
+<p>On the basis of analytical and statistical calculations, the ACDMS determines the projected time to disposal for the particular case. This is founded on statistical data concerning:</p>
+<ul>
+<li>the time taken to dispose of analogous disputes by the same judge;</li>
+<li>the time taken to dispose of analogous disputes by other judges of the same court;</li>
+<li>the time taken to dispose of analogous disputes by other judges (where there are not enough statistically sufficient data at the level of the court).</li>
+</ul>
+<p>This figure is communicated to the claimant at the point of filing the claim or other procedural applications. It does not replace procedural time limits but supplements them — creating reasonable expectations and forestalling unfounded complaints about the length of proceedings.</p>
+<p><em>If the “projected time to disposal” is given the status of a defined legal category, it can substantially reduce the social tension between courts and the parties to a case, because such a period: (1) is communicated to the claimant before the claim is filed — forming realistic expectations; (2) is calculated by the system without human involvement — building trust; (3) is fixed in legislation as the period within which the state guarantees adjudication or will arrange for the judge to be replaced — creating certainty.</em></p>
+<p><strong>2.6.3. Re-allocation where the projected period is exceeded</strong></p>
+<p>The Concept provides for a mechanism of automatic re-allocation of a case where the time taken by a particular judge to dispose of it exceeds the projected period by more than a certain percentage (for example, by 30%). This allows a timely response where a case has “stalled” with one judge, without waiting for complaints from the parties.</p>
+<p><strong>2.6.4. A rolling control period instead of the calendar year</strong></p>
+<p>Instead of resetting the workload coefficients on 1 January each year, the Concept provides for a rolling control period (for example, 12 months from the current day). This means that a December imbalance does not vanish automatically in January, but is gradually “washed out” by new allocations over the following months.</p>
+<h2 id="part-iii-the-new-formula-for-allocation-within-a-court">Part III. The new formula for allocation within a court</h2>
+<p>This part sets out the mathematical description of the new allocation formula for the classic model — the allocation of cases between the judges of a single court. The formula removes all the problems identified in Part I with the current 2024/2025 edition and with the 2018 formula, gives the administrative coefficient a symmetrical effect, and offers a complete deterministic algorithm running from the input data to the final selection.</p>
+<h3 id="31-the-overall-structure-of-the-algorithm">3.1. The overall structure of the algorithm</h3>
+<p>The algorithm consists of six sequential steps, each of them mathematically defined:</p>
+<p><strong>Step 1:</strong> calculate the weight of the case V (complexity and the form of the judge’s participation only, <strong>WITHOUT K_ADMIN</strong>)</p>
+<p><strong>Step 2:</strong> calculate the effective capacity of each judge C_i (K_ADMIN enters this calculation)</p>
+<p><strong>Step 3:</strong> calculate the target workload T_i for each judge</p>
+<p><strong>Step 4:</strong> calculate each judge’s shortfall B_i against the target workload</p>
+<p><strong>Step 5:</strong> calculate the probability range R_i for each judge</p>
+<p><strong>Step 6:</strong> generate a random number X and select the judge into whose range X falls</p>
+<h3 id="32-the-formula-for-the-weight-of-a-case">3.2. The formula for the weight of a case</h3>
+<p><strong>V = K_compl × K_form × K_other</strong></p>
+<p>where:</p>
+<p><strong>V —</strong> the weight of the case (the figure representing the expected workload for a single judge);</p>
+<p><strong>K_compl —</strong> the coefficient of complexity for the category of case under the approved methodology (taking account of the number of parties, the number of documents, the presence of expert examinations, a foreign element and so on). Range: 1–60. Determined automatically in accordance with paragraph 2.3.6 of this Concept;</p>
+<p><strong>K_form —</strong> the coefficient for the form of the judge’s participation in the case (sitting alone, presiding, judge-rapporteur, member of a panel). Range: 0.5–1.0;</p>
+<p><strong>K_other —</strong> an additional coefficient for circumstances provided for in the regulation (urgency, a special procedural regime, extraterritoriality and so on). By default K_other = 1.0.</p>
+<p><em>The key difference from the current formula: K_ADMIN does NOT enter the formula for the weight of the case. The weight describes the case itself, not the judge who will receive it. This removes the improper conflation of the complexity of a case with the capacity of a judge and makes the effect of an administrative post transparent.</em></p>
+<h3 id="33-the-formula-for-a-judges-effective-capacity">3.3. The formula for a judge’s effective capacity</h3>
+<p><strong>C_i = K_admin_i × D_i × K_part_i × S_i</strong></p>
+<p>where:</p>
+<p><strong>C_i —</strong> the effective allocative capacity of judge i;</p>
+<p><strong>K_admin_i —</strong> the coefficient for the administrative post. Range: 0.4–1.0 (retained from the current edition);</p>
+<p><strong>D_i —</strong> the number of working days in the control period on which the judge was available for allocation (excluding leave, official trips and sick leave);</p>
+<p><strong>K_part_i —</strong> the coefficient of partial availability (for partly available days — participation in an official trip for part of a day, training, the analysis of case-law). By default K_part_i = 1.0;</p>
+<p><strong>S_i —</strong> the coefficient of specialisation / eligibility to hear a case of this category. Equals 1 if the judge may hear this category of case; 0 if not.</p>
+<p><em>The fundamental change: K_admin affects the capacity of the judge (not the weight of the case). If a judge has a lower K_admin, their expected share of the overall workload is proportionately smaller. This is a symmetrical and mathematically correct approach.</em></p>
+<h3 id="34-the-formula-for-the-target-workload">3.4. The formula for the target workload</h3>
+<p><strong>T_i = (ΣL + V) × C_i / ΣC</strong></p>
+<p>where:</p>
+<p><strong>T_i —</strong> the target workload of judge i after the hypothetical inclusion of the present case in the overall body of work;</p>
+<p><strong>ΣL —</strong> the sum of the weights of all cases already allocated among all judges during the control period;</p>
+<p><strong>V —</strong> the weight of the present case;</p>
+<p><strong>C_i —</strong> the effective capacity of judge i (from formula 3.3);</p>
+<p><strong>ΣC —</strong> the sum of the capacities of all judges taking part in the allocation.</p>
+<p>The economic sense of this is that T_i shows how much workload judge i ought to have if allocation were perfectly proportionate to capacity. If C_i amounts to 5% of ΣC, then T_i is 5% of the total workload.</p>
+<h3 id="35-the-formula-for-the-probability-range">3.5. The formula for the probability range</h3>
+<p><strong>B_i = max(ε; T_i − L_i)</strong></p>
+<p>where:</p>
+<p><strong>B_i —</strong> the shortfall of judge i against the target workload;</p>
+<p><strong>L_i —</strong> the sum of the weights of the cases actually allocated to judge i in the control period;</p>
+<p><strong>ε —</strong> a small stabiliser (0.001, say), so that every eligible judge has a non-zero chance. This stabiliser is not an innovation: in the formula actually in use, K_prob = ROUND((1.05 × K_LOAD.max − K_LOAD) × 100), the equivalent safeguard is performed by the 1.05 margin coefficient, which prevents the probability coefficient from becoming zero. The proposed ε performs the same function, but makes it defined in the regulation and transparent. The new formula therefore does not introduce a stabiliser “from nothing”; it formalises a mechanism already present in the system.</p>
+<p><strong>R_i = max(1; round(Q × B_i / V))</strong></p>
+<p>where:</p>
+<p><strong>R_i —</strong> the integer probability range of judge i;</p>
+<p><strong>Q —</strong> a scaling factor converting fractional values into integer ranges (by default Q = 10,000).</p>
+<p>The further a judge falls behind the target workload, the wider their range R_i, and the greater their chance of receiving the next case. At the same time a positive ε guarantees a minimal non-zero chance even for a judge who has already been allocated a sufficient number of cases — provided that the scaling of R_i and the rounding rules are fixed in the regulation. This upholds the principle of randomness, but must not be allowed to become a hidden channel for substantial departures from the target proportions.</p>
+<h3 id="36-random-selection-and-recording">3.6. Random selection and recording</h3>
+<p><strong>X = random(1; ΣR_i)</strong></p>
+<p>The random number X is generated within the range from 1 to the total range ΣR_i. The case is transferred to the judge into whose range R_i the value X falls. The record must contain: V, K_admin, D_i, K_part_i, S_i, L_i, T_i, B_i, R_i for each judge, ΣR_i, X, the version of the algorithm, the exact date and time, and the hash of the preceding record.</p>
+<h3 id="37-the-workflow">3.7. The workflow</h3>
+<p><img alt="Diagram of the full automated allocation workflow: ten steps from registration of the document to notification of the parties" loading="lazy" decoding="async" width="1177" height="598" src="/_astro/workflow-avtorozpodilu.UXhgqF-f_ZL7rTB.webp" srcset=""></p>
+<p><em>Fig. 5. The full automated allocation workflow: 10 steps from registration of a document to notification of the parties, including the branch for the extraterritorial module.</em></p>
+<p>The workflow shows how the algorithm interacts with the other levels of the architecture. Classification, validation, the check for related cases and the formation of the pool of judges all take place BEFORE the formula is run. After the random selection, a record is generated (with the hash chain), the parties are notified and the projected time to disposal is determined.</p>
+<p><strong>3.7.1. Testing the result on the data of the Pechersk District Court</strong></p>
+<p>On the modelling assumptions based on the total volume of filings at the Pechersk District Court of Kyiv (68,716 cases in 2025, 20 judges), the proposed formula produces the following allocation. The averages given are rounded, so the category totals may not come to exactly 68,716 without a table of unrounded values:</p>
+<p>For this section to be fully verifiable, the Concept needs an annex containing the code or pseudocode of the simulation, the seed of the random number generator, the distribution of case weights and the unrounded totals for each category of judge. In addition: since the formula actually used to convert K_LOAD into a probability is now reliably known (K_prob = ROUND((1.05 × K_LOAD.max − K_LOAD) × 100), confirmed by the state enterprise “Information Judicial Systems”), it would be sensible to repeat the modelling on that very formula rather than on a hypothetical “main implementation of 2024”. That would make the results comparable with the real behaviour of the system and remove the objection that the comparison rests on an assumption. All numerical results should be consistently labelled as a modelled scenario, with the wording aligned between the main text, the figure captions and the conclusions.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Category</strong></th><th><strong>Current, 2024</strong></th><th><strong>New formula</strong></th><th><strong>Change for the category</strong></th></tr></thead><tbody><tr><td>Court president (1)</td><td>2,794</td><td><strong>1,624</strong></td><td>Relieved of 1,170 cases a year (5 cases a day)</td></tr><tr><td>Deputy presidents (2)</td><td>3,001 (avg.)</td><td><strong>2,027 (avg.)</strong></td><td>Each relieved of 974 cases a year</td></tr><tr><td>Other administrative posts (3)</td><td>3,408 (avg.)</td><td><strong>2,968 (avg.)</strong></td><td>Each relieved of 440 cases a year</td></tr><tr><td>Ordinary judges (14)</td><td>3,545 (avg.)</td><td>3,874 (avg.)</td><td>An increase of 329 cases a year (1–2 cases a day)</td></tr></tbody></table>
+<p><em>In the modelled scenario set out here, ordinary judges receive on average 329 more cases — roughly 1–2 cases per working day. Such a redistribution can be a fair trade-off only if the administrative workload of the judges concerned is actually documented and the coefficients for their posts are set uniformly and transparently (rather than existing as a paper privilege).</em></p>
+<h2 id="part-iv-the-new-formula-for-extraterritorial-allocation">Part IV. The new formula for extraterritorial allocation</h2>
+<p>Alongside the classic allocation within a single court, the Concept provides for a separate model — extraterritorial automated allocation. This model is new to the Ukrainian judiciary and makes it possible to allocate cases not only among the judges of one court, but among the judges of different courts. The need for it arises both from temporary circumstances (an insufficient number of judges in a particular court) and from systemic challenges — uneven workload between courts, the conditions of wartime, and the minor nature of certain cases where procedural economy is in point.</p>
+<p><strong>A precondition as to technical feasibility.</strong> Extraterritorial allocation is technically impossible until a centralised allocation module is launched. According to the technical audit of the UJITS (CIVITTA LLC), confirmed by letters from the State Judicial Administration and the state enterprise “Information Judicial Systems” in reply to query No. 3782/0/19-26 of 2 June 2026, no centralised allocation module currently exists as a distinct element: allocation is implemented only as a local function of each court’s automated document management system. A centralised module is merely planned as part of the UJICS “Electronic court document management” subsystem, and has no approved launch dates. Accordingly, the stages of extraterritorial allocation described below should be implemented not against calendar deadlines, but by reference to the actual creation of the centralised module in accordance with the Roadmap for the development of IT solutions in the judicial system (State Judicial Administration order No. 534 of 2 December 2024) and the UJICS Concept (State Judicial Administration order No. 178 of 30 April 2025).</p>
+<h3 id="41-the-grounds-for-extraterritoriality">4.1. The grounds for extraterritoriality</h3>
+<p>The Concept provides for three principal situations in which extraterritorial allocation applies:</p>
+<p><strong>4.1.1. A shortage of judges with the necessary specialisation</strong></p>
+<p>If a particular court lacks a sufficient number of judges with the requisite specialisation (through temporary vacancies, leave, suspension and so on), the case is automatically included in the allocation among the judges of other courts. This removes the need for the formal transfer of the case on jurisdictional grounds and substantially shortens the time to disposal.</p>
+<p><strong>4.1.2. Balancing cases between courts</strong></p>
+<p>Where uneven workload between courts has become systemic — one regional court, say, has 1,500 cases per judge while another has 5,000 — the Concept provides for the automated allocation of cases to reduce that imbalance. This is particularly relevant for district courts in large cities, where workload can significantly exceed the national average.</p>
+<p><strong>4.1.3. Minor disputes and written proceedings</strong></p>
+<p>For categories of case heard in written proceedings, and for minor disputes, territorial jurisdiction is often of no critical importance to the quality of adjudication. The Concept provides for such cases to be allocated automatically among all judges in Ukraine (with the appropriate specialisation), without any territorial link. This creates a very large pool and allows workload to be balanced more effectively.</p>
+<h3 id="42-the-multi-level-pool-of-courts">4.2. The multi-level pool of courts</h3>
+<p>The key innovation of the Concept is a six-level pool of courts, which determines the priority in which judges are included in the pool of candidates to receive a case. Allocation proceeds from the highest level of priority (the courts closest geographically) to the lowest. A move to a lower level occurs only where the preceding level does not contain enough judges.</p>
+<p><img alt="Diagram of the multi-level pool of courts for extraterritorial allocation: six levels of priority by distance" loading="lazy" decoding="async" width="1223" height="585" src="/_astro/bagatorivnevyi-pul-sudiv.CEw9Aq3R_fGRUi.webp" srcset=""></p>
+<p><em>Fig. 6. The multi-level pool of courts for extraterritorial allocation: 6 levels of priority by distance.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Level</strong></th><th><strong>Description of the level</strong></th><th><strong>K_TERR</strong></th><th><strong>Application</strong></th></tr></thead><tbody><tr><td><strong>Level 1</strong></td><td>Courts within the same region and geographically close to the original court</td><td><strong>1.00</strong></td><td>First priority — minimal inconvenience for the parties</td></tr><tr><td><strong>Level 2</strong></td><td>Courts within the same region, located in the regional centre or geographically close to it</td><td><strong>0.95</strong></td><td>If Level 1 is unavailable</td></tr><tr><td><strong>Level 3</strong></td><td>Courts in regions bordering the region of the original court, located in the regional centre or geographically close to it</td><td><strong>0.85</strong></td><td>If Levels 1–2 are unavailable</td></tr><tr><td><strong>Level 4</strong></td><td>Courts in regions bordering the region of the original court, located closest to the original court</td><td><strong>0.80</strong></td><td>If Levels 1–3 are unavailable</td></tr><tr><td><strong>Level 5</strong></td><td>Courts in regions that do not border the region of the original court but are the nearest, in the regional centre or geographically close to it</td><td><strong>0.70</strong></td><td>If Levels 1–4 are unavailable</td></tr><tr><td><strong>Level 6</strong></td><td>Other courts of Ukraine with the appropriate specialisation</td><td><strong>0.50</strong></td><td>Only for written proceedings and minor disputes</td></tr></tbody></table>
+<h3 id="43-the-extended-capacity-formula">4.3. The extended capacity formula</h3>
+<p>For extraterritorial allocation the formula for effective capacity is extended by two new coefficients:</p>
+<p><strong>C_i = K_admin_i × D_i × K_part_i × S_i × K_terr_i × K_sec_i</strong></p>
+<p>where the new coefficients mean:</p>
+<p><strong>K_terr_i —</strong> the territoriality coefficient, reflecting the level of priority (from 0.50 for Level 6 to 1.00 for Level 1, in accordance with the table above);</p>
+<p><strong>K_sec_i —</strong> the security coefficient, reflecting the security situation in the region where the court is located. For territories under martial law or in a combat zone, K_sec may be reduced (to 0.3, for example) or set at 0 (excluding the court from the pool entirely).</p>
+<p>In peacetime and normal circumstances K_terr = 1.0 (for the original court) and K_sec = 1.0. In other words, allocation within a court (Part III) is a special case of extraterritorial allocation with K_terr = K_sec = 1.</p>
+<h3 id="44-special-rules-minor-cases-and-written-proceedings">4.4. Special rules: minor cases and written proceedings</h3>
+<p>For categories of case heard in written proceedings (where the personal participation of the parties is not required), and for minor disputes, the Concept provides for a special regime:</p>
+<p><strong>Allocation without a territorial link.</strong> All judges in Ukraine with the appropriate specialisation are included in a single pool. K_terr = 1.0 for all of them. This creates a very large pool, which allows workload to be balanced automatically between courts.</p>
+<p><strong>Adjudication on the materials available.</strong> As the proceedings are written, the physical presence of the parties is not required. The judge to whom the case is transferred obtains access to the full materials through the electronic cabinet.</p>
+<p><strong>Electronic signature of decisions.</strong> The decision is signed with a qualified electronic signature and transmitted automatically to the Unified State Register of Court Decisions.</p>
+<h3 id="45-an-electronic-deliberation-room-for-cross-court-panels">4.5. An electronic deliberation room for cross-court panels</h3>
+<p>For cases in which an extraterritorial case must be heard by a panel (on appellate review, for example), the Concept provides for the creation of a secure “electronic deliberation room”.</p>
+<p>Technically this is a separate secure peer-to-peer (P2P) connection between the judges making up the panel. The channel is created bypassing the main server of the videoconferencing system, which takes part only at the stage of initiating the connection. Once the deliberation is over, the thin client informs the videoconferencing system that the session has ended.</p>
+<p>One feature is fundamental: no video recording of such a connection is made by the standard means of the system. This can secure the secrecy of the deliberation room only if recording is technically prohibited on client devices, if the creation and termination of the session are logged without recording the content of the deliberation, and if there is procedural liability for any recording by outside means.</p>
+<h2 id="part-v-implementing-the-concept">Part V. Implementing the Concept</h2>
+<p>Implementing the Concept requires coordinated change at three levels: legal, technical and organisational. This part sets out systematically what needs to be done at each of them.</p>
+<h3 id="51-legal-changes">5.1. Legal changes</h3>
+<p>Full implementation of the Concept requires amendments to legislative and subordinate legal acts.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>Measure</strong></th><th><strong>Change to the Regulation</strong></th><th><strong>Change to other legal acts</strong></th><th><strong>Change to statute</strong></th></tr></thead><tbody><tr><td>Introduction of centralised automated allocation</td><td><strong>Yes</strong></td><td>No</td><td>No</td></tr><tr><td>Adoption of a classifier of procedural documents</td><td><strong>Yes</strong></td><td>No</td><td>No</td></tr><tr><td>Automatic classification of incoming documents (AI)</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>A Single Register of Judges’ Specialisations</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>A methodology for setting the complexity coefficient</td><td><strong>Yes</strong></td><td>No</td><td>No</td></tr><tr><td>A register of judges’ connected persons</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Balancing cases between courts</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td></tr><tr><td>A secure “electronic deliberation room”</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td></tr><tr><td>The projected time to disposal</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td></tr></tbody></table>
+<p><strong>Note:</strong> “the Regulation” means the Regulation on the ACDMS; “other legal acts” means legal acts of other bodies; “statute” means a law of Ukraine.</p>
+<h3 id="52-technical-changes-to-the-acdms">5.2. Technical changes to the ACDMS</h3>
+<p>Most of the solutions proposed require changes to the ACDMS software. The specific scope of the technical work includes:</p>
+<ul>
+<li>implementing the new mathematical model (the formulas V, C_i, T_i, B_i, R_i);</li>
+<li>integration with the eHealth system to verify sick leave;</li>
+<li>integration with the NACP, the State Register of Individual Taxpayers and the Pension Fund of Ukraine to update the register of connected persons;</li>
+<li>implementing an AI module for document classification;</li>
+<li>implementing the hash chain of records;</li>
+<li>implementing the mechanism for notifying the parties;</li>
+<li>creating the extraterritorial allocation module;</li>
+<li>creating the electronic deliberation room with a P2P protocol;</li>
+<li>implementing the calculation of the projected time to disposal on the basis of statistical data.</li>
+</ul>
+<h3 id="53-transitional-arrangements">5.3. Transitional arrangements</h3>
+<p>Given the complexity of the Concept, it is best implemented in stages:</p>
+<p><strong>Stage 1 (short term — 1 month)</strong></p>
+<ol>
+<li>replacing the formula in the Regulation on the ACDMS with a mathematically correct formula with a symmetrical K_ADMIN;</li>
+<li>restoring the mandatory requirement to show the probability ranges in the records;</li>
+<li>introducing the hash chain of records;</li>
+<li>introducing automatic notification of the parties.</li>
+</ol>
+<p><strong>Stage 2 (medium term — 1–6 months)</strong></p>
+<ol>
+<li>developing and adopting the classifier of procedural documents;</li>
+<li>creating the Single Register of Judges’ Specialisations;</li>
+<li>developing the methodology for the case complexity coefficient;</li>
+<li>extending the register of connected persons and automatic exclusion for conflict of interest;</li>
+<li>integration with the eHealth system;</li>
+<li>introducing dynamic workload balancing;</li>
+<li>introducing the projected time to disposal.</li>
+</ol>
+<p><strong>Stage 3 (long term — 1–12 months)</strong></p>
+<ol>
+<li>developing the AI module for the automatic classification of documents;</li>
+<li>introducing extraterritorial automated allocation for written proceedings;</li>
+<li>creating the electronic deliberation room with P2P;</li>
+<li>completing the transition to a rolling control period instead of the calendar year.</li>
+</ol>
+<h2 id="conclusions">Conclusions</h2>
+<p>The current formula for the automated allocation of court cases, as fixed in the 2024/2025 edition of the Regulation, has a number of mathematical and regulatory defects which prevent it from fully securing fair and impartial allocation. The most serious of them are the absence of a complete random-selection algorithm, the incorrect placement of the administrative coefficient in the denominator of the weight of the case, and the reduced verifiability of the records.</p>
+<p>A further caveat: the statistical results set out here should be presented as the results of a modelled scenario, not as a precise forecast for the Pechersk District Court in the absence of actual ACDMS logs, a calendar of judges’ availability and the real distribution of case complexity.</p>
+<p>Modelling based on the total volume of filings at the Pechersk District Court of Kyiv (68,716 cases in 2025, 20 judges) and on modelling assumptions as to the coefficients, case complexity and judges’ availability illustrates that modelled implementations of the incomplete algorithm of the 2024 formula can lead to a difference in the allocation of cases to the court president ranging from 1,579 to 4,866 cases — a factor of 3.1, and that this depends on the technical implementation. In the modelled scenario set out here, the proposed new formula keeps the deviation from the fair target below 5% for every category of judge; on the baseline assumptions of equal case weights and equal availability it should produce an almost exactly proportionate allocation. Before it is enacted, this conclusion should be confirmed by a reproducible simulation with a published algorithm, input data and rounding rules.</p>
+<p>The Concept proposes not only a replacement formula, but a comprehensive six-level architecture — from the standardisation of input data and a single register of specialisations to extraterritorial allocation and safeguards. In all, the Concept systematises 27 proposals concerning technical changes to the ACDMS, subordinate legal acts and legislation.</p>
+<p>The key advantages of the proposed Concept:</p>
+<ol>
+<li>A mathematically correct formula in which the administrative coefficient has a symmetrical effect.</li>
+<li>A complete algorithm set out in the regulation — leaving no room for differing technical interpretations.</li>
+<li>Greater verifiability — the full restoration of probability ranges in the records and the introduction of a hash chain.</li>
+<li>Protection against manipulation — automatic verification of data through the eHealth system, the NACP, the State Register of Individual Taxpayers and the register of connected persons.</li>
+<li>Early detection of conflicts of interest — notifying the parties of the outcome of the allocation.</li>
+<li>Readiness for extraterritorial allocation — a six-level pool of courts with K_TERR and K_SEC.</li>
+<li>Support for new forms of work — the electronic deliberation room, and minor cases without a territorial link.</li>
+<li>Optimisation of proceedings — dynamic balancing, the projected time to disposal, and re-allocation in the event of delay.</li>
+</ol>
+<p>Implementing the Concept requires coordinated change in legal acts, in the technical solutions of the ACDMS and in organisational processes. The three-stage approach proposed (short, medium and long term) allows the Concept to be realised gradually, beginning with the most critical changes — replacing the formula and restoring the completeness of the records.</p>
+<p><em>The aim of this Concept is not merely to resolve the mathematical problems that exist, but to create a system in which the fairness of automated allocation does not depend on the good will of particular individuals and cannot be called into question. That is a fundamental condition for confidence in the judiciary and for the realisation of the constitutional right to a fair trial.</em></p>
+<p><strong>* * *</strong></p>  </div> </div>  <nav class="toc-container" data-astro-cid-xvrfupwn><div class="toc-inner" data-astro-cid-xvrfupwn><h2 class="toc-title" data-astro-cid-xvrfupwn>Зміст</h2><ul class="toc-list" data-astro-cid-xvrfupwn><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#preamble" data-astro-cid-xvrfupwn>Preamble</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#part-i-an-analysis-of-the-problems-with-the-current-allocation-methodologies" data-astro-cid-xvrfupwn>Part I. An analysis of the problems with the current allocation methodologies</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#11-how-the-methodology-evolved-the-2018-and-2024-editions" data-astro-cid-xvrfupwn>1.1. How the methodology evolved: the 2018 and 2024 editions</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#12-the-defects-identified-in-the-current-formula" data-astro-cid-xvrfupwn>1.2. The defects identified in the current formula</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#13-statistical-modelling-on-the-data-of-the-pechersk-district-court-of-kyiv" data-astro-cid-xvrfupwn>1.3. Statistical modelling on the data of the Pechersk District Court of Kyiv</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#14-conclusions-from-the-analysis" data-astro-cid-xvrfupwn>1.4. Conclusions from the analysis</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#part-ii-the-conceptual-foundations-of-the-new-allocation-methodology" data-astro-cid-xvrfupwn>Part II. The conceptual foundations of the new allocation methodology</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#21-principles-of-the-concept" data-astro-cid-xvrfupwn>2.1. Principles of the Concept</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#22-the-architecture-of-the-system-six-levels" data-astro-cid-xvrfupwn>2.2. The architecture of the system: six levels</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#23-improving-the-input-data-level-1" data-astro-cid-xvrfupwn>2.3. Improving the input data (Level 1)</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#24-determining-the-pool-of-judges-level-2" data-astro-cid-xvrfupwn>2.4. Determining the pool of judges (Level 2)</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#25-safeguards-level-6" data-astro-cid-xvrfupwn>2.5. Safeguards (Level 6)</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#26-new-approaches-to-optimising-the-conduct-of-proceedings" data-astro-cid-xvrfupwn>2.6. New approaches to optimising the conduct of proceedings</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#part-iii-the-new-formula-for-allocation-within-a-court" data-astro-cid-xvrfupwn>Part III. The new formula for allocation within a court</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#31-the-overall-structure-of-the-algorithm" data-astro-cid-xvrfupwn>3.1. The overall structure of the algorithm</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#32-the-formula-for-the-weight-of-a-case" data-astro-cid-xvrfupwn>3.2. The formula for the weight of a case</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#33-the-formula-for-a-judges-effective-capacity" data-astro-cid-xvrfupwn>3.3. The formula for a judge’s effective capacity</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#34-the-formula-for-the-target-workload" data-astro-cid-xvrfupwn>3.4. The formula for the target workload</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#35-the-formula-for-the-probability-range" data-astro-cid-xvrfupwn>3.5. The formula for the probability range</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#36-random-selection-and-recording" data-astro-cid-xvrfupwn>3.6. Random selection and recording</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#37-the-workflow" data-astro-cid-xvrfupwn>3.7. The workflow</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#part-iv-the-new-formula-for-extraterritorial-allocation" data-astro-cid-xvrfupwn>Part IV. The new formula for extraterritorial allocation</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#41-the-grounds-for-extraterritoriality" data-astro-cid-xvrfupwn>4.1. The grounds for extraterritoriality</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#42-the-multi-level-pool-of-courts" data-astro-cid-xvrfupwn>4.2. The multi-level pool of courts</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#43-the-extended-capacity-formula" data-astro-cid-xvrfupwn>4.3. The extended capacity formula</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#44-special-rules-minor-cases-and-written-proceedings" data-astro-cid-xvrfupwn>4.4. Special rules: minor cases and written proceedings</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#45-an-electronic-deliberation-room-for-cross-court-panels" data-astro-cid-xvrfupwn>4.5. An electronic deliberation room for cross-court panels</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#part-v-implementing-the-concept" data-astro-cid-xvrfupwn>Part V. Implementing the Concept</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#51-legal-changes" data-astro-cid-xvrfupwn>5.1. Legal changes</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#52-technical-changes-to-the-acdms" data-astro-cid-xvrfupwn>5.2. Technical changes to the ACDMS</a></li><li class="toc-item depth-3" data-astro-cid-xvrfupwn><a href="#53-transitional-arrangements" data-astro-cid-xvrfupwn>5.3. Transitional arrangements</a></li><li class="toc-item depth-2" data-astro-cid-xvrfupwn><a href="#conclusions" data-astro-cid-xvrfupwn>Conclusions</a></li></ul></div></nav> </div> </article> </main> <footer class="site-footer" data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <div class="footer-col brand-col" data-astro-cid-sz7xmlte> <h3 data-astro-cid-sz7xmlte>Публічний звіт Романа Маселка</h3> <p data-astro-cid-sz7xmlte> про роботу на посаді члена Вищої ради правосуддя. </p> <div class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2026 Роман Маселко<br data-astro-cid-sz7xmlte>Матеріали звіту — CC BY 4.0: їх можна вільно цитувати, перекладати, передруковувати й зберігати копії, вказавши авторство. Код сайту — MIT. </div> </div>  <div class="footer-col" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Розділи</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="/about" data-astro-cid-sz7xmlte>Про мене</a></li> <li data-astro-cid-sz7xmlte><a href="/publications" data-astro-cid-sz7xmlte>Публікації</a></li> <li data-astro-cid-sz7xmlte><a href="/moments" data-astro-cid-sz7xmlte>Моменти</a></li> <li data-astro-cid-sz7xmlte><a href="/thanks" data-astro-cid-sz7xmlte>Подяки</a></li> <li data-astro-cid-sz7xmlte><a href="/plans" data-astro-cid-sz7xmlte>Плани</a></li> </ul> </div> <div class="footer-col" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Напрямки діяльності</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte> <a href="/directions/dyscyplinarni-provadzhennya" data-astro-cid-sz7xmlte>Дисциплінарні провадження</a> </li><li data-astro-cid-sz7xmlte> <a href="/directions/formuvannya-suddivskogo-korpusu" data-astro-cid-sz7xmlte>Формування суддівського корпусу</a> </li><li data-astro-cid-sz7xmlte> <a href="/directions/avtorytet-pravosuddya" data-astro-cid-sz7xmlte>Підвищення авторитету правосуддя</a> </li><li data-astro-cid-sz7xmlte> <a href="/directions/cyfrovizaciya" data-astro-cid-sz7xmlte>Цифровізація</a> </li> </ul> </div>  <div class="footer-col" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Контакти</h4> <div class="social-links" data-astro-cid-sz7xmlte> <a href="https://github.com/maselkor" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-astro-cid-sz7xmlte>    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" data-astro-cid-sz7xmlte></path></svg>   </a><a href="mailto:maselko.r@gmail.com" aria-label="Email" data-astro-cid-sz7xmlte>  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-astro-cid-sz7xmlte></path><polyline points="22,6 12,13 2,6" data-astro-cid-sz7xmlte></polyline></svg>     </a><a href="https://www.linkedin.com/in/roman-maselko-527262340/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-astro-cid-sz7xmlte>     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" data-astro-cid-sz7xmlte></path><rect x="2" y="9" width="4" height="12" data-astro-cid-sz7xmlte></rect><circle cx="4" cy="4" r="2" data-astro-cid-sz7xmlte></circle></svg>  </a><a href="https://www.facebook.com/roman.maselko" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-astro-cid-sz7xmlte>      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-sz7xmlte><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" data-astro-cid-sz7xmlte></path></svg> </a> </div> </div> </div>  </footer> <div id="search-overlay" class="search-overlay hidden" data-astro-cid-otpdt6jm> <div id="search-backdrop" class="search-backdrop" data-astro-cid-otpdt6jm></div> <div class="search-panel-wrapper" data-astro-cid-otpdt6jm> <div id="search-panel" class="search-panel" data-astro-cid-otpdt6jm> <div class="search-panel-header" data-astro-cid-otpdt6jm> <span class="search-title" data-astro-cid-otpdt6jm>Search</span> <button id="search-close-btn" class="search-close-btn" data-astro-cid-otpdt6jm>Esc</button> </div> <div class="search-panel-content" data-astro-cid-otpdt6jm> <div id="pagefind__search" data-astro-cid-otpdt6jm></div> </div> </div> </div> </div> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.mnDh6bwG.js"></script> <dialog id="author-modal" class="author-modal" data-astro-cid-sz7xmlte> <button id="close-modal" class="close-btn" aria-label="Close modal" data-astro-cid-sz7xmlte>&times;</button> <div class="modal-flex" data-astro-cid-sz7xmlte> <img id="modal-avatar" src="" alt="Avatar" class="modal-avatar" data-astro-cid-sz7xmlte> <div data-astro-cid-sz7xmlte> <h3 id="modal-name" data-astro-cid-sz7xmlte></h3> <span id="modal-title" data-astro-cid-sz7xmlte></span> <span id="modal-role" data-astro-cid-sz7xmlte></span> </div> </div> <p id="modal-bio" data-astro-cid-sz7xmlte></p> <div id="modal-socials" data-astro-cid-sz7xmlte></div> </dialog> <script type="module" src="/_astro/Footer.astro_astro_type_script_index_0_lang.WDfCEJ-K.js"></script> <script data-astro-rerun>
+			function getCodeBlockLabel(pre) {
+				const explicitLabel =
+					pre.getAttribute('data-file') ||
+					pre.getAttribute('data-filename') ||
+					pre.dataset.file ||
+					pre.dataset.filename;
+				if (explicitLabel) return explicitLabel;
+
+				const code = pre.querySelector('code');
+				const languageClass = code
+					? Array.from(code.classList).find((className) => className.startsWith('language-'))
+					: null;
+				const language =
+					pre.getAttribute('data-language') ||
+					pre.dataset.language ||
+					(languageClass ? languageClass.replace('language-', '') : '');
+				const normalized = language.toLowerCase();
+
+				const labels = {
+					astro: 'Astro',
+					bash: 'Bash',
+					css: 'CSS',
+					diff: 'Diff',
+					html: 'HTML',
+					js: 'JavaScript',
+					json: 'JSON',
+					md: 'Markdown',
+					plaintext: 'Code',
+					sh: 'Shell',
+					shell: 'Shell',
+					text: 'Code',
+					toml: 'TOML',
+					ts: 'TypeScript',
+					tsx: 'TSX',
+					yaml: 'YAML',
+					yml: 'YAML',
+				};
+
+				if (!normalized) return 'Code';
+				return labels[normalized] || normalized.toUpperCase();
+			}
+
+			async function writeToClipboard(text) {
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					await navigator.clipboard.writeText(text);
+					return;
+				}
+
+				const textarea = document.createElement('textarea');
+				textarea.value = text;
+				textarea.setAttribute('readonly', 'true');
+				textarea.style.position = 'absolute';
+				textarea.style.left = '-9999px';
+				document.body.appendChild(textarea);
+				textarea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textarea);
+			}
+
+			function enhanceCodeBlocks() {
+				const codeBlocks = Array.from(document.querySelectorAll('.prose pre'));
+
+				for (const pre of codeBlocks) {
+					if (pre.dataset.enhancedCodeBlock === 'true') continue;
+
+					const code = pre.querySelector('code');
+					if (!code) continue;
+
+					pre.dataset.enhancedCodeBlock = 'true';
+					pre.setAttribute('tabindex', '0');
+
+					const wrapper = document.createElement('div');
+					wrapper.className = 'code-block-frame';
+
+					pre.parentNode?.insertBefore(wrapper, pre);
+					wrapper.appendChild(pre);
+
+					const label = document.createElement('span');
+					label.className = 'code-block-label';
+					label.textContent = getCodeBlockLabel(pre);
+
+					const copyButton = document.createElement('button');
+					copyButton.type = 'button';
+					copyButton.className = 'copy-code-button';
+					copyButton.innerHTML =
+						'<span class="copy-code-button__default">Copy</span><span class="copy-code-button__success">Copied</span>';
+					copyButton.setAttribute('aria-label', `Copy ${label.textContent} code`);
+
+					copyButton.addEventListener('click', async () => {
+						try {
+							await writeToClipboard(code.innerText || '');
+							copyButton.dataset.copied = 'true';
+							window.setTimeout(() => {
+								copyButton.dataset.copied = 'false';
+							}, 1200);
+						} catch (error) {
+							console.error('Failed to copy code block', error);
+						}
+					});
+
+					wrapper.appendChild(label);
+					wrapper.appendChild(copyButton);
+				}
+			}
+
+			enhanceCodeBlocks();
+
+			if (!window.__academicPortfolioCodeBlockListener) {
+				document.addEventListener('astro:after-swap', enhanceCodeBlocks);
+				window.__academicPortfolioCodeBlockListener = true;
+			}
+		</script> </body> </html>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <radialGradient id="glow1" cx="70%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow2" cx="25%" cy="65%" r="45%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg)" />
+  <rect width="800" height="500" fill="url(#glow1)" />
+  <rect width="800" height="500" fill="url(#glow2)" />
+
+  <!-- Subtle grid -->
+  <g stroke="#334155" stroke-width="1" opacity="0.35">
+    <line x1="0" y1="100" x2="800" y2="100" />
+    <line x1="0" y1="200" x2="800" y2="200" />
+    <line x1="0" y1="300" x2="800" y2="300" />
+    <line x1="0" y1="400" x2="800" y2="400" />
+    <line x1="160" y1="0" x2="160" y2="500" />
+    <line x1="320" y1="0" x2="320" y2="500" />
+    <line x1="480" y1="0" x2="480" y2="500" />
+    <line x1="640" y1="0" x2="640" y2="500" />
+  </g>
+
+  <!-- Left side: Judicial Document / Scales motif -->
+  <g transform="translate(110, 115)">
+    <rect x="0" y="0" width="190" height="260" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2" />
+    <rect x="24" y="28" width="90" height="10" rx="5" fill="#f59e0b" opacity="0.85" />
+    <rect x="24" y="54" width="142" height="8" rx="4" fill="#94a3b8" opacity="0.55" />
+    <rect x="24" y="72" width="130" height="8" rx="4" fill="#94a3b8" opacity="0.55" />
+    <rect x="24" y="90" width="142" height="8" rx="4" fill="#94a3b8" opacity="0.55" />
+    <rect x="24" y="118" width="110" height="8" rx="4" fill="#60a5fa" opacity="0.75" />
+    <rect x="24" y="136" width="142" height="8" rx="4" fill="#94a3b8" opacity="0.45" />
+    <rect x="24" y="154" width="125" height="8" rx="4" fill="#94a3b8" opacity="0.45" />
+    <!-- Balance scales icon inside document -->
+    <g transform="translate(95, 208)" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round">
+      <line x1="0" y1="-22" x2="0" y2="22" />
+      <line x1="-22" y1="22" x2="22" y2="22" />
+      <line x1="-32" y1="-12" x2="32" y2="-12" />
+      <path d="M-32,-12 L-42,6 L-22,6 Z" fill="#f59e0b" fill-opacity="0.2" />
+      <path d="M32,-12 L22,6 L42,6 Z" fill="#f59e0b" fill-opacity="0.2" />
+    </g>
+  </g>
+
+  <!-- Connection streams (Embeddings / Pipeline) -->
+  <g fill="none" stroke-width="2.5" opacity="0.8">
+    <path d="M 300 175 C 370 175, 390 140, 460 140" stroke="url(#accentGrad)" stroke-dasharray="6 4" />
+    <path d="M 300 245 C 370 245, 390 245, 460 245" stroke="url(#accentGrad)" />
+    <path d="M 300 315 C 370 315, 390 350, 460 350" stroke="url(#accentGrad)" stroke-dasharray="6 4" />
+  </g>
+
+  <!-- Right side: AI Neural Network & Practice Analytics -->
+  <g transform="translate(460, 100)">
+    <!-- Analytics card -->
+    <rect x="0" y="0" width="230" height="290" rx="14" fill="#1e293b" stroke="#3b82f6" stroke-width="2" stroke-opacity="0.7" />
+    
+    <!-- Neural graph nodes -->
+    <g stroke="#60a5fa" stroke-width="1.8" opacity="0.75">
+      <line x1="55" y1="65" x2="115" y2="45" />
+      <line x1="55" y1="65" x2="115" y2="95" />
+      <line x1="55" y1="120" x2="115" y2="45" />
+      <line x1="55" y1="120" x2="115" y2="95" />
+      <line x1="55" y1="120" x2="115" y2="140" />
+      <line x1="115" y1="45" x2="175" y2="70" />
+      <line x1="115" y1="95" x2="175" y2="70" />
+      <line x1="115" y1="95" x2="175" y2="115" />
+      <line x1="115" y1="140" x2="175" y2="115" />
+    </g>
+    <circle cx="55" cy="65" r="8" fill="#3b82f6" />
+    <circle cx="55" cy="120" r="8" fill="#3b82f6" />
+    <circle cx="115" cy="45" r="9" fill="#60a5fa" />
+    <circle cx="115" cy="95" r="10" fill="#f59e0b" />
+    <circle cx="115" cy="140" r="9" fill="#60a5fa" />
+    <circle cx="175" cy="70" r="8" fill="#38bdf8" />
+    <circle cx="175" cy="115" r="8" fill="#38bdf8" />
+
+    <!-- Analytics bars -->
+    <g transform="translate(35, 185)">
+      <rect x="0" y="40" width="22" height="35" rx="4" fill="#3b82f6" opacity="0.7" />
+      <rect x="34" y="22" width="22" height="53" rx="4" fill="#3b82f6" opacity="0.85" />
+      <rect x="68" y="8" width="22" height="67" rx="4" fill="#60a5fa" />
+      <rect x="102" y="28" width="22" height="47" rx="4" fill="#3b82f6" opacity="0.85" />
+      <rect x="136" y="0" width="22" height="75" rx="4" fill="#f59e0b" />
+      <line x1="-5" y1="75" x2="165" y2="75" stroke="#64748b" stroke-width="2" />
+    </g>
+  </g>
+</svg>
+
